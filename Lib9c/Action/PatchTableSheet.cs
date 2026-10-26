@@ -80,36 +80,9 @@ namespace Nekoyume.Action
                 TableCsv
             );
 
-            // Reject a malformed policy here: once it is on the chain a row no lookup can
-            // match reads as "unrestricted", and nothing reports that it went missing.
-            if (TableName == nameof(RestrictionSheet))
-            {
-                RestrictionSheet.ValidateCsv(TableCsv);
-            }
-
-            // Reject a malformed schedule here: a row that does not parse is read as no
-            // adjustment, so it would otherwise land and silently never apply.
-            if (TableName == nameof(BoostScheduleSheet))
-            {
-                BoostScheduleSheet.ValidateCsv(TableCsv);
-            }
-
-            // Reject malformed world-open sheets here: every HackAndSlash reads them, so a
-            // malformed one on the chain would make all of them throw.
-            if (TableName == nameof(GlobalCounterSheet))
-            {
-                GlobalCounterSheet.ValidateCsv(TableCsv);
-            }
-
-            if (TableName == nameof(WorldOpenSheet))
-            {
-                WorldOpenSheet.ValidateCsv(TableCsv);
-            }
-
-            if (TableName == nameof(WorldOpenConditionSheet))
-            {
-                WorldOpenConditionSheet.ValidateCsv(TableCsv);
-            }
+            // Reject a malformed patch here rather than let it silently mis-configure the game
+            // (or, for an empty world-open sheet, fail every HackAndSlash).
+            TableSheetPatchValidation.Validate(TableName, TableCsv);
 
             states = states.SetLegacyState(sheetAddress, TableCsv.Serialize());
 

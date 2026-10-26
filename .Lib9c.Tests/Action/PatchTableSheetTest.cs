@@ -34,6 +34,25 @@ namespace Lib9c.Tests.Action
             }
         }
 
+        /// <summary>
+        /// Malformed world-open sheets, shared with <see cref="PatchTableSheetCompressedTest"/>.
+        /// </summary>
+        public static TheoryData<string, string> MalformedWorldOpenSheets => new ()
+        {
+            { nameof(GlobalCounterSheet), "id,type,target_begin,target_end,min_avatar_level\n1,NOT_A_TYPE,10,10,0\n" },
+            { nameof(GlobalCounterSheet), "id,type,target_begin,target_end,min_avatar_level\n0,STAGE_FIRST_CLEAR,10,10,0\n" },
+            { nameof(WorldOpenSheet), "id,world_id,stage_end,prerequisite_open_id,min_block_index,fallback_block_index,effective_delay_block\nx,12,570,,0,1000,0\n" },
+            { nameof(WorldOpenSheet), "id,world_id,stage_end,prerequisite_open_id,min_block_index,fallback_block_index,effective_delay_block\n1,12\n" },
+            { nameof(WorldOpenConditionSheet), "open_id,condition_group,counter_id,threshold\n1,1,1,abc\n" },
+            { nameof(WorldOpenConditionSheet), "open_id,condition_group,counter_id,threshold\n1,1,1\n" },
+            { nameof(GlobalCounterSheet), string.Empty },
+            { nameof(GlobalCounterSheet), " \n\t\n" },
+            { nameof(WorldOpenSheet), string.Empty },
+            { nameof(WorldOpenSheet), " \n\t\n" },
+            { nameof(WorldOpenConditionSheet), string.Empty },
+            { nameof(WorldOpenConditionSheet), " \n\t\n" },
+        };
+
         [Fact]
         public void Execute()
         {
@@ -212,12 +231,7 @@ namespace Lib9c.Tests.Action
         }
 
         [Theory]
-        [InlineData(nameof(GlobalCounterSheet), "id,type,target_begin,target_end,min_avatar_level\n1,NOT_A_TYPE,10,10,0\n")]
-        [InlineData(nameof(GlobalCounterSheet), "id,type,target_begin,target_end,min_avatar_level\n0,STAGE_FIRST_CLEAR,10,10,0\n")]
-        [InlineData(nameof(WorldOpenSheet), "id,world_id,stage_end,prerequisite_open_id,min_block_index,fallback_block_index,effective_delay_block\nx,12,570,,0,1000,0\n")]
-        [InlineData(nameof(WorldOpenSheet), "id,world_id,stage_end,prerequisite_open_id,min_block_index,fallback_block_index,effective_delay_block\n1,12\n")]
-        [InlineData(nameof(WorldOpenConditionSheet), "open_id,condition_group,counter_id,threshold\n1,1,1,abc\n")]
-        [InlineData(nameof(WorldOpenConditionSheet), "open_id,condition_group,counter_id,threshold\n1,1,1\n")]
+        [MemberData(nameof(MalformedWorldOpenSheets))]
         public void Execute_Throw_SheetRowValidateException_WhenWorldOpenSheetIsMalformed(
             string tableName,
             string csv)
