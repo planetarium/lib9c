@@ -2267,7 +2267,7 @@ namespace Lib9c.Tests.Action
         {
             var state = WithWorldOpenSheets(
                 PrepareWorld11(clearedStageId: 519),
-                "1,STAGE_FIRST_CLEAR,501,550,0\n2,STAGE_PLAY,501,550,0\n",
+                "1,STAGE_FIRST_CLEAR,520,520,0\n2,STAGE_PLAY,501,550,0\n",
                 "1,11,550,,0,1000000,0\n",
                 "1,1,1,100\n1,1,2,100\n");
 
@@ -2288,7 +2288,7 @@ namespace Lib9c.Tests.Action
             const long blockIndex = 100;
             var state = WithWorldOpenSheets(
                 PrepareWorld11(clearedStageId: 519),
-                "1,STAGE_FIRST_CLEAR,501,550,0\n",
+                "1,STAGE_FIRST_CLEAR,520,520,0\n",
                 "1,11,550,,0,1000000,0\n",
                 "1,1,1,1\n");
 
@@ -2298,13 +2298,17 @@ namespace Lib9c.Tests.Action
             Assert.Equal(blockIndex, confirmed);
         }
 
+        /// <summary>
+        /// A multi-play HackAndSlash that first-clears the stage counts the first clear once and
+        /// the play counter by <c>TotalPlayCount</c>, however many of the battles were won.
+        /// </summary>
         [Fact]
-        public void MultiHas_WinsTwice_FirstClearPlusOne()
+        public void MultiHas_FirstClearCountsOnce_PlayCountsTotalPlayCount()
         {
             const int totalPlayCount = 3;
             var state = WithWorldOpenSheets(
                 PrepareWorld11(clearedStageId: 519),
-                "1,STAGE_FIRST_CLEAR,501,550,0\n2,STAGE_PLAY,501,550,0\n",
+                "1,STAGE_FIRST_CLEAR,520,520,0\n2,STAGE_PLAY,501,550,0\n",
                 "1,11,550,,0,1000000,0\n",
                 "1,1,1,100\n1,1,2,100\n");
 
@@ -2325,7 +2329,7 @@ namespace Lib9c.Tests.Action
                     clearedStageId: 519,
                     level: startLevel,
                     exp: levelSheet[startLevel + 1].Exp - 1),
-                $"1,STAGE_FIRST_CLEAR,501,550,{startLevel + 1}\n2,STAGE_PLAY,501,550,{startLevel + 1}\n",
+                $"1,STAGE_FIRST_CLEAR,520,520,{startLevel + 1}\n2,STAGE_PLAY,501,550,{startLevel + 1}\n",
                 "1,11,550,,0,1000000,0\n",
                 "1,1,1,100\n1,1,2,100\n");
 

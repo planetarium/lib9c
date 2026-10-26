@@ -1504,7 +1504,7 @@ namespace Lib9c.Tests.Action
         {
             var state = WithWorldOpenSheets(
                 PrepareWorld11(clearedStageId: 520),
-                "1,STAGE_FIRST_CLEAR,501,550,0\n2,STAGE_PLAY,501,550,0\n",
+                "1,STAGE_FIRST_CLEAR,520,520,0\n2,STAGE_PLAY,501,550,0\n",
                 "1,11,550,,0,1000000,0\n",
                 "1,1,1,100\n1,1,2,100\n");
 
