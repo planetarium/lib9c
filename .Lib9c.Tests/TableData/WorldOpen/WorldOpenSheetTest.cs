@@ -91,6 +91,7 @@ namespace Lib9c.Tests.TableData.WorldOpen
         [InlineData("1,101,300,,-5,-1,10")] // fallback negative
         [InlineData("1,101,300,,6000,5000,10")] // min > fallback
         [InlineData("1,101,300,,1000,5000,-1")] // negative delay
+        [InlineData("1,101,300,,1000,5000,5001")] // delay greater than fallback
         [InlineData("1,101,300,,1000,5000,10\n2,101,300,1,1000,5000,10")] // stage_end not increasing
         [InlineData("1,101,300,,1000,5000,10\n2,101,200,1,1000,5000,10")] // stage_end decreasing
         [InlineData("1,101,300,,1000,5000,10\n1,101,400,,1000,5000,10")] // duplicated id

@@ -144,7 +144,7 @@ namespace Nekoyume.TableData
         /// The header does not match <see cref="ColumnNames"/>; an id is not a positive unique
         /// integer; a cell does not parse; <c>fallback_block_index</c> is not positive;
         /// <c>min_block_index</c> is negative or greater than the fallback;
-        /// <c>effective_delay_block</c> is negative; a prerequisite is unknown, refers to itself
+        /// <c>effective_delay_block</c> is negative or greater than the fallback; a prerequisite is unknown, refers to itself
         /// or is part of a cycle; or, within one world, <c>stage_end</c> does not increase along
         /// a prerequisite.
         /// </exception>
@@ -191,11 +191,12 @@ namespace Nekoyume.TableData
                         $"between 0 and fallback_block_index({row.FallbackBlockIndex}).");
                 }
 
-                if (row.EffectiveDelayBlock < 0)
+                // A delay past the fallback can never take effect: the fallback always wins.
+                if (row.EffectiveDelayBlock < 0 || row.EffectiveDelayBlock > row.FallbackBlockIndex)
                 {
                     throw new SheetRowValidateException(
                         $"line {lineNumber}: effective_delay_block({row.EffectiveDelayBlock}) " +
-                        "must not be negative.");
+                        $"must be between 0 and fallback_block_index({row.FallbackBlockIndex}).");
                 }
 
                 rows.Add(row.Id, row);
