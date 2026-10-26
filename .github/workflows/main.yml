@@ -120,7 +120,7 @@ jobs:
         destination_dir: latest
 
   update-submodule:
-    if: github.ref_type == 'branch' && startsWith(github.ref_name, 'release/')
+    if: ${{ (github.ref_type == 'branch' && startsWith(github.ref_name, 'release/')) && !startsWith(github.head_ref || github.event.workflow_run.head_branch || github.ref_name, 'donggeul/') }}
     runs-on: ubuntu-latest
     steps:
     - name: Update other repos referring lib9c as submodules
