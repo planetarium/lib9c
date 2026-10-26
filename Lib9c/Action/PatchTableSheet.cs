@@ -80,7 +80,7 @@ namespace Nekoyume.Action
                 TableCsv
             );
 
-            // Reject a malformed patch here rather than let it silently mis-configure the game
+            // Reject a malformed patch here rather than let it silently misconfigure the game
             // (or, for an empty world-open sheet, fail every HackAndSlash).
             TableSheetPatchValidation.Validate(TableName, TableCsv);
 

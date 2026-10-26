@@ -15,7 +15,7 @@ namespace Nekoyume.Action
         /// </summary>
         /// <remarks>
         /// The validated sheets are read leniently at runtime: a row that does not parse is kept
-        /// but never matches, so a malformed patch would otherwise land and silently mis-configure
+        /// but never matches, so a malformed patch would otherwise land and silently misconfigure
         /// the game with nothing reporting it. The world-open sheets are also read by every
         /// HackAndSlash, where an empty CSV would make <see cref="Sheet{TKey,TValue}.Set"/> throw
         /// and fail all of them, so an empty or whitespace-only CSV is rejected for them too.

@@ -81,8 +81,8 @@ namespace Nekoyume.Action
         }
 
         /// <summary>
-        /// Whether any condition group of <paramref name="openId"/> is fully met (conditions of
-        /// a group are ANDed, groups are ORed). An opening without condition rows is never
+        /// Whether any condition group of <paramref name="openId"/> is fully met (all conditions in
+        /// a group must hold; any one group suffices). An opening without condition rows is never
         /// satisfied.
         /// </summary>
         public static bool IsSatisfied(
