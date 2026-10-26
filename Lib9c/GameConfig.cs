@@ -4,6 +4,9 @@ namespace Nekoyume
 {
     public static class GameConfig
     {
+        /// <summary>
+        /// Whether this build is an editor/development build (<c>LIB9C_DEV_EXTENSIONS</c> or <c>UNITY_EDITOR</c> defined).
+        /// </summary>
         // ReSharper disable once ConvertToConstant.Global
 #if LIB9C_DEV_EXTENSIONS || UNITY_EDITOR
         public static readonly bool IsEditor = true;
