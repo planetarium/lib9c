@@ -280,6 +280,27 @@ namespace Lib9c.Tests.Action
             Assert.False(nextState.TryGetConfirmedBlock(1, out _));
         }
 
+        [Fact]
+        public void Execute_ChangedOpenIdentity_Throws()
+        {
+            const string header =
+                "id,world_id,stage_end,prerequisite_open_id,min_block_index,fallback_block_index,effective_delay_block\n";
+            var first = new PatchTableSheet
+            {
+                TableName = nameof(WorldOpenSheet),
+                TableCsv = header + "1,12,570,,0,1000,0\n",
+            };
+            var state = first.Execute(new ActionContext { BlockIndex = 1, PreviousState = _initialState });
+            var moved = new PatchTableSheet
+            {
+                TableName = nameof(WorldOpenSheet),
+                TableCsv = header + "1,12,560,,0,1000,0\n",
+            };
+
+            Assert.Throws<SheetRowValidateException>(
+                () => moved.Execute(new ActionContext { BlockIndex = 2, PreviousState = state }));
+        }
+
         [Theory]
         [MemberData(nameof(MalformedWorldOpenSheets))]
         public void Execute_Throw_SheetRowValidateException_WhenWorldOpenSheetIsMalformed(

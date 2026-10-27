@@ -17,6 +17,10 @@ namespace Nekoyume.TableData
     /// the order rows are added (CSV order, starting at 1). Look rows up with
     /// <see cref="GroupsOf"/> or <see cref="OpenIdsReferencing"/> rather than by key.
     /// </para>
+    /// <para>
+    /// A patch cannot change what an id means once recorded; see
+    /// <see cref="Nekoyume.Action.WorldOpenIdentity"/>.
+    /// </para>
     /// </summary>
     [Serializable]
     public class WorldOpenConditionSheet : Sheet<int, WorldOpenConditionSheet.Row>

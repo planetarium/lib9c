@@ -37,6 +37,10 @@ namespace Nekoyume.TableData
     /// but marked invalid and never matches. <see cref="ValidateCsv"/> rejects such a row at
     /// patch time.
     /// </para>
+    /// <para>
+    /// A patch cannot change what an id means once recorded; see
+    /// <see cref="Nekoyume.Action.WorldOpenIdentity"/>.
+    /// </para>
     /// </summary>
     [Serializable]
     public class GlobalCounterSheet : Sheet<int, GlobalCounterSheet.Row>

@@ -17,6 +17,10 @@ namespace Nekoyume.TableData
     /// <see cref="Row.Set"/> does not validate across rows, so a test can build an invalid sheet
     /// directly; <see cref="ValidateCsv"/> does, at patch time.
     /// </para>
+    /// <para>
+    /// A patch cannot change what an id means once recorded; see
+    /// <see cref="Nekoyume.Action.WorldOpenIdentity"/>.
+    /// </para>
     /// </summary>
     [Serializable]
     public class WorldOpenSheet : Sheet<int, WorldOpenSheet.Row>

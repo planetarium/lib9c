@@ -135,6 +135,7 @@ namespace Nekoyume.Action
 
             // Same checks as PatchTableSheet: the backoffice signs only this variant.
             TableSheetPatchValidation.Validate(TableName, tableCsv);
+            states = WorldOpenIdentity.CheckAndRecord(states, TableName, tableCsv);
 
             states = states.SetLegacyState(sheetAddress, tableCsv.Serialize());
 

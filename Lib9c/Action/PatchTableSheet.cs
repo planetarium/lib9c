@@ -83,6 +83,7 @@ namespace Nekoyume.Action
             // Reject a malformed patch here rather than let it silently misconfigure the game
             // (or, for an empty world-open sheet, fail every HackAndSlash).
             TableSheetPatchValidation.Validate(TableName, TableCsv);
+            states = WorldOpenIdentity.CheckAndRecord(states, TableName, TableCsv);
 
             states = states.SetLegacyState(sheetAddress, TableCsv.Serialize());
 

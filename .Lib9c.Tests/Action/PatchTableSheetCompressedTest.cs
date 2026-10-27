@@ -264,6 +264,29 @@ namespace Lib9c.Tests.Action
             Assert.False(nextState.TryGetConfirmedBlock(1, out _));
         }
 
+        [Fact]
+        public void Execute_ChangedOpenIdentity_Throws()
+        {
+            const string header =
+                "id,world_id,stage_end,prerequisite_open_id,min_block_index,fallback_block_index,effective_delay_block\n";
+            var first = new PatchTableSheetCompressed
+            {
+                TableName = nameof(WorldOpenSheet),
+                CompressedTableCsv = PatchTableSheetCompressed.CompressCsv(header + "1,12,570,,0,1000,0\n"),
+            };
+            var state = first.Execute(
+                new ActionContext { PreviousState = _previousState, BlockIndex = 1, RandomSeed = 0 });
+            var moved = new PatchTableSheetCompressed
+            {
+                TableName = nameof(WorldOpenSheet),
+                CompressedTableCsv = PatchTableSheetCompressed.CompressCsv(header + "1,12,560,,0,1000,0\n"),
+            };
+
+            Assert.Throws<SheetRowValidateException>(
+                () => moved.Execute(
+                    new ActionContext { PreviousState = state, BlockIndex = 2, RandomSeed = 0 }));
+        }
+
         /// <summary>
         /// The backoffice signs only this compressed variant, so it must reject a malformed
         /// world-open sheet exactly like <see cref="PatchTableSheet"/> does.
