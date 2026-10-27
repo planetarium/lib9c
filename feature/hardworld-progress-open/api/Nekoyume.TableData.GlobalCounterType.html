@@ -131,7 +131,9 @@ Enum GlobalCounterType  <a class="header-action link-secondary" title="View sour
     <dd><p>An avatar clears a stage for the first time.</p>
 </dd>
     <dt id="Nekoyume_TableData_GlobalCounterType_STAGE_PLAY"><code>STAGE_PLAY = 1</code></dt>
-    <dd><p>An avatar plays (clears) a stage, however many times.</p>
+    <dd><p>An avatar clears a stage in a <code>HackAndSlash</code> battle (every wave cleared, the same
+signal as a stage clear), counted per such battle: a multi-play action adds its cleared
+battles; a lost or partly cleared battle adds nothing. Sweeping does not count.</p>
 </dd>
   </dl>
 
