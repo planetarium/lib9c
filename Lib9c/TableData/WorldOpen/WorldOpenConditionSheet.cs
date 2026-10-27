@@ -15,7 +15,9 @@ namespace Nekoyume.TableData
     /// <para>
     /// <c>open_id</c> is not unique, so a row's key is a synthetic sequential number assigned in
     /// the order rows are added (CSV order, starting at 1). Look rows up with
-    /// <see cref="GroupsOf"/> or <see cref="OpenIdsReferencing"/> rather than by key.
+    /// <see cref="GroupsOf"/> or <see cref="OpenIdsReferencing"/> rather than by key. A blank line
+    /// is kept as an invalid row (open_id 0); both lookups skip invalid rows, so code reading
+    /// <c>OrderedList</c> directly must check <see cref="Row.IsValid"/> too.
     /// </para>
     /// <para>
     /// A patch cannot change what an id means once recorded; see

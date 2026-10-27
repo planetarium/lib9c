@@ -74,7 +74,7 @@ namespace Lib9c.Tests.TableData.WorldOpen
         {
             // Blank lines are skipped like in the other world-open sheets; Sheet.Set keeps them as
             // invalid rows, which no lookup returns.
-            var csv = Header + "1,1,10,100\n\n,,,\n1,2,12,1\n";
+            var csv = Header + "1,1,10,100\n\n,,,\n ,,,\n\r\n1,2,12,1\n";
             WorldOpenConditionSheet.ValidateCsv(csv);
 
             var sheet = new WorldOpenConditionSheet();
