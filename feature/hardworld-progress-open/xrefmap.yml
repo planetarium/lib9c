@@ -7685,60 +7685,6 @@ references:
   fullName.vb: Nekoyume.Action.CombinationSlotUnlockException.New
   nameWithType: CombinationSlotUnlockException.CombinationSlotUnlockException
   nameWithType.vb: CombinationSlotUnlockException.New
-- uid: Nekoyume.Action.ConfirmWorldOpen
-  name: ConfirmWorldOpen
-  href: api/Nekoyume.Action.ConfirmWorldOpen.html
-  commentId: T:Nekoyume.Action.ConfirmWorldOpen
-  fullName: Nekoyume.Action.ConfirmWorldOpen
-  nameWithType: ConfirmWorldOpen
-- uid: Nekoyume.Action.ConfirmWorldOpen.Execute(Libplanet.Action.IActionContext)
-  name: Execute(IActionContext)
-  href: api/Nekoyume.Action.ConfirmWorldOpen.html#Nekoyume_Action_ConfirmWorldOpen_Execute_Libplanet_Action_IActionContext_
-  commentId: M:Nekoyume.Action.ConfirmWorldOpen.Execute(Libplanet.Action.IActionContext)
-  fullName: Nekoyume.Action.ConfirmWorldOpen.Execute(Libplanet.Action.IActionContext)
-  nameWithType: ConfirmWorldOpen.Execute(IActionContext)
-- uid: Nekoyume.Action.ConfirmWorldOpen.Execute*
-  name: Execute
-  href: api/Nekoyume.Action.ConfirmWorldOpen.html#Nekoyume_Action_ConfirmWorldOpen_Execute_
-  commentId: Overload:Nekoyume.Action.ConfirmWorldOpen.Execute
-  isSpec: "True"
-  fullName: Nekoyume.Action.ConfirmWorldOpen.Execute
-  nameWithType: ConfirmWorldOpen.Execute
-- uid: Nekoyume.Action.ConfirmWorldOpen.LoadPlainValueInternal(System.Collections.Immutable.IImmutableDictionary{System.String,Bencodex.Types.IValue})
-  name: LoadPlainValueInternal(IImmutableDictionary<string, IValue>)
-  href: api/Nekoyume.Action.ConfirmWorldOpen.html#Nekoyume_Action_ConfirmWorldOpen_LoadPlainValueInternal_System_Collections_Immutable_IImmutableDictionary_System_String_Bencodex_Types_IValue__
-  commentId: M:Nekoyume.Action.ConfirmWorldOpen.LoadPlainValueInternal(System.Collections.Immutable.IImmutableDictionary{System.String,Bencodex.Types.IValue})
-  name.vb: LoadPlainValueInternal(IImmutableDictionary(Of String, IValue))
-  fullName: Nekoyume.Action.ConfirmWorldOpen.LoadPlainValueInternal(System.Collections.Immutable.IImmutableDictionary<string, Bencodex.Types.IValue>)
-  fullName.vb: Nekoyume.Action.ConfirmWorldOpen.LoadPlainValueInternal(System.Collections.Immutable.IImmutableDictionary(Of String, Bencodex.Types.IValue))
-  nameWithType: ConfirmWorldOpen.LoadPlainValueInternal(IImmutableDictionary<string, IValue>)
-  nameWithType.vb: ConfirmWorldOpen.LoadPlainValueInternal(IImmutableDictionary(Of String, IValue))
-- uid: Nekoyume.Action.ConfirmWorldOpen.LoadPlainValueInternal*
-  name: LoadPlainValueInternal
-  href: api/Nekoyume.Action.ConfirmWorldOpen.html#Nekoyume_Action_ConfirmWorldOpen_LoadPlainValueInternal_
-  commentId: Overload:Nekoyume.Action.ConfirmWorldOpen.LoadPlainValueInternal
-  isSpec: "True"
-  fullName: Nekoyume.Action.ConfirmWorldOpen.LoadPlainValueInternal
-  nameWithType: ConfirmWorldOpen.LoadPlainValueInternal
-- uid: Nekoyume.Action.ConfirmWorldOpen.OpenId
-  name: OpenId
-  href: api/Nekoyume.Action.ConfirmWorldOpen.html#Nekoyume_Action_ConfirmWorldOpen_OpenId
-  commentId: F:Nekoyume.Action.ConfirmWorldOpen.OpenId
-  fullName: Nekoyume.Action.ConfirmWorldOpen.OpenId
-  nameWithType: ConfirmWorldOpen.OpenId
-- uid: Nekoyume.Action.ConfirmWorldOpen.PlainValueInternal
-  name: PlainValueInternal
-  href: api/Nekoyume.Action.ConfirmWorldOpen.html#Nekoyume_Action_ConfirmWorldOpen_PlainValueInternal
-  commentId: P:Nekoyume.Action.ConfirmWorldOpen.PlainValueInternal
-  fullName: Nekoyume.Action.ConfirmWorldOpen.PlainValueInternal
-  nameWithType: ConfirmWorldOpen.PlainValueInternal
-- uid: Nekoyume.Action.ConfirmWorldOpen.PlainValueInternal*
-  name: PlainValueInternal
-  href: api/Nekoyume.Action.ConfirmWorldOpen.html#Nekoyume_Action_ConfirmWorldOpen_PlainValueInternal_
-  commentId: Overload:Nekoyume.Action.ConfirmWorldOpen.PlainValueInternal
-  isSpec: "True"
-  fullName: Nekoyume.Action.ConfirmWorldOpen.PlainValueInternal
-  nameWithType: ConfirmWorldOpen.PlainValueInternal
 - uid: Nekoyume.Action.ConsumableSlotOutOfRangeException
   name: ConsumableSlotOutOfRangeException
   href: api/Nekoyume.Action.ConsumableSlotOutOfRangeException.html
@@ -26457,6 +26403,22 @@ references:
   commentId: T:Nekoyume.Action.WorldOpenCounter
   fullName: Nekoyume.Action.WorldOpenCounter
   nameWithType: WorldOpenCounter
+- uid: Nekoyume.Action.WorldOpenCounter.ConfirmSatisfiedAfterPatch(Libplanet.Action.State.IWorld,System.String,System.Int64)
+  name: ConfirmSatisfiedAfterPatch(IWorld, string, long)
+  href: api/Nekoyume.Action.WorldOpenCounter.html#Nekoyume_Action_WorldOpenCounter_ConfirmSatisfiedAfterPatch_Libplanet_Action_State_IWorld_System_String_System_Int64_
+  commentId: M:Nekoyume.Action.WorldOpenCounter.ConfirmSatisfiedAfterPatch(Libplanet.Action.State.IWorld,System.String,System.Int64)
+  name.vb: ConfirmSatisfiedAfterPatch(IWorld, String, Long)
+  fullName: Nekoyume.Action.WorldOpenCounter.ConfirmSatisfiedAfterPatch(Libplanet.Action.State.IWorld, string, long)
+  fullName.vb: Nekoyume.Action.WorldOpenCounter.ConfirmSatisfiedAfterPatch(Libplanet.Action.State.IWorld, String, Long)
+  nameWithType: WorldOpenCounter.ConfirmSatisfiedAfterPatch(IWorld, string, long)
+  nameWithType.vb: WorldOpenCounter.ConfirmSatisfiedAfterPatch(IWorld, String, Long)
+- uid: Nekoyume.Action.WorldOpenCounter.ConfirmSatisfiedAfterPatch*
+  name: ConfirmSatisfiedAfterPatch
+  href: api/Nekoyume.Action.WorldOpenCounter.html#Nekoyume_Action_WorldOpenCounter_ConfirmSatisfiedAfterPatch_
+  commentId: Overload:Nekoyume.Action.WorldOpenCounter.ConfirmSatisfiedAfterPatch
+  isSpec: "True"
+  fullName: Nekoyume.Action.WorldOpenCounter.ConfirmSatisfiedAfterPatch
+  nameWithType: WorldOpenCounter.ConfirmSatisfiedAfterPatch
 - uid: Nekoyume.Action.WorldOpenCounter.IsSatisfied(Libplanet.Action.State.IWorldState,Nekoyume.TableData.WorldOpenConditionSheet,System.Int32)
   name: IsSatisfied(IWorldState, WorldOpenConditionSheet, int)
   href: api/Nekoyume.Action.WorldOpenCounter.html#Nekoyume_Action_WorldOpenCounter_IsSatisfied_Libplanet_Action_State_IWorldState_Nekoyume_TableData_WorldOpenConditionSheet_System_Int32_

@@ -154,11 +154,62 @@ conditions are met.</p>
 </h2>
 
 
+  <a id="Nekoyume_Action_WorldOpenCounter_ConfirmSatisfiedAfterPatch_" data-uid="Nekoyume.Action.WorldOpenCounter.ConfirmSatisfiedAfterPatch*"></a>
+
+  <h3 id="Nekoyume_Action_WorldOpenCounter_ConfirmSatisfiedAfterPatch_Libplanet_Action_State_IWorld_System_String_System_Int64_" data-uid="Nekoyume.Action.WorldOpenCounter.ConfirmSatisfiedAfterPatch(Libplanet.Action.State.IWorld,System.String,System.Int64)">
+  ConfirmSatisfiedAfterPatch(IWorld, string, long)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/hardworld-progress-open/Lib9c/Action/WorldOpenCounter.cs/#L97"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Confirms every pending opening whose conditions are already met, after
+<code class="paramref">tableName</code> was patched. A table patch can lower a threshold below a
+counter that no longer moves often (a rarely cleared stage, a rarely crafted recipe);
+confirming here means such an opening does not wait for the next matching play. Only a
+<a class="xref" href="Nekoyume.TableData.WorldOpenSheet.html">WorldOpenSheet</a> or <a class="xref" href="Nekoyume.TableData.WorldOpenConditionSheet.html">WorldOpenConditionSheet</a> patch triggers it;
+any other sheet, or absent world-open sheets, writes nothing.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static IWorld ConfirmSatisfiedAfterPatch(IWorld states, string tableName, long blockIndex)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>states</code> <span class="xref">IWorld</span></dt>
+    <dd><p>The world after the patched sheet was stored.</p>
+</dd>
+    <dt><code>tableName</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd><p>The patched sheet's name.</p>
+</dd>
+    <dt><code>blockIndex</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
+    <dd><p>The block being evaluated; recorded as the confirmed block.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><span class="xref">IWorld</span></dt>
+    <dd><p>The updated world, or <code class="paramref">states</code> itself when nothing was
+written.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
   <a id="Nekoyume_Action_WorldOpenCounter_IsSatisfied_" data-uid="Nekoyume.Action.WorldOpenCounter.IsSatisfied*"></a>
 
   <h3 id="Nekoyume_Action_WorldOpenCounter_IsSatisfied_Libplanet_Action_State_IWorldState_Nekoyume_TableData_WorldOpenConditionSheet_System_Int32_" data-uid="Nekoyume.Action.WorldOpenCounter.IsSatisfied(Libplanet.Action.State.IWorldState,Nekoyume.TableData.WorldOpenConditionSheet,System.Int32)">
   IsSatisfied(IWorldState, WorldOpenConditionSheet, int)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/hardworld-progress-open/Lib9c/Action/WorldOpenCounter.cs/#L88"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/hardworld-progress-open/Lib9c/Action/WorldOpenCounter.cs/#L133"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Whether any condition group of <code class="paramref">openId</code> is fully met (all conditions in
