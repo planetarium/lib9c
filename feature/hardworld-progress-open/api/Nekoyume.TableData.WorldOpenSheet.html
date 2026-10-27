@@ -6,7 +6,7 @@
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <meta name="title" content="Class WorldOpenSheet | Lib9c ">
       
-      <meta name="description" content="Defines when each hard world segment opens: up to which stage, which opening it follows, and the block window (earliest, fallback, activation delay) around it. The conditions that open it are in .  Columns: id, world_id, stage_end, prerequisite_open_id (empty for none), min_block_index, fallback_block_index, effective_delay_block.  does not validate across rows, so a test can build an invalid sheet directly;  does, at patch time.">
+      <meta name="description" content="Defines when each hard world segment opens: up to which stage, which opening it follows, and the block window (earliest, fallback, activation delay) around it. The conditions that open it are in .  Columns: id, world_id, stage_end, prerequisite_open_id (empty for none), min_block_index, fallback_block_index, effective_delay_block.  does not validate across rows, so a test can build an invalid sheet directly;  does, at patch time.  A patch cannot change what an id means once recorded; see .">
       <link rel="icon" href="../favicon.ico">
       <link rel="stylesheet" href="../public/docfx.min.css">
       <link rel="stylesheet" href="../public/main.css">
@@ -89,7 +89,7 @@
 
 
   <h1 id="Nekoyume_TableData_WorldOpenSheet" data-uid="Nekoyume.TableData.WorldOpenSheet" class="text-break">
-Class WorldOpenSheet  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/hardworld-progress-open/Lib9c/TableData/WorldOpen/WorldOpenSheet.cs/#L21"><i class="bi bi-code-slash"></i></a>
+Class WorldOpenSheet  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/hardworld-progress-open/Lib9c/TableData/WorldOpen/WorldOpenSheet.cs/#L25"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
@@ -106,6 +106,9 @@ Columns: <code>id</code>, <code>world_id</code>, <code>stage_end</code>, <code>p
 <code>effective_delay_block</code>.
 </p><p><a class="xref" href="Nekoyume.TableData.WorldOpenSheet.Row.html#Nekoyume_TableData_WorldOpenSheet_Row_Set_System_Collections_Generic_IReadOnlyList_System_String__">Set(IReadOnlyList&lt;string&gt;)</a> does not validate across rows, so a test can build an invalid sheet
 directly; <a class="xref" href="Nekoyume.TableData.WorldOpenSheet.html#Nekoyume_TableData_WorldOpenSheet_ValidateCsv_System_String_">ValidateCsv(string)</a> does, at patch time.
+</p><p>
+A patch cannot change what an id means once recorded; see
+<a class="xref" href="Nekoyume.Action.WorldOpenIdentity.html">WorldOpenIdentity</a>.
 </p>
 </div>
   <div class="markdown conceptual"></div>
@@ -250,7 +253,7 @@ public class WorldOpenSheet : Sheet&lt;int, WorldOpenSheet.Row&gt;, IDictionary&
 
   <h3 id="Nekoyume_TableData_WorldOpenSheet__ctor" data-uid="Nekoyume.TableData.WorldOpenSheet.#ctor">
   WorldOpenSheet()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/hardworld-progress-open/Lib9c/TableData/WorldOpen/WorldOpenSheet.cs/#L108"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/hardworld-progress-open/Lib9c/TableData/WorldOpen/WorldOpenSheet.cs/#L112"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Creates an empty sheet.</p>
@@ -280,7 +283,7 @@ public class WorldOpenSheet : Sheet&lt;int, WorldOpenSheet.Row&gt;, IDictionary&
 
   <h3 id="Nekoyume_TableData_WorldOpenSheet_ColumnNames" data-uid="Nekoyume.TableData.WorldOpenSheet.ColumnNames">
   ColumnNames
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/hardworld-progress-open/Lib9c/TableData/WorldOpen/WorldOpenSheet.cs/#L27"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/hardworld-progress-open/Lib9c/TableData/WorldOpen/WorldOpenSheet.cs/#L31"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Column names in their expected order, after <code>_</code> prefixed columns are dropped.</p>
@@ -316,7 +319,7 @@ public class WorldOpenSheet : Sheet&lt;int, WorldOpenSheet.Row&gt;, IDictionary&
 
   <h3 id="Nekoyume_TableData_WorldOpenSheet_AddRow_System_Int32_Nekoyume_TableData_WorldOpenSheet_Row_" data-uid="Nekoyume.TableData.WorldOpenSheet.AddRow(System.Int32,Nekoyume.TableData.WorldOpenSheet.Row)">
   AddRow(int, Row)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/hardworld-progress-open/Lib9c/TableData/WorldOpen/WorldOpenSheet.cs/#L129"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/hardworld-progress-open/Lib9c/TableData/WorldOpen/WorldOpenSheet.cs/#L133"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Adds a parsed row. A row without a usable id is dropped and a duplicated id keeps the
@@ -351,7 +354,7 @@ first row instead of throwing.</p>
 
   <h3 id="Nekoyume_TableData_WorldOpenSheet_ByWorld_System_Int32_" data-uid="Nekoyume.TableData.WorldOpenSheet.ByWorld(System.Int32)">
   ByWorld(int)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/hardworld-progress-open/Lib9c/TableData/WorldOpen/WorldOpenSheet.cs/#L115"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/hardworld-progress-open/Lib9c/TableData/WorldOpen/WorldOpenSheet.cs/#L119"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>The openings of <code class="paramref">worldId</code>.</p>
@@ -388,7 +391,7 @@ first row instead of throwing.</p>
 
   <h3 id="Nekoyume_TableData_WorldOpenSheet_ValidateCsv_System_String_" data-uid="Nekoyume.TableData.WorldOpenSheet.ValidateCsv(System.String)">
   ValidateCsv(string)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/hardworld-progress-open/Lib9c/TableData/WorldOpen/WorldOpenSheet.cs/#L155"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/hardworld-progress-open/Lib9c/TableData/WorldOpen/WorldOpenSheet.cs/#L159"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Parses <code class="paramref">csv</code> strictly so that a malformed sheet fails the
@@ -436,7 +439,7 @@ below it (by <code>stage_end</code>, across all worlds) as its prerequisite.</p>
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/planetarium/lib9c/blob/feature/hardworld-progress-open/Lib9c/TableData/WorldOpen/WorldOpenSheet.cs/#L21" class="edit-link">Edit this page</a>
+          <a href="https://github.com/planetarium/lib9c/blob/feature/hardworld-progress-open/Lib9c/TableData/WorldOpen/WorldOpenSheet.cs/#L25" class="edit-link">Edit this page</a>
         </div>
 
 

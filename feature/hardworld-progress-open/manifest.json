@@ -3612,6 +3612,16 @@
     },
     {
       "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.Action.WorldOpenIdentity.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.Action.WorldOpenIdentity.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
       "source_relative_path": "api/Nekoyume.Action.yml",
       "output": {
         ".html": {

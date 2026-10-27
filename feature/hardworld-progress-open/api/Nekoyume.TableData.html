@@ -428,6 +428,9 @@ Columns: <code>id</code>, <code>type</code>, <code>target_begin</code>, <code>ta
 Reading is total, like <a class="xref" href="Nekoyume.TableData.BoostScheduleSheet.html">BoostScheduleSheet</a>: a row that does not parse is kept
 but marked invalid and never matches. <a class="xref" href="Nekoyume.TableData.GlobalCounterSheet.html#Nekoyume_TableData_GlobalCounterSheet_ValidateCsv_System_String_">ValidateCsv(string)</a> rejects such a row at
 patch time.
+</p><p>
+A patch cannot change what an id means once recorded; see
+<a class="xref" href="Nekoyume.Action.WorldOpenIdentity.html">WorldOpenIdentity</a>.
 </p>
 </dd>
     </dl>
@@ -1114,6 +1117,9 @@ Cross-sheet references (<code>open_id</code>, <code>counter_id</code>) are not v
 </p><p><code>open_id</code> is not unique, so a row's key is a synthetic sequential number assigned in
 the order rows are added (CSV order, starting at 1). Look rows up with
 <a class="xref" href="Nekoyume.TableData.WorldOpenConditionSheet.html#Nekoyume_TableData_WorldOpenConditionSheet_GroupsOf_System_Int32_">GroupsOf(int)</a> or <a class="xref" href="Nekoyume.TableData.WorldOpenConditionSheet.html#Nekoyume_TableData_WorldOpenConditionSheet_OpenIdsReferencing_System_Int32_">OpenIdsReferencing(int)</a> rather than by key.
+</p><p>
+A patch cannot change what an id means once recorded; see
+<a class="xref" href="Nekoyume.Action.WorldOpenIdentity.html">WorldOpenIdentity</a>.
 </p>
 </dd>
     </dl>
@@ -1133,6 +1139,9 @@ Columns: <code>id</code>, <code>world_id</code>, <code>stage_end</code>, <code>p
 <code>effective_delay_block</code>.
 </p><p><a class="xref" href="Nekoyume.TableData.WorldOpenSheet.Row.html#Nekoyume_TableData_WorldOpenSheet_Row_Set_System_Collections_Generic_IReadOnlyList_System_String__">Set(IReadOnlyList&lt;string&gt;)</a> does not validate across rows, so a test can build an invalid sheet
 directly; <a class="xref" href="Nekoyume.TableData.WorldOpenSheet.html#Nekoyume_TableData_WorldOpenSheet_ValidateCsv_System_String_">ValidateCsv(string)</a> does, at patch time.
+</p><p>
+A patch cannot change what an id means once recorded; see
+<a class="xref" href="Nekoyume.Action.WorldOpenIdentity.html">WorldOpenIdentity</a>.
 </p>
 </dd>
     </dl>

@@ -1270,6 +1270,14 @@ conditions are met.</p>
 <a class="xref" href="Nekoyume.TableData.WorldOpenSheet.html">WorldOpenSheet</a> row covers them.</p>
 </dd>
     </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.WorldOpenIdentity.html">WorldOpenIdentity</a></dt>
+      <dd><p>Keeps what each world-open id means fixed across table patches. The first patch that
+carries an id records its identity; a later patch that gives the id a different identity is
+rejected. An id may be dropped from the sheet (retired), but its record stays, so it can
+only come back with the same identity. To fix a wrong rule, drop it and add a new id.</p>
+</dd>
+    </dl>
     <h3 id="structs">
 Structs
 </h3>

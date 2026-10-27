@@ -26489,6 +26489,28 @@ references:
   isSpec: "True"
   fullName: Nekoyume.Action.WorldOpenGate.IsStageOpen
   nameWithType: WorldOpenGate.IsStageOpen
+- uid: Nekoyume.Action.WorldOpenIdentity
+  name: WorldOpenIdentity
+  href: api/Nekoyume.Action.WorldOpenIdentity.html
+  commentId: T:Nekoyume.Action.WorldOpenIdentity
+  fullName: Nekoyume.Action.WorldOpenIdentity
+  nameWithType: WorldOpenIdentity
+- uid: Nekoyume.Action.WorldOpenIdentity.CheckAndRecord(Libplanet.Action.State.IWorld,System.String,System.String)
+  name: CheckAndRecord(IWorld, string, string)
+  href: api/Nekoyume.Action.WorldOpenIdentity.html#Nekoyume_Action_WorldOpenIdentity_CheckAndRecord_Libplanet_Action_State_IWorld_System_String_System_String_
+  commentId: M:Nekoyume.Action.WorldOpenIdentity.CheckAndRecord(Libplanet.Action.State.IWorld,System.String,System.String)
+  name.vb: CheckAndRecord(IWorld, String, String)
+  fullName: Nekoyume.Action.WorldOpenIdentity.CheckAndRecord(Libplanet.Action.State.IWorld, string, string)
+  fullName.vb: Nekoyume.Action.WorldOpenIdentity.CheckAndRecord(Libplanet.Action.State.IWorld, String, String)
+  nameWithType: WorldOpenIdentity.CheckAndRecord(IWorld, string, string)
+  nameWithType.vb: WorldOpenIdentity.CheckAndRecord(IWorld, String, String)
+- uid: Nekoyume.Action.WorldOpenIdentity.CheckAndRecord*
+  name: CheckAndRecord
+  href: api/Nekoyume.Action.WorldOpenIdentity.html#Nekoyume_Action_WorldOpenIdentity_CheckAndRecord_
+  commentId: Overload:Nekoyume.Action.WorldOpenIdentity.CheckAndRecord
+  isSpec: "True"
+  fullName: Nekoyume.Action.WorldOpenIdentity.CheckAndRecord
+  nameWithType: WorldOpenIdentity.CheckAndRecord
 - uid: Nekoyume.ActionObsoleteAttributeExtension
   name: ActionObsoleteAttributeExtension
   href: api/Nekoyume.ActionObsoleteAttributeExtension.html
