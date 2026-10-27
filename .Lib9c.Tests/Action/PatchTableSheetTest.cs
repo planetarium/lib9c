@@ -299,6 +299,11 @@ namespace Lib9c.Tests.Action
 
             Assert.Throws<SheetRowValidateException>(
                 () => moved.Execute(new ActionContext { BlockIndex = 2, PreviousState = state }));
+
+            // The failed patch leaves the stored sheet as it was.
+            Assert.Contains(
+                "1,12,570,",
+                ((Bencodex.Types.Text)state.GetLegacyState(Nekoyume.Addresses.GetSheetAddress<WorldOpenSheet>())).Value);
         }
 
         [Theory]

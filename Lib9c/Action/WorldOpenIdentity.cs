@@ -26,6 +26,12 @@ namespace Nekoyume.Action
     /// <item><see cref="WorldOpenConditionSheet"/>: per <c>open_id</c>, which counters are grouped
     /// together. Group numbers and row order do not matter; thresholds stay adjustable.</item>
     /// </list>
+    /// <para>
+    /// The recorded strings are part of the chain state: changing their format (adding a column,
+    /// renaming a <see cref="GlobalCounterType"/>, reordering fields) would make every recorded id
+    /// mismatch and reject every later patch of that sheet. Keep the format, or compare against the
+    /// old format as well when it has to change. The tests pin it.
+    /// </para>
     /// </remarks>
     public static class WorldOpenIdentity
     {

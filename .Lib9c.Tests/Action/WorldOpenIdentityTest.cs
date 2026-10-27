@@ -1,8 +1,11 @@
 namespace Lib9c.Tests.Action
 {
+    using Bencodex.Types;
     using Libplanet.Action.State;
     using Libplanet.Mocks;
+    using Nekoyume;
     using Nekoyume.Action;
+    using Nekoyume.Module;
     using Nekoyume.TableData;
     using Xunit;
 
@@ -118,6 +121,48 @@ namespace Lib9c.Tests.Action
             var s = Patch(NewWorld(), nameof(WorldOpenSheet), OpenHeader + "1,12,570,,0,1000,0\n");
             Assert.Same(s, Patch(s, nameof(WorldOpenSheet), OpenHeader + "1,12,570,,0,9000,0\n"));
         }
+
+        [Fact]
+        public void RecordedFormat_IsPinned()
+        {
+            var s = Patch(NewWorld(), nameof(GlobalCounterSheet), CounterHeader + "1,STAGE_PLAY,10,12,3\n");
+            s = Patch(s, nameof(WorldOpenSheet), OpenHeader + "1,12,570,,0,1000,0\n");
+
+            // Duplicate counter in a group; ids sorted as numbers within a group (2 before 10).
+            s = Patch(s, nameof(WorldOpenConditionSheet), CondHeader + "1,1,2,5\n1,1,10,5\n1,1,2,7\n1,2,3,1\n");
+
+            Assert.Equal("STAGE_PLAY,10,12,3", Recorded(s, "identity_counter_1"));
+            Assert.Equal("12,570", Recorded(s, "identity_open_1"));
+            Assert.Equal("2,10|3", Recorded(s, "identity_conditions_1"));
+        }
+
+        [Fact]
+        public void Record_DoesNotLookConfirmed()
+        {
+            var s = Patch(NewWorld(), nameof(WorldOpenSheet), OpenHeader + "1,12,570,,0,1000,0\n");
+            Assert.False(s.TryGetConfirmedBlock(1, out _));
+        }
+
+        [Fact]
+        public void Open_RetiredIdBackWithOtherIdentity_Rejected()
+        {
+            var s = Patch(NewWorld(), nameof(WorldOpenSheet), OpenHeader + "1,12,570,,0,1000,0\n");
+            s = Patch(s, nameof(WorldOpenSheet), OpenHeader + "2,12,570,,0,1000,0\n");
+            Assert.Throws<SheetRowValidateException>(
+                () => Patch(s, nameof(WorldOpenSheet), OpenHeader + "2,12,570,,0,1000,0\n1,12,600,2,0,2000,0\n"));
+        }
+
+        [Fact]
+        public void Conditions_RetiredOpenBackWithOtherGroups_Rejected()
+        {
+            var s = Patch(NewWorld(), nameof(WorldOpenConditionSheet), CondHeader + "1,1,1,10\n");
+            s = Patch(s, nameof(WorldOpenConditionSheet), CondHeader + "2,1,1,10\n");
+            Assert.Throws<SheetRowValidateException>(
+                () => Patch(s, nameof(WorldOpenConditionSheet), CondHeader + "1,1,2,10\n"));
+        }
+
+        private static string Recorded(IWorld states, string key) =>
+            ((Text)states.GetAccountState(Addresses.WorldOpen).GetState(Addresses.WorldOpen.Derive(key))).Value;
 
         private static IWorld Patch(IWorld states, string tableName, string csv)
         {
