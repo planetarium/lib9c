@@ -1116,7 +1116,9 @@ Columns: <code>open_id</code>, <code>condition_group</code>, <code>counter_id</c
 Cross-sheet references (<code>open_id</code>, <code>counter_id</code>) are not validated here.
 </p><p><code>open_id</code> is not unique, so a row's key is a synthetic sequential number assigned in
 the order rows are added (CSV order, starting at 1). Look rows up with
-<a class="xref" href="Nekoyume.TableData.WorldOpenConditionSheet.html#Nekoyume_TableData_WorldOpenConditionSheet_GroupsOf_System_Int32_">GroupsOf(int)</a> or <a class="xref" href="Nekoyume.TableData.WorldOpenConditionSheet.html#Nekoyume_TableData_WorldOpenConditionSheet_OpenIdsReferencing_System_Int32_">OpenIdsReferencing(int)</a> rather than by key.
+<a class="xref" href="Nekoyume.TableData.WorldOpenConditionSheet.html#Nekoyume_TableData_WorldOpenConditionSheet_GroupsOf_System_Int32_">GroupsOf(int)</a> or <a class="xref" href="Nekoyume.TableData.WorldOpenConditionSheet.html#Nekoyume_TableData_WorldOpenConditionSheet_OpenIdsReferencing_System_Int32_">OpenIdsReferencing(int)</a> rather than by key. A blank line
+is kept as an invalid row (open_id 0); both lookups skip invalid rows, so code reading
+<code>OrderedList</code> directly must check <a class="xref" href="Nekoyume.TableData.WorldOpenConditionSheet.Row.html#Nekoyume_TableData_WorldOpenConditionSheet_Row_IsValid">IsValid</a> too.
 </p><p>
 A patch cannot change what an id means once recorded; see
 <a class="xref" href="Nekoyume.Action.WorldOpenIdentity.html">WorldOpenIdentity</a>.

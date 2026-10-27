@@ -6,7 +6,7 @@
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <meta name="title" content="Class WorldOpenConditionSheet | Lib9c ">
       
-      <meta name="description" content="The conditions that open a  opening: within one condition_group every counter must reach its threshold, and any one group being satisfied opens it (AND within a group, OR across groups).  Columns: open_id, condition_group, counter_id, threshold. Cross-sheet references (open_id, counter_id) are not validated here. open_id is not unique, so a row&#39;s key is a synthetic sequential number assigned in the order rows are added (CSV order, starting at 1). Look rows up with  or  rather than by key.  A patch cannot change what an id means once recorded; see .">
+      <meta name="description" content="The conditions that open a  opening: within one condition_group every counter must reach its threshold, and any one group being satisfied opens it (AND within a group, OR across groups).  Columns: open_id, condition_group, counter_id, threshold. Cross-sheet references (open_id, counter_id) are not validated here. open_id is not unique, so a row&#39;s key is a synthetic sequential number assigned in the order rows are added (CSV order, starting at 1). Look rows up with  or  rather than by key. A blank line is kept as an invalid row (open_id 0); both lookups skip invalid rows, so code reading OrderedList directly must check  too.  A patch cannot change what an id means once recorded; see .">
       <link rel="icon" href="../favicon.ico">
       <link rel="stylesheet" href="../public/docfx.min.css">
       <link rel="stylesheet" href="../public/main.css">
@@ -89,7 +89,7 @@
 
 
   <h1 id="Nekoyume_TableData_WorldOpenConditionSheet" data-uid="Nekoyume.TableData.WorldOpenConditionSheet" class="text-break">
-Class WorldOpenConditionSheet  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/hardworld-progress-open/Lib9c/TableData/WorldOpen/WorldOpenConditionSheet.cs/#L25"><i class="bi bi-code-slash"></i></a>
+Class WorldOpenConditionSheet  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/hardworld-progress-open/Lib9c/TableData/WorldOpen/WorldOpenConditionSheet.cs/#L27"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
@@ -105,7 +105,9 @@ Columns: <code>open_id</code>, <code>condition_group</code>, <code>counter_id</c
 Cross-sheet references (<code>open_id</code>, <code>counter_id</code>) are not validated here.
 </p><p><code>open_id</code> is not unique, so a row's key is a synthetic sequential number assigned in
 the order rows are added (CSV order, starting at 1). Look rows up with
-<a class="xref" href="Nekoyume.TableData.WorldOpenConditionSheet.html#Nekoyume_TableData_WorldOpenConditionSheet_GroupsOf_System_Int32_">GroupsOf(int)</a> or <a class="xref" href="Nekoyume.TableData.WorldOpenConditionSheet.html#Nekoyume_TableData_WorldOpenConditionSheet_OpenIdsReferencing_System_Int32_">OpenIdsReferencing(int)</a> rather than by key.
+<a class="xref" href="Nekoyume.TableData.WorldOpenConditionSheet.html#Nekoyume_TableData_WorldOpenConditionSheet_GroupsOf_System_Int32_">GroupsOf(int)</a> or <a class="xref" href="Nekoyume.TableData.WorldOpenConditionSheet.html#Nekoyume_TableData_WorldOpenConditionSheet_OpenIdsReferencing_System_Int32_">OpenIdsReferencing(int)</a> rather than by key. A blank line
+is kept as an invalid row (open_id 0); both lookups skip invalid rows, so code reading
+<code>OrderedList</code> directly must check <a class="xref" href="Nekoyume.TableData.WorldOpenConditionSheet.Row.html#Nekoyume_TableData_WorldOpenConditionSheet_Row_IsValid">IsValid</a> too.
 </p><p>
 A patch cannot change what an id means once recorded; see
 <a class="xref" href="Nekoyume.Action.WorldOpenIdentity.html">WorldOpenIdentity</a>.
@@ -253,7 +255,7 @@ public class WorldOpenConditionSheet : Sheet&lt;int, WorldOpenConditionSheet.Row
 
   <h3 id="Nekoyume_TableData_WorldOpenConditionSheet__ctor" data-uid="Nekoyume.TableData.WorldOpenConditionSheet.#ctor">
   WorldOpenConditionSheet()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/hardworld-progress-open/Lib9c/TableData/WorldOpen/WorldOpenConditionSheet.cs/#L89"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/hardworld-progress-open/Lib9c/TableData/WorldOpen/WorldOpenConditionSheet.cs/#L91"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Creates an empty sheet.</p>
@@ -283,7 +285,7 @@ public class WorldOpenConditionSheet : Sheet&lt;int, WorldOpenConditionSheet.Row
 
   <h3 id="Nekoyume_TableData_WorldOpenConditionSheet_ColumnNames" data-uid="Nekoyume.TableData.WorldOpenConditionSheet.ColumnNames">
   ColumnNames
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/hardworld-progress-open/Lib9c/TableData/WorldOpen/WorldOpenConditionSheet.cs/#L31"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/hardworld-progress-open/Lib9c/TableData/WorldOpen/WorldOpenConditionSheet.cs/#L33"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Column names in their expected order, after <code>_</code> prefixed columns are dropped.</p>
@@ -319,7 +321,7 @@ public class WorldOpenConditionSheet : Sheet&lt;int, WorldOpenConditionSheet.Row
 
   <h3 id="Nekoyume_TableData_WorldOpenConditionSheet_AddRow_System_Int32_Nekoyume_TableData_WorldOpenConditionSheet_Row_" data-uid="Nekoyume.TableData.WorldOpenConditionSheet.AddRow(System.Int32,Nekoyume.TableData.WorldOpenConditionSheet.Row)">
   AddRow(int, Row)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/hardworld-progress-open/Lib9c/TableData/WorldOpen/WorldOpenConditionSheet.cs/#L130"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/hardworld-progress-open/Lib9c/TableData/WorldOpen/WorldOpenConditionSheet.cs/#L132"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Assigns the synthetic key. Rows are numbered in the order they are added.</p>
@@ -353,7 +355,7 @@ public class WorldOpenConditionSheet : Sheet&lt;int, WorldOpenConditionSheet.Row
 
   <h3 id="Nekoyume_TableData_WorldOpenConditionSheet_GroupsOf_System_Int32_" data-uid="Nekoyume.TableData.WorldOpenConditionSheet.GroupsOf(System.Int32)">
   GroupsOf(int)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/hardworld-progress-open/Lib9c/TableData/WorldOpen/WorldOpenConditionSheet.cs/#L113"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/hardworld-progress-open/Lib9c/TableData/WorldOpen/WorldOpenConditionSheet.cs/#L115"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>The condition groups of <code class="paramref">openId</code>, each as the rows (counters) of that
@@ -391,7 +393,7 @@ group, ordered by group then by row order.</p>
 
   <h3 id="Nekoyume_TableData_WorldOpenConditionSheet_OpenIdsReferencing_System_Int32_" data-uid="Nekoyume.TableData.WorldOpenConditionSheet.OpenIdsReferencing(System.Int32)">
   OpenIdsReferencing(int)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/hardworld-progress-open/Lib9c/TableData/WorldOpen/WorldOpenConditionSheet.cs/#L96"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/hardworld-progress-open/Lib9c/TableData/WorldOpen/WorldOpenConditionSheet.cs/#L98"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>The ids of the openings that have a condition on <code class="paramref">counterId</code>.</p>
@@ -428,7 +430,7 @@ group, ordered by group then by row order.</p>
 
   <h3 id="Nekoyume_TableData_WorldOpenConditionSheet_ValidateCsv_System_String_" data-uid="Nekoyume.TableData.WorldOpenConditionSheet.ValidateCsv(System.String)">
   ValidateCsv(string)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/hardworld-progress-open/Lib9c/TableData/WorldOpen/WorldOpenConditionSheet.cs/#L148"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/hardworld-progress-open/Lib9c/TableData/WorldOpen/WorldOpenConditionSheet.cs/#L150"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Parses <code class="paramref">csv</code> strictly so that a malformed sheet fails the
@@ -472,7 +474,7 @@ positive.</p>
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/planetarium/lib9c/blob/feature/hardworld-progress-open/Lib9c/TableData/WorldOpen/WorldOpenConditionSheet.cs/#L25" class="edit-link">Edit this page</a>
+          <a href="https://github.com/planetarium/lib9c/blob/feature/hardworld-progress-open/Lib9c/TableData/WorldOpen/WorldOpenConditionSheet.cs/#L27" class="edit-link">Edit this page</a>
         </div>
 
 
