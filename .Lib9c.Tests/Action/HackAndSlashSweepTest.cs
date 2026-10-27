@@ -1499,8 +1499,12 @@ namespace Lib9c.Tests.Action
             Assert.True(next.GetAvatarState(_avatarAddress).exp > state.GetAvatarState(_avatarAddress).exp);
         }
 
+        /// <summary>
+        /// Sweeping never moves a world-open counter: STAGE_PLAY counts won battles only, and a
+        /// sweep is not a battle.
+        /// </summary>
         [Fact]
-        public void Sweep_CountsStagePlay_NotFirstClear()
+        public void Sweep_DoesNotCount()
         {
             var state = WithWorldOpenSheets(
                 PrepareWorld11(clearedStageId: 520),
@@ -1508,35 +1512,13 @@ namespace Lib9c.Tests.Action
                 "1,11,550,,0,1000000,0\n",
                 "1,1,1,100\n1,1,2,100\n");
 
-            // Stage 520 costs 5 AP per play, so the full action point is a known play count.
-            var apBefore = (int)state.GetActionPoint(_avatarAddress);
-            var expectedPlays = apBefore / state.GetSheet<StageSheet>()[520].CostAP;
             var next = SweepWorld11(state, 520);
 
-            Assert.True(expectedPlays > 1);
+            Assert.True(next.GetAvatarState(_avatarAddress).exp > state.GetAvatarState(_avatarAddress).exp);
             Assert.Equal(0, next.GetCounter(1));
-            Assert.Equal(expectedPlays, next.GetCounter(2));
-        }
-
-        [Fact]
-        public void Sweep_LevelUpDuringSweep_UsesStartLevel()
-        {
-            const int startLevel = 100;
-            var levelSheet = _tableSheets.CharacterLevelSheet;
-            var state = WithWorldOpenSheets(
-                PrepareWorld11(
-                    clearedStageId: 520,
-                    level: startLevel,
-                    exp: levelSheet[startLevel + 1].Exp - 1),
-                $"1,STAGE_PLAY,501,550,{startLevel + 1}\n",
-                "1,11,550,,0,1000000,0\n",
-                "1,1,1,100\n");
-
-            var next = SweepWorld11(state, 520);
-
-            Assert.True(next.GetAvatarState(_avatarAddress).level > startLevel);
-            Assert.Equal(0, next.GetCounter(1));
+            Assert.Equal(0, next.GetCounter(2));
             AssertAccountUnchanged(state, next, Addresses.GlobalCounter);
+            AssertAccountUnchanged(state, next, Addresses.WorldOpen);
         }
 
         [Fact]

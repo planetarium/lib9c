@@ -145,9 +145,9 @@ namespace Nekoyume.TableData
         /// integer; a cell does not parse; <c>fallback_block_index</c> is not positive;
         /// <c>min_block_index</c> is negative or greater than the fallback;
         /// <c>effective_delay_block</c> is negative or greater than the fallback; a prerequisite is unknown, refers to itself
-        /// or is part of a cycle; within one world, <c>stage_end</c> does not increase along
-        /// a prerequisite; or, within one world, a row other than the lowest does not take the
-        /// row just below it (by <c>stage_end</c>) as its prerequisite.
+        /// or is part of a cycle; <c>stage_end</c> does not increase along a prerequisite; or a
+        /// row other than the one with the lowest <c>stage_end</c> does not take the row just
+        /// below it (by <c>stage_end</c>, across all worlds) as its prerequisite.
         /// </exception>
         /// <remarks>
         /// References to other sheets (conditions, counters) are not checked here.
@@ -216,8 +216,7 @@ namespace Nekoyume.TableData
                         $"id({row.Id}): prerequisite_open_id({prerequisiteId}) does not exist.");
                 }
 
-                if (prerequisite.WorldId == row.WorldId &&
-                    prerequisite.StageEnd >= row.StageEnd)
+                if (prerequisite.StageEnd >= row.StageEnd)
                 {
                     throw new SheetRowValidateException(
                         $"id({row.Id}): stage_end({row.StageEnd}) must be greater than " +
@@ -243,24 +242,22 @@ namespace Nekoyume.TableData
                 }
             }
 
-            // The gate opens up to the largest applied stage_end of a world, so a later row must
-            // not be able to apply before the rows below it: within one world, each row after the
-            // first must take the row just below it as its prerequisite.
-            foreach (var world in rows.Values.GroupBy(r => r.WorldId))
+            // The gate opens a world up to its largest applied stage_end, so a row must not be
+            // able to apply before the rows below it. Stage ids run on across worlds, so all rows
+            // form one line by stage_end: each row after the lowest takes the row just below it
+            // as its prerequisite. "Some prerequisite" is not enough — one skipping a row would let
+            // a fallback open everything up to it without that row's conditions.
+            Row below = null;
+            foreach (var row in rows.Values.OrderBy(r => r.StageEnd).ThenBy(r => r.Id))
             {
-                Row below = null;
-                foreach (var row in world.OrderBy(r => r.StageEnd).ThenBy(r => r.Id))
+                if (below is not null && row.PrerequisiteOpenId != below.Id)
                 {
-                    if (below is not null && row.PrerequisiteOpenId != below.Id)
-                    {
-                        throw new SheetRowValidateException(
-                            $"id({row.Id}): world {row.WorldId} already has id({below.Id}) " +
-                            $"opening up to stage {below.StageEnd}, so prerequisite_open_id must " +
-                            $"be {below.Id}.");
-                    }
-
-                    below = row;
+                    throw new SheetRowValidateException(
+                        $"id({row.Id}): id({below.Id}) opens up to stage {below.StageEnd} just " +
+                        $"below this row, so prerequisite_open_id must be {below.Id}.");
                 }
+
+                below = row;
             }
 
             // Guards against this validator and Sheet.Set disagreeing about which rows exist.

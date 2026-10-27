@@ -12,7 +12,10 @@ namespace Nekoyume.TableData
         /// <summary>An avatar clears a stage for the first time.</summary>
         STAGE_FIRST_CLEAR,
 
-        /// <summary>An avatar plays (clears) a stage, however many times.</summary>
+        /// <summary>
+        /// An avatar wins a <c>HackAndSlash</c> battle on a stage, counted per battle won (a
+        /// multi-play action adds its wins; a lost battle adds nothing). Sweeping does not count.
+        /// </summary>
         STAGE_PLAY,
 
         /// <summary>An avatar crafts a recipe.</summary>

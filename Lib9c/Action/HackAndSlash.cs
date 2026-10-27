@@ -684,6 +684,8 @@ namespace Nekoyume.Action
             // change how this action counts toward world openings.
             var wasCleared = avatarState.worldInformation.IsStageCleared(StageId);
             var levelAtStart = avatarState.level;
+            // Only won battles count toward STAGE_PLAY; a lost one does not.
+            var winCount = 0;
             for (var i = 0; i < TotalPlayCount; i++)
             {
                 var rewards = StageSimulator.GetWaveRewards(
@@ -734,6 +736,7 @@ namespace Nekoyume.Action
                     activity?.Id ?? string.Empty);
                 if (simulator.Log.IsClear)
                 {
+                    winCount++;
                     avatarState.worldInformation.ClearStage(
                         WorldId,
                         StageId,
@@ -925,7 +928,7 @@ namespace Nekoyume.Action
                 states,
                 GlobalCounterType.STAGE_PLAY,
                 StageId,
-                TotalPlayCount,
+                winCount,
                 levelAtStart,
                 blockIndex);
 

@@ -2300,10 +2300,10 @@ namespace Lib9c.Tests.Action
 
         /// <summary>
         /// A multi-play HackAndSlash that first-clears the stage counts the first clear once and
-        /// the play counter by <c>TotalPlayCount</c>, however many of the battles were won.
+        /// the play counter by the number of battles won.
         /// </summary>
         [Fact]
-        public void MultiHas_FirstClearCountsOnce_PlayCountsTotalPlayCount()
+        public void MultiHas_FirstClearCountsOnce_PlayCountsWins()
         {
             const int totalPlayCount = 3;
             var state = WithWorldOpenSheets(
@@ -2317,6 +2317,32 @@ namespace Lib9c.Tests.Action
             Assert.True(next.GetAvatarState(_avatarAddress).worldInformation.IsStageCleared(520));
             Assert.Equal(1, next.GetCounter(1));
             Assert.Equal(totalPlayCount, next.GetCounter(2));
+        }
+
+        /// <summary>
+        /// A lost battle counts neither as a first clear nor as a play.
+        /// </summary>
+        [Fact]
+        public void LostBattle_DoesNotCount()
+        {
+            const int totalPlayCount = 3;
+            // Stage 520 normally reuses stage 1's waves; give it stage 300's so an unequipped
+            // level-1 avatar loses.
+            var state = WithWorldOpenSheets(
+                PrepareWorld11(clearedStageId: 519, level: 1)
+                    .SetLegacyState(
+                        Addresses.TableSheet.Derive(nameof(StageWaveSheet)),
+                        CopyRows(_sheets[nameof(StageWaveSheet)], 300, 520, 521).Serialize()),
+                "1,STAGE_FIRST_CLEAR,520,520,0\n2,STAGE_PLAY,501,550,0\n",
+                "1,11,550,,0,1000000,0\n",
+                "1,1,1,100\n1,1,2,100\n");
+
+            var next = PlayWorld11(state, 520, totalPlayCount, equip: false);
+
+            Assert.False(next.GetAvatarState(_avatarAddress).worldInformation.IsStageCleared(520));
+            Assert.Equal(0, next.GetCounter(1));
+            Assert.Equal(0, next.GetCounter(2));
+            AssertAccountUnchanged(state, next, Addresses.GlobalCounter);
         }
 
         [Fact]
@@ -2575,13 +2601,20 @@ namespace Lib9c.Tests.Action
                     List.Empty.Add(11.Serialize()));
         }
 
-        private IWorld PlayWorld11(IWorld state, int stageId, int totalPlayCount = 1, long blockIndex = 100)
+        private IWorld PlayWorld11(
+            IWorld state,
+            int stageId,
+            int totalPlayCount = 1,
+            long blockIndex = 100,
+            bool equip = true)
         {
             var avatarState = state.GetAvatarState(_avatarAddress);
             var action = new HackAndSlash
             {
                 Costumes = new List<Guid>(),
-                Equipments = avatarState.inventory.Equipments.Select(e => e.NonFungibleId).ToList(),
+                Equipments = equip
+                    ? avatarState.inventory.Equipments.Select(e => e.NonFungibleId).ToList()
+                    : new List<Guid>(),
                 Foods = new List<Guid>(),
                 RuneInfos = new List<RuneSlotInfo>(),
                 WorldId = 11,
