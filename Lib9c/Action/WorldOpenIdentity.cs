@@ -76,7 +76,9 @@ namespace Nekoyume.Action
                 case nameof(WorldOpenConditionSheet):
                     var conditions = new WorldOpenConditionSheet();
                     conditions.Set(csv);
+                    // A blank line is kept as an invalid row; it names no opening.
                     identities = conditions.OrderedList
+                        .Where(r => r.IsValid)
                         .Select(r => r.OpenId)
                         .Distinct()
                         .Select(openId => (Key("conditions", openId), Groups(conditions, openId)));

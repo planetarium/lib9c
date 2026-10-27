@@ -162,13 +162,16 @@ namespace Nekoyume.TableData
                 count++;
             }
 
-            // Guards against this validator and Sheet.Set disagreeing about which rows exist.
+            // Guards against this validator and Sheet.Set disagreeing about which rows exist. Only
+            // valid rows count: Sheet.Set keeps a blank line as an invalid row (the synthetic key
+            // never drops it), and lookups skip invalid rows.
             var sheet = new WorldOpenConditionSheet();
             sheet.Set(csv);
-            if (sheet.Count != count)
+            var parsed = sheet.OrderedList?.Count(row => row.IsValid) ?? 0;
+            if (parsed != count)
             {
                 throw new SheetRowValidateException(
-                    $"validated {count} row(s) but the sheet parsed {sheet.Count}.");
+                    $"validated {count} row(s) but the sheet parsed {parsed}.");
             }
         }
     }

@@ -161,6 +161,14 @@ namespace Lib9c.Tests.Action
                 () => Patch(s, nameof(WorldOpenConditionSheet), CondHeader + "1,1,2,10\n"));
         }
 
+        [Fact]
+        public void Conditions_BlankLine_RecordsNoOpening()
+        {
+            var s = Patch(NewWorld(), nameof(WorldOpenConditionSheet), CondHeader + "1,1,1,10\n\n1,2,2,5\n");
+            Assert.Equal("1|2", Recorded(s, "identity_conditions_1"));
+            Assert.Null(s.GetAccountState(Addresses.WorldOpen).GetState(Addresses.WorldOpen.Derive("identity_conditions_0")));
+        }
+
         private static string Recorded(IWorld states, string key) =>
             ((Text)states.GetAccountState(Addresses.WorldOpen).GetState(Addresses.WorldOpen.Derive(key))).Value;
 

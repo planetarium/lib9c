@@ -69,6 +69,19 @@ namespace Lib9c.Tests.TableData.WorldOpen
                 "1,2,12,1\n");
         }
 
+        [Fact]
+        public void ValidateCsvAcceptsBlankLines()
+        {
+            // Blank lines are skipped like in the other world-open sheets; Sheet.Set keeps them as
+            // invalid rows, which no lookup returns.
+            var csv = Header + "1,1,10,100\n\n,,,\n1,2,12,1\n";
+            WorldOpenConditionSheet.ValidateCsv(csv);
+
+            var sheet = new WorldOpenConditionSheet();
+            sheet.Set(csv);
+            Assert.Equal(2, sheet.GroupsOf(1).Count());
+        }
+
         [Theory]
         [InlineData("1,1,10,0")] // threshold not positive
         [InlineData("1,1,10,-5")]
