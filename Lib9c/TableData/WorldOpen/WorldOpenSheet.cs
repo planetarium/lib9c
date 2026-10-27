@@ -250,6 +250,13 @@ namespace Nekoyume.TableData
             Row below = null;
             foreach (var row in rows.Values.OrderBy(r => r.StageEnd).ThenBy(r => r.Id))
             {
+                if (below is not null && below.StageEnd == row.StageEnd)
+                {
+                    throw new SheetRowValidateException(
+                        $"id({row.Id}): stage_end({row.StageEnd}) duplicates id({below.Id}); " +
+                        "each opening must end at a different stage.");
+                }
+
                 if (below is not null && row.PrerequisiteOpenId != below.Id)
                 {
                     throw new SheetRowValidateException(

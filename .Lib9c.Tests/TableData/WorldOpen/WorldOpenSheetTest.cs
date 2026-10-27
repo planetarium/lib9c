@@ -42,6 +42,7 @@ namespace Lib9c.Tests.TableData.WorldOpen
         [Fact]
         public void ByWorld()
         {
+            // Set does not validate: this sheet breaks the chain rule and could not be patched.
             var sheet = new WorldOpenSheet();
             sheet.Set(
                 Header +

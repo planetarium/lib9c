@@ -684,7 +684,8 @@ namespace Nekoyume.Action
             // change how this action counts toward world openings.
             var wasCleared = avatarState.worldInformation.IsStageCleared(StageId);
             var levelAtStart = avatarState.level;
-            // Only won battles count toward STAGE_PLAY; a lost one does not.
+            // Only battles that clear the stage (every wave, BattleLog.IsClear) count toward
+            // STAGE_PLAY; a lost or partly cleared one does not.
             var winCount = 0;
             for (var i = 0; i < TotalPlayCount; i++)
             {

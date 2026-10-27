@@ -13,8 +13,9 @@ namespace Nekoyume.TableData
         STAGE_FIRST_CLEAR,
 
         /// <summary>
-        /// An avatar wins a <c>HackAndSlash</c> battle on a stage, counted per battle won (a
-        /// multi-play action adds its wins; a lost battle adds nothing). Sweeping does not count.
+        /// An avatar clears a stage in a <c>HackAndSlash</c> battle (every wave cleared, the same
+        /// signal as a stage clear), counted per such battle: a multi-play action adds its cleared
+        /// battles; a lost or partly cleared battle adds nothing. Sweeping does not count.
         /// </summary>
         STAGE_PLAY,
 

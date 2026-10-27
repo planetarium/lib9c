@@ -1663,7 +1663,7 @@ namespace Lib9c.Tests.Action
         /// World 11 spanning 501-550 with stages 520-521 copied from stage 1, and an avatar that
         /// cleared up to <paramref name="clearedStageId"/> and unlocked world 11.
         /// </summary>
-        private IWorld PrepareWorld11(int clearedStageId, int level = 100, long exp = -1)
+        private IWorld PrepareWorld11(int clearedStageId)
         {
             var state = _initialState
                 .SetLegacyState(
@@ -1683,8 +1683,8 @@ namespace Lib9c.Tests.Action
                     CopyRows(_sheets[nameof(SweepRequiredCPSheet)], 1, 520, 521).Serialize());
 
             var avatarState = state.GetAvatarState(_avatarAddress);
-            avatarState.level = level;
-            avatarState.exp = exp >= 0 ? exp : _tableSheets.CharacterLevelSheet[level].Exp;
+            avatarState.level = 100;
+            avatarState.exp = _tableSheets.CharacterLevelSheet[100].Exp;
             avatarState.worldInformation = new WorldInformation(
                 0,
                 state.GetSheet<WorldSheet>(),

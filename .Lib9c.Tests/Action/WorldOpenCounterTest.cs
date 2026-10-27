@@ -154,6 +154,8 @@ namespace Lib9c.Tests.Action
         [Fact]
         public void Tick_CounterSharedByTwoOpens()
         {
+            // Built without ValidateCsv: two unchained rows could not be patched on chain, but
+            // Tick must still write a shared counter once.
             var s = Build(
                 "1,STAGE_FIRST_CLEAR,10,10,0\n",
                 "1,12,570,,0,1000,0\n2,13,620,,0,1000,0\n",
