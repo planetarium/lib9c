@@ -2,6 +2,9 @@ using System;
 
 namespace Nekoyume
 {
+    /// <summary>
+    /// Game-wide constants shared by actions and the client.
+    /// </summary>
     public static class GameConfig
     {
         /// <summary>
