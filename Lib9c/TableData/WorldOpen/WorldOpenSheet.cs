@@ -145,8 +145,9 @@ namespace Nekoyume.TableData
         /// integer; a cell does not parse; <c>fallback_block_index</c> is not positive;
         /// <c>min_block_index</c> is negative or greater than the fallback;
         /// <c>effective_delay_block</c> is negative or greater than the fallback; a prerequisite is unknown, refers to itself
-        /// or is part of a cycle; or, within one world, <c>stage_end</c> does not increase along
-        /// a prerequisite.
+        /// or is part of a cycle; within one world, <c>stage_end</c> does not increase along
+        /// a prerequisite; or, within one world, a row other than the lowest does not take the
+        /// row just below it (by <c>stage_end</c>) as its prerequisite.
         /// </exception>
         /// <remarks>
         /// References to other sheets (conditions, counters) are not checked here.
@@ -239,6 +240,26 @@ namespace Nekoyume.TableData
                         throw new SheetRowValidateException(
                             $"id({row.Id}): prerequisite_open_id({next}) in its chain does not exist.");
                     }
+                }
+            }
+
+            // The gate opens up to the largest applied stage_end of a world, so a later row must
+            // not be able to apply before the rows below it: within one world, each row after the
+            // first must take the row just below it as its prerequisite.
+            foreach (var world in rows.Values.GroupBy(r => r.WorldId))
+            {
+                Row below = null;
+                foreach (var row in world.OrderBy(r => r.StageEnd).ThenBy(r => r.Id))
+                {
+                    if (below is not null && row.PrerequisiteOpenId != below.Id)
+                    {
+                        throw new SheetRowValidateException(
+                            $"id({row.Id}): world {row.WorldId} already has id({below.Id}) " +
+                            $"opening up to stage {below.StageEnd}, so prerequisite_open_id must " +
+                            $"be {below.Id}.");
+                    }
+
+                    below = row;
                 }
             }
 

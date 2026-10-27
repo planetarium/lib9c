@@ -82,6 +82,18 @@ namespace Lib9c.Tests.TableData.WorldOpen
                 "2,102,100,1,1000,5000,0\n");
         }
 
+        [Fact]
+        public void ValidateCsvAcceptsSameWorldChain()
+        {
+            // Rows out of stage order; the lowest row of world 102 depends on world 101.
+            WorldOpenSheet.ValidateCsv(
+                Header +
+                "4,102,700,3,1000,5000,0\n" +
+                "1,101,300,,1000,5000,10\n" +
+                "3,102,600,1,1000,5000,0\n" +
+                "5,102,800,4,1000,5000,0\n");
+        }
+
         [Theory]
         [InlineData("1,101,300,1,1000,5000,10")] // self reference
         [InlineData("1,101,300,2,1000,5000,10\n2,101,400,1,1000,5000,10")] // cycle
@@ -95,6 +107,10 @@ namespace Lib9c.Tests.TableData.WorldOpen
         [InlineData("1,101,300,,1000,5000,10\n2,101,300,1,1000,5000,10")] // stage_end not increasing
         [InlineData("1,101,300,,1000,5000,10\n2,101,200,1,1000,5000,10")] // stage_end decreasing
         [InlineData("1,101,300,,1000,5000,10\n1,101,400,,1000,5000,10")] // duplicated id
+        [InlineData("1,101,300,,1000,5000,10\n2,101,400,,1000,5000,10")] // same world, later row without prerequisite
+        [InlineData("1,101,300,,1000,5000,10\n2,101,400,1,1000,5000,10\n3,101,500,1,1000,5000,10")] // skips the row just below
+        [InlineData("1,101,300,,1000,5000,10\n2,102,300,,1000,5000,10\n3,101,400,2,1000,5000,10")] // prerequisite on another world instead of the row below
+        [InlineData("1,101,300,,1000,5000,10\n2,101,300,,1000,5000,10")] // same stage_end, no chain
         [InlineData("0,101,300,,1000,5000,10")] // id not positive
         [InlineData("1,101,300,,1000,5000")] // missing cell
         [InlineData("1,101,x,,1000,5000,10")] // not a number
