@@ -144,7 +144,7 @@ namespace Nekoyume.Action
                 states = states.SetLegacyState(GameConfigState.Address, gameConfigState.Serialize());
             }
 
-            return states;
+            return WorldOpenCounter.ConfirmSatisfiedAfterPatch(states, TableName, ctx.BlockIndex);
         }
 
         /// <summary>

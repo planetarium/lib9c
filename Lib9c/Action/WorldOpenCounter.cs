@@ -81,6 +81,51 @@ namespace Nekoyume.Action
         }
 
         /// <summary>
+        /// Confirms every pending opening whose conditions are already met, after
+        /// <paramref name="tableName"/> was patched. A table patch can lower a threshold below a
+        /// counter that no longer moves often (a rarely cleared stage, a rarely crafted recipe);
+        /// confirming here means such an opening does not wait for the next matching play. Only a
+        /// <see cref="WorldOpenSheet"/> or <see cref="WorldOpenConditionSheet"/> patch triggers it;
+        /// any other sheet, or absent world-open sheets, writes nothing.
+        /// </summary>
+        /// <param name="states">The world after the patched sheet was stored.</param>
+        /// <param name="tableName">The patched sheet's name.</param>
+        /// <param name="blockIndex">The block being evaluated; recorded as the confirmed block.
+        /// </param>
+        /// <returns>The updated world, or <paramref name="states"/> itself when nothing was
+        /// written.</returns>
+        public static IWorld ConfirmSatisfiedAfterPatch(
+            IWorld states,
+            string tableName,
+            long blockIndex)
+        {
+            // Only these two decide whether an opening is satisfied and still pending; the counter
+            // sheet defines what is counted, not the counts or thresholds.
+            if (tableName != nameof(WorldOpenSheet)
+                && tableName != nameof(WorldOpenConditionSheet))
+            {
+                return states;
+            }
+
+            if (!states.TryGetPatchedSheet<WorldOpenSheet>(out var opens)
+                || !states.TryGetPatchedSheet<WorldOpenConditionSheet>(out var conditions)
+                || opens.OrderedList is null)
+            {
+                return states;
+            }
+
+            foreach (var open in opens.OrderedList)
+            {
+                if (states.IsPending(open, blockIndex) && IsSatisfied(states, conditions, open.Id))
+                {
+                    states = states.ConfirmOpen(open.Id, blockIndex);
+                }
+            }
+
+            return states;
+        }
+
+        /// <summary>
         /// Whether any condition group of <paramref name="openId"/> is fully met (all conditions in
         /// a group must hold; any one group suffices). An opening without condition rows is never
         /// satisfied.

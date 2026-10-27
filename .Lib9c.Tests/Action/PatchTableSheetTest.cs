@@ -230,6 +230,56 @@ namespace Lib9c.Tests.Action
                 ((Text)nextState.GetLegacyState(Addresses.TableSheet.Derive(tableName))).Value);
         }
 
+        [Fact]
+        public void Execute_LoweredThreshold_ConfirmsOpenAtPatchBlock()
+        {
+            var state = _initialState
+                .SetLegacyState(
+                    Addresses.GetSheetAddress<GlobalCounterSheet>(),
+                    (Text)"id,type,target_begin,target_end,min_avatar_level\n1,STAGE_PLAY,10,10,0\n")
+                .SetLegacyState(
+                    Addresses.GetSheetAddress<WorldOpenSheet>(),
+                    (Text)"id,world_id,stage_end,prerequisite_open_id,min_block_index,fallback_block_index,effective_delay_block\n1,12,570,,0,1000,0\n")
+                .SetLegacyState(
+                    Addresses.GetSheetAddress<WorldOpenConditionSheet>(),
+                    (Text)"open_id,condition_group,counter_id,threshold\n1,1,1,10\n")
+                .AddCounter(1, 5);
+            var lowered = new PatchTableSheet
+            {
+                TableName = nameof(WorldOpenConditionSheet),
+                TableCsv = "open_id,condition_group,counter_id,threshold\n1,1,1,5\n",
+            };
+
+            var nextState = lowered.Execute(
+                new ActionContext { BlockIndex = 8, PreviousState = state });
+
+            Assert.True(nextState.TryGetConfirmedBlock(1, out var block));
+            Assert.Equal(8, block);
+        }
+
+        [Fact]
+        public void Execute_ThresholdStillAboveCounter_DoesNotConfirm()
+        {
+            var state = _initialState
+                .SetLegacyState(
+                    Addresses.GetSheetAddress<GlobalCounterSheet>(),
+                    (Text)"id,type,target_begin,target_end,min_avatar_level\n1,STAGE_PLAY,10,10,0\n")
+                .SetLegacyState(
+                    Addresses.GetSheetAddress<WorldOpenSheet>(),
+                    (Text)"id,world_id,stage_end,prerequisite_open_id,min_block_index,fallback_block_index,effective_delay_block\n1,12,570,,0,1000,0\n")
+                .AddCounter(1, 5);
+            var action = new PatchTableSheet
+            {
+                TableName = nameof(WorldOpenConditionSheet),
+                TableCsv = "open_id,condition_group,counter_id,threshold\n1,1,1,6\n",
+            };
+
+            var nextState = action.Execute(
+                new ActionContext { BlockIndex = 8, PreviousState = state });
+
+            Assert.False(nextState.TryGetConfirmedBlock(1, out _));
+        }
+
         [Theory]
         [MemberData(nameof(MalformedWorldOpenSheets))]
         public void Execute_Throw_SheetRowValidateException_WhenWorldOpenSheetIsMalformed(

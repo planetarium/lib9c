@@ -212,6 +212,59 @@ namespace Lib9c.Tests.Action
         }
 
         /// <summary>
+        /// Lowering a threshold below the current counter confirms the opening in the patch
+        /// itself, at the patch's block — the backoffice signs only this variant.
+        /// </summary>
+        [Fact]
+        public void Execute_LoweredThreshold_ConfirmsOpenAtPatchBlock()
+        {
+            var state = _previousState
+                .SetLegacyState(
+                    Nekoyume.Addresses.GetSheetAddress<GlobalCounterSheet>(),
+                    (Bencodex.Types.Text)"id,type,target_begin,target_end,min_avatar_level\n1,STAGE_PLAY,10,10,0\n")
+                .SetLegacyState(
+                    Nekoyume.Addresses.GetSheetAddress<WorldOpenSheet>(),
+                    (Bencodex.Types.Text)"id,world_id,stage_end,prerequisite_open_id,min_block_index,fallback_block_index,effective_delay_block\n1,12,570,,0,1000,0\n")
+                .SetLegacyState(
+                    Nekoyume.Addresses.GetSheetAddress<WorldOpenConditionSheet>(),
+                    (Bencodex.Types.Text)"open_id,condition_group,counter_id,threshold\n1,1,1,10\n")
+                .AddCounter(1, 5);
+            var action = new PatchTableSheetCompressed
+            {
+                TableName = nameof(WorldOpenConditionSheet),
+                CompressedTableCsv = PatchTableSheetCompressed.CompressCsv(
+                    "open_id,condition_group,counter_id,threshold\n1,1,1,5\n"),
+            };
+
+            var nextState = action.Execute(
+                new ActionContext { PreviousState = state, BlockIndex = 8, RandomSeed = 0 });
+
+            Assert.True(nextState.TryGetConfirmedBlock(1, out var block));
+            Assert.Equal(8, block);
+        }
+
+        [Fact]
+        public void Execute_ThresholdStillAboveCounter_DoesNotConfirm()
+        {
+            var state = _previousState
+                .SetLegacyState(
+                    Nekoyume.Addresses.GetSheetAddress<WorldOpenSheet>(),
+                    (Bencodex.Types.Text)"id,world_id,stage_end,prerequisite_open_id,min_block_index,fallback_block_index,effective_delay_block\n1,12,570,,0,1000,0\n")
+                .AddCounter(1, 5);
+            var action = new PatchTableSheetCompressed
+            {
+                TableName = nameof(WorldOpenConditionSheet),
+                CompressedTableCsv = PatchTableSheetCompressed.CompressCsv(
+                    "open_id,condition_group,counter_id,threshold\n1,1,1,6\n"),
+            };
+
+            var nextState = action.Execute(
+                new ActionContext { PreviousState = state, BlockIndex = 8, RandomSeed = 0 });
+
+            Assert.False(nextState.TryGetConfirmedBlock(1, out _));
+        }
+
+        /// <summary>
         /// The backoffice signs only this compressed variant, so it must reject a malformed
         /// world-open sheet exactly like <see cref="PatchTableSheet"/> does.
         /// </summary>
