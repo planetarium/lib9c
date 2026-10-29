@@ -2117,7 +2117,8 @@ namespace Lib9c.Tests.Action
 
             var nextState = ExecuteFloorRangeBattle(state, agentAddress, avatarAddress, 121);
 
-            Assert.NotNull(nextState.GetInfiniteTowerInfo(avatarAddress, 1));
+            // The battle was entered: one ticket was spent.
+            Assert.Equal(1, nextState.GetInfiniteTowerInfo(avatarAddress, 1).TotalTicketsUsed);
         }
 
         [Fact]
@@ -2127,7 +2128,7 @@ namespace Lib9c.Tests.Action
 
             var nextState = ExecuteFloorRangeBattle(state, agentAddress, avatarAddress, 122);
 
-            Assert.NotNull(nextState.GetInfiniteTowerInfo(avatarAddress, 1));
+            Assert.Equal(1, nextState.GetInfiniteTowerInfo(avatarAddress, 1).TotalTicketsUsed);
         }
 
         [Fact]
@@ -2145,8 +2146,9 @@ namespace Lib9c.Tests.Action
         {
             var (state, agentAddress, avatarAddress) = CreateFloorRangeState(clearedFloor: 0);
 
-            Assert.Throws<InvalidOperationException>(() =>
+            var exception = Assert.Throws<InvalidOperationException>(() =>
                 ExecuteFloorRangeBattle(state, agentAddress, avatarAddress, 1));
+            Assert.Contains("out of range", exception.Message);
         }
 
         /// <summary>
@@ -2194,8 +2196,6 @@ namespace Lib9c.Tests.Action
             var infiniteTowerInfo = CreateInfiniteTowerInfo(avatarAddress, 1);
             infiniteTowerInfo.AddTickets(5);
             infiniteTowerInfo.ClearFloor(clearedFloor);
-            // Keep the season from resetting the cleared floor (StartBlockIndex is 0).
-            infiniteTowerInfo.GetType().GetProperty("LastResetBlockIndex")?.SetValue(infiniteTowerInfo, 1L);
             return (state.SetInfiniteTowerInfo(avatarAddress, infiniteTowerInfo), agentAddress, avatarAddress);
         }
 
