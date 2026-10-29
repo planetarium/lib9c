@@ -86,12 +86,25 @@ namespace Nekoyume.Action
 
             var sortedWorldIds = WorldIds.OrderBy(i => i).ToList();
             var worldUnlockSheet = states.GetSheet<WorldUnlockSheet>();
+            states.TryGetSheet<WorldSheet>(out var worldSheet);
             foreach (var worldId in sortedWorldIds)
             {
                 // Already Unlocked.
                 if (unlockedIds.Contains(worldId))
                 {
                     throw new AlreadyWorldUnlockedException($"World {worldId} Already unlocked.");
+                }
+
+                // Hard worlds are locked until their opening is applied.
+                if (worldSheet is not null
+                    && worldSheet.TryGetValue(worldId, out var worldRow)
+                    && !WorldOpenGate.IsStageOpen(
+                        states,
+                        worldRow,
+                        worldRow.StageBegin,
+                        context.BlockIndex))
+                {
+                    throw new StageNotOpenedException(worldRow.StageBegin, worldId);
                 }
 
                 WorldUnlockSheet.Row row =

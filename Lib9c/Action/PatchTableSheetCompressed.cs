@@ -133,19 +133,9 @@ namespace Nekoyume.Action
                 tableCsv
             );
 
-            // Reject a malformed policy here: once it is on the chain a row no lookup can
-            // match reads as "unrestricted", and nothing reports that it went missing.
-            if (TableName == nameof(RestrictionSheet))
-            {
-                RestrictionSheet.ValidateCsv(tableCsv);
-            }
-
-            // Reject a malformed schedule here: a row that does not parse is read as no
-            // adjustment, so it would otherwise land and silently never apply.
-            if (TableName == nameof(BoostScheduleSheet))
-            {
-                BoostScheduleSheet.ValidateCsv(tableCsv);
-            }
+            // Same checks as PatchTableSheet: the backoffice signs only this variant.
+            TableSheetPatchValidation.Validate(TableName, tableCsv);
+            states = WorldOpenIdentity.CheckAndRecord(states, TableName, tableCsv);
 
             states = states.SetLegacyState(sheetAddress, tableCsv.Serialize());
 
@@ -155,7 +145,7 @@ namespace Nekoyume.Action
                 states = states.SetLegacyState(GameConfigState.Address, gameConfigState.Serialize());
             }
 
-            return states;
+            return WorldOpenCounter.ConfirmSatisfiedAfterPatch(states, TableName, ctx.BlockIndex);
         }
 
         /// <summary>

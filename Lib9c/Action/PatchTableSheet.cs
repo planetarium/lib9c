@@ -80,19 +80,10 @@ namespace Nekoyume.Action
                 TableCsv
             );
 
-            // Reject a malformed policy here: once it is on the chain a row no lookup can
-            // match reads as "unrestricted", and nothing reports that it went missing.
-            if (TableName == nameof(RestrictionSheet))
-            {
-                RestrictionSheet.ValidateCsv(TableCsv);
-            }
-
-            // Reject a malformed schedule here: a row that does not parse is read as no
-            // adjustment, so it would otherwise land and silently never apply.
-            if (TableName == nameof(BoostScheduleSheet))
-            {
-                BoostScheduleSheet.ValidateCsv(TableCsv);
-            }
+            // Reject a malformed patch here rather than let it silently misconfigure the game
+            // (or, for an empty world-open sheet, fail every HackAndSlash).
+            TableSheetPatchValidation.Validate(TableName, TableCsv);
+            states = WorldOpenIdentity.CheckAndRecord(states, TableName, TableCsv);
 
             states = states.SetLegacyState(sheetAddress, TableCsv.Serialize());
 
@@ -102,7 +93,7 @@ namespace Nekoyume.Action
                 states = states.SetLegacyState(GameConfigState.Address, gameConfigState.Serialize());
             }
 
-            return states;
+            return WorldOpenCounter.ConfirmSatisfiedAfterPatch(states, TableName, context.BlockIndex);
         }
 
         protected override IImmutableDictionary<string, IValue> PlainValueInternal =>

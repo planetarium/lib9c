@@ -226,5 +226,59 @@ namespace Lib9c.Tests.Action
             Assert.Equal(10 * _currency, nextState.GetBalance(_agentAddress, _currency));
             Assert.Equal(0 * _currency, nextState.GetBalance(Addresses.UnlockWorld, _currency));
         }
+
+        [Theory]
+        [InlineData(false, typeof(StageNotOpenedException))]
+        [InlineData(true, null)]
+        public void Execute_HardWorldGate(bool opened, Type exc)
+        {
+            var worldSheet = new WorldSheet();
+            worldSheet.Set("id,name,stage_begin,stage_end\n1,w1,1,50\n12,w12,551,600\n");
+            var worldUnlockSheet = new WorldUnlockSheet();
+            worldUnlockSheet.Set(
+                "id,world_id,stage_id,world_id_to_unlock,required_crystal\n1,1,50,12,0\n");
+            var avatarState = _avatarState;
+            var noUnlocks = new WorldUnlockSheet();
+            noUnlocks.Set("id,world_id,stage_id,world_id_to_unlock,required_crystal\n");
+            avatarState.worldInformation.ClearStage(1, 50, 0, _tableSheets.WorldSheet, noUnlocks);
+
+            var state = _initialState
+                .SetLegacyState(Addresses.GetSheetAddress<WorldSheet>(), worldSheet.Serialize())
+                .SetLegacyState(Addresses.GetSheetAddress<WorldUnlockSheet>(), worldUnlockSheet.Serialize())
+                .SetAvatarState(_avatarAddress, avatarState);
+            if (opened)
+            {
+                const string openCsv =
+                    "id,world_id,stage_end,prerequisite_open_id,min_block_index,fallback_block_index,effective_delay_block\n" +
+                    "1,12,570,,0,0,0\n";
+                state = state.SetLegacyState(
+                    Addresses.GetSheetAddress<WorldOpenSheet>(),
+                    (Text)openCsv);
+            }
+
+            var action = new UnlockWorld
+            {
+                WorldIds = new List<int> { 12, },
+                AvatarAddress = _avatarAddress,
+            };
+            var ctx = new ActionContext
+            {
+                PreviousState = state,
+                Signer = _agentAddress,
+                BlockIndex = 1,
+                RandomSeed = _random.Seed,
+            };
+
+            if (exc is null)
+            {
+                var next = action.Execute(ctx);
+                Assert.True(next.TryGetLegacyState(_avatarAddress.Derive("world_ids"), out List raw));
+                Assert.Contains(12, raw.ToList(StateExtensions.ToInteger));
+            }
+            else
+            {
+                Assert.Throws(exc, () => action.Execute(ctx));
+            }
+        }
     }
 }

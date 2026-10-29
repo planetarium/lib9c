@@ -19,6 +19,7 @@ namespace Lib9c.Tests.Action
     using Nekoyume.Model.State;
     using Nekoyume.Module;
     using Nekoyume.Module.CombinationSlot;
+    using Nekoyume.TableData;
     using Nekoyume.TableData.Crystal;
     using Serilog;
     using Xunit;
@@ -26,6 +27,9 @@ namespace Lib9c.Tests.Action
 
     public class CombinationEquipmentTest
     {
+        private const string WorldOpenHeader =
+            "id,world_id,stage_end,prerequisite_open_id,min_block_index,fallback_block_index,effective_delay_block\n";
+
         private readonly Address _agentAddress;
         private readonly Address _avatarAddress;
         private readonly Address _slotAddress;
@@ -499,6 +503,124 @@ namespace Lib9c.Tests.Action
                 _tableSheets.SkillSheet
             );
             Assert.True(equipment.optionCountFromCombination > 0);
+        }
+
+        [Fact]
+        public void Craft_CountsRecipeCraft()
+        {
+            var state = WithWorldOpenSheets(PrepareTutorialCraft(), "1,RECIPE_CRAFT,1,1,0\n");
+
+            var next = Craft(state, 1);
+            Assert.Equal(1, next.GetCounter(1));
+
+            // Counters accumulate across crafts.
+            Assert.Equal(2, Craft(WithFreshSlotAndMaterial(next), 1).GetCounter(1));
+        }
+
+        [Fact]
+        public void Craft_RecipeOutsideTarget_NoChange()
+        {
+            var state = WithWorldOpenSheets(PrepareTutorialCraft(), "1,RECIPE_CRAFT,2,2,0\n");
+
+            var next = Craft(state, 1);
+
+            Assert.Equal(0, next.GetCounter(1));
+            AssertAccountUnchanged(state, next, Addresses.GlobalCounter);
+        }
+
+        [Fact]
+        public void Craft_BelowMinAvatarLevel_NoChange()
+        {
+            var state = WithWorldOpenSheets(
+                PrepareTutorialCraft(),
+                $"1,RECIPE_CRAFT,1,1,{_avatarState.level + 1}\n");
+
+            var next = Craft(state, 1);
+
+            Assert.Equal(0, next.GetCounter(1));
+            AssertAccountUnchanged(state, next, Addresses.GlobalCounter);
+        }
+
+        [Fact]
+        public void Craft_NoWorldOpenSheets_AccountsUntouched()
+        {
+            var state = PrepareTutorialCraft();
+
+            var next = Craft(state, 1);
+
+            Assert.NotNull(next.GetAllCombinationSlotState(_avatarAddress).GetSlot(0).Result);
+            AssertAccountUnchanged(state, next, Addresses.GlobalCounter);
+            AssertAccountUnchanged(state, next, Addresses.WorldOpen);
+        }
+
+        private static void AssertAccountUnchanged(IWorld before, IWorld after, Address account) =>
+            Assert.Equal(
+                before.GetAccountState(account).Trie.Hash,
+                after.GetAccountState(account).Trie.Hash);
+
+        private static IWorld WithWorldOpenSheets(IWorld state, string counters) =>
+            state
+                .SetLegacyState(
+                    Addresses.GetSheetAddress<GlobalCounterSheet>(),
+                    new Text("id,type,target_begin,target_end,min_avatar_level\n" + counters))
+                .SetLegacyState(
+                    Addresses.GetSheetAddress<WorldOpenSheet>(),
+                    new Text(WorldOpenHeader + "1,11,550,,0,1000000,0\n"))
+                .SetLegacyState(
+                    Addresses.GetSheetAddress<WorldOpenConditionSheet>(),
+                    new Text("open_id,condition_group,counter_id,threshold\n1,1,1,100\n"));
+
+        private IWorld PrepareTutorialCraft()
+        {
+            _avatarState.worldInformation = new WorldInformation(0, _tableSheets.WorldSheet, 3);
+            var state = _initialState
+                .SetAgentState(_agentAddress, _agentState)
+                .SetLegacyState(
+                    _avatarAddress.Derive("recipe_ids"),
+                    List.Empty.Add(1.Serialize()));
+            return AddRecipeMaterial(state.SetAvatarState(_avatarAddress, _avatarState), 1);
+        }
+
+        private IWorld AddRecipeMaterial(IWorld state, int recipeId)
+        {
+            var avatarState = state.GetAvatarState(_avatarAddress);
+            var row = _tableSheets.EquipmentItemRecipeSheet[recipeId];
+            avatarState.inventory.AddItem(
+                ItemFactory.CreateItem(_tableSheets.MaterialItemSheet[row.MaterialId], _random),
+                row.MaterialCount);
+            return state.SetAvatarState(_avatarAddress, avatarState);
+        }
+
+        private IWorld WithFreshSlotAndMaterial(IWorld state)
+        {
+            var allSlotState = new AllCombinationSlotState();
+            allSlotState.AddSlot(CombinationSlotState.DeriveAddress(_avatarAddress, 0));
+            return AddRecipeMaterial(
+                state.SetCombinationSlotState(_avatarAddress, allSlotState),
+                1)
+                .SetActionPoint(_avatarAddress, DailyReward.ActionPointMax);
+        }
+
+        private IWorld Craft(IWorld state, int recipeId)
+        {
+            var action = new CombinationEquipment
+            {
+                avatarAddress = _avatarAddress,
+                slotIndex = 0,
+                recipeId = recipeId,
+                subRecipeId = null,
+                payByCrystal = false,
+                useHammerPoint = false,
+            };
+
+            return action.Execute(
+                new ActionContext
+                {
+                    PreviousState = state,
+                    Signer = _agentAddress,
+                    BlockIndex = 1L,
+                    RandomSeed = _random.Seed,
+                });
         }
     }
 }

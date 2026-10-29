@@ -27,6 +27,7 @@ namespace Lib9c.Tests.Action
     using Nekoyume.Model.State;
     using Nekoyume.Module;
     using Nekoyume.TableData;
+    using Nekoyume.TableData.Crystal;
     using Xunit;
     using static SerializeKeys;
 
@@ -36,6 +37,8 @@ namespace Lib9c.Tests.Action
         private const int ExtendedStageIdOffset = 450;
         private const int ExtendedEntryMaterialId = 900001;
         private const int StageRewardBoostTotalPlayCount = 3;
+        private const string WorldOpenHeader =
+            "id,world_id,stage_end,prerequisite_open_id,min_block_index,fallback_block_index,effective_delay_block\n";
 
         private readonly Dictionary<string, string> _sheets;
         private readonly TableSheets _tableSheets;
@@ -2233,6 +2236,205 @@ namespace Lib9c.Tests.Action
             }
         }
 
+        [Fact]
+        public void Execute_StageNotOpened_Throws()
+        {
+            var state = PrepareWorld11(clearedStageId: 520);
+            Assert.Throws<StageNotOpenedException>(() => PlayWorld11(state, 521));
+
+            // A pending opening (fallback still ahead) keeps it locked as well.
+            var pending = WithWorldOpenSheets(state, null, "1,11,550,,0,1000000,0\n", null);
+            Assert.Throws<StageNotOpenedException>(() => PlayWorld11(pending, 521));
+        }
+
+        [Fact]
+        public void Execute_StageOpened_ByFallback()
+        {
+            const long blockIndex = 100;
+            var state = WithWorldOpenSheets(
+                PrepareWorld11(clearedStageId: 520),
+                null,
+                $"1,11,550,,0,{blockIndex},0\n",
+                null);
+
+            var next = PlayWorld11(state, 521, blockIndex: blockIndex);
+
+            Assert.True(next.GetAvatarState(_avatarAddress).worldInformation.IsStageCleared(521));
+        }
+
+        [Fact]
+        public void FirstClear_CountsOnce()
+        {
+            var state = WithWorldOpenSheets(
+                PrepareWorld11(clearedStageId: 519),
+                "1,STAGE_FIRST_CLEAR,520,520,0\n2,STAGE_PLAY,501,550,0\n",
+                "1,11,550,,0,1000000,0\n",
+                "1,1,1,100\n1,1,2,100\n");
+
+            var first = PlayWorld11(state, 520);
+            Assert.True(first.GetAvatarState(_avatarAddress).worldInformation.IsStageCleared(520));
+            Assert.Equal(1, first.GetCounter(1));
+            Assert.Equal(1, first.GetCounter(2));
+
+            var again = PlayWorld11(first, 520);
+            Assert.Equal(1, again.GetCounter(1));
+            Assert.Equal(2, again.GetCounter(2));
+            Assert.False(again.TryGetConfirmedBlock(1, out _));
+        }
+
+        [Fact]
+        public void FirstClear_ReachesThreshold_ConfirmsOpen()
+        {
+            const long blockIndex = 100;
+            var state = WithWorldOpenSheets(
+                PrepareWorld11(clearedStageId: 519),
+                "1,STAGE_FIRST_CLEAR,520,520,0\n",
+                "1,11,550,,0,1000000,0\n",
+                "1,1,1,1\n");
+
+            var next = PlayWorld11(state, 520, blockIndex: blockIndex);
+
+            Assert.True(next.TryGetConfirmedBlock(1, out var confirmed));
+            Assert.Equal(blockIndex, confirmed);
+        }
+
+        /// <summary>
+        /// A multi-play HackAndSlash that first-clears the stage counts the first clear once and
+        /// the play counter by the number of battles won.
+        /// </summary>
+        [Fact]
+        public void MultiHas_FirstClearCountsOnce_PlayCountsWins()
+        {
+            const int totalPlayCount = 3;
+            var state = WithWorldOpenSheets(
+                PrepareWorld11(clearedStageId: 519),
+                "1,STAGE_FIRST_CLEAR,520,520,0\n2,STAGE_PLAY,501,550,0\n",
+                "1,11,550,,0,1000000,0\n",
+                "1,1,1,100\n1,1,2,100\n");
+
+            var next = PlayWorld11(state, 520, totalPlayCount);
+
+            Assert.True(next.GetAvatarState(_avatarAddress).worldInformation.IsStageCleared(520));
+            Assert.Equal(1, next.GetCounter(1));
+            Assert.Equal(totalPlayCount, next.GetCounter(2));
+        }
+
+        /// <summary>
+        /// A lost battle counts neither as a first clear nor as a play.
+        /// </summary>
+        [Fact]
+        public void LostBattle_DoesNotCount()
+        {
+            const int totalPlayCount = 3;
+            // Stage 520 normally reuses stage 1's waves; give it stage 300's so an unequipped
+            // level-1 avatar loses.
+            var state = WithWorldOpenSheets(
+                PrepareWorld11(clearedStageId: 519, level: 1)
+                    .SetLegacyState(
+                        Addresses.TableSheet.Derive(nameof(StageWaveSheet)),
+                        CopyRows(_sheets[nameof(StageWaveSheet)], 300, 520, 521).Serialize()),
+                "1,STAGE_FIRST_CLEAR,520,520,0\n2,STAGE_PLAY,501,550,0\n",
+                "1,11,550,,0,1000000,0\n",
+                "1,1,1,100\n1,1,2,100\n");
+
+            var next = PlayWorld11(state, 520, totalPlayCount, equip: false);
+
+            Assert.False(next.GetAvatarState(_avatarAddress).worldInformation.IsStageCleared(520));
+            Assert.Equal(0, next.GetCounter(1));
+            Assert.Equal(0, next.GetCounter(2));
+            AssertAccountUnchanged(state, next, Addresses.GlobalCounter);
+        }
+
+        [Fact]
+        public void LevelUpDuringBattle_UsesStartLevel()
+        {
+            const int startLevel = 100;
+            var levelSheet = _tableSheets.CharacterLevelSheet;
+            var state = WithWorldOpenSheets(
+                PrepareWorld11(
+                    clearedStageId: 519,
+                    level: startLevel,
+                    exp: levelSheet[startLevel + 1].Exp - 1),
+                $"1,STAGE_FIRST_CLEAR,520,520,{startLevel + 1}\n2,STAGE_PLAY,501,550,{startLevel + 1}\n",
+                "1,11,550,,0,1000000,0\n",
+                "1,1,1,100\n1,1,2,100\n");
+
+            var next = PlayWorld11(state, 520);
+
+            Assert.True(next.GetAvatarState(_avatarAddress).level > startLevel);
+            Assert.Equal(0, next.GetCounter(1));
+            Assert.Equal(0, next.GetCounter(2));
+            AssertAccountUnchanged(state, next, Addresses.GlobalCounter);
+        }
+
+        [Fact]
+        public void Gate_WorldRowMissing_ExistingError()
+        {
+            var state = PrepareWorld11(clearedStageId: 520);
+            var withoutWorld11 = state.SetLegacyState(
+                Addresses.TableSheet.Derive(nameof(WorldSheet)),
+                _sheets[nameof(WorldSheet)].Serialize());
+            Assert.Throws<SheetRowNotFoundException>(() => PlayWorld11(withoutWorld11, 521));
+
+            // Out of the world's range still fails the range check before the gate.
+            Assert.Throws<SheetRowColumnException>(() => PlayWorld11(state, 551));
+        }
+
+        [Fact]
+        public void NoWorldOpenSheets_StateIdenticalToBefore()
+        {
+            var state = PrepareWorld11(clearedStageId: 519);
+
+            var next = PlayWorld11(state, 520, totalPlayCount: 3);
+
+            Assert.True(next.GetAvatarState(_avatarAddress).worldInformation.IsStageCleared(520));
+            AssertAccountUnchanged(state, next, Addresses.GlobalCounter);
+            AssertAccountUnchanged(state, next, Addresses.WorldOpen);
+        }
+
+        private static void AssertAccountUnchanged(IWorld before, IWorld after, Address account) =>
+            Assert.Equal(
+                before.GetAccountState(account).Trie.Hash,
+                after.GetAccountState(account).Trie.Hash);
+
+        private static string CopyRows(string csv, int sourceId, params int[] targetIds)
+        {
+            var lines = csv.Split('\n').Select(l => l.TrimEnd('\r')).Where(l => l.Length > 0).ToList();
+            var source = lines.Where(l => l.Split(',')[0] == sourceId.ToString()).ToList();
+            foreach (var target in targetIds)
+            {
+                lines.AddRange(source.Select(l => target + l.Substring(l.IndexOf(','))));
+            }
+
+            return string.Join("\n", lines) + "\n";
+        }
+
+        private static IWorld WithWorldOpenSheets(IWorld state, string counters, string opens, string conds)
+        {
+            if (counters is not null)
+            {
+                state = state.SetLegacyState(
+                    Addresses.GetSheetAddress<GlobalCounterSheet>(),
+                    (Text)("id,type,target_begin,target_end,min_avatar_level\n" + counters));
+            }
+
+            if (opens is not null)
+            {
+                state = state.SetLegacyState(
+                    Addresses.GetSheetAddress<WorldOpenSheet>(),
+                    (Text)(WorldOpenHeader + opens));
+            }
+
+            if (conds is not null)
+            {
+                state = state.SetLegacyState(
+                    Addresses.GetSheetAddress<WorldOpenConditionSheet>(),
+                    (Text)("open_id,condition_group,counter_id,threshold\n" + conds));
+            }
+
+            return state;
+        }
+
         private static void SerializeException<T>(Exception exec)
             where T : Exception
         {
@@ -2354,6 +2556,81 @@ namespace Lib9c.Tests.Action
                 CountMaterials(nextAvatarState),
                 nextState.GetBalance(recipient, favCurrency),
                 nextAvatarState.exp);
+        }
+
+        /// <summary>
+        /// World 11 spanning 501-550 with stages 520-521 copied from stage 1 (stage, wave and
+        /// crystal buff rows), and an avatar that
+        /// cleared up to <paramref name="clearedStageId"/> and unlocked world 11.
+        /// </summary>
+        private IWorld PrepareWorld11(int clearedStageId, int level = 100, long exp = -1)
+        {
+            var state = _initialState
+                .SetLegacyState(
+                    Addresses.TableSheet.Derive(nameof(WorldSheet)),
+                    (_sheets[nameof(WorldSheet)].TrimEnd() + "\n11,Hard 2,501,550\n").Serialize())
+                .SetLegacyState(
+                    Addresses.TableSheet.Derive(nameof(StageSheet)),
+                    CopyRows(_sheets[nameof(StageSheet)], 1, 520, 521).Serialize())
+                .SetLegacyState(
+                    Addresses.TableSheet.Derive(nameof(StageWaveSheet)),
+                    CopyRows(_sheets[nameof(StageWaveSheet)], 1, 520, 521).Serialize())
+                .SetLegacyState(
+                    Addresses.TableSheet.Derive(nameof(CrystalStageBuffGachaSheet)),
+                    CopyRows(_sheets[nameof(CrystalStageBuffGachaSheet)], 1, 520, 521).Serialize());
+
+            var avatarState = state.GetAvatarState(_avatarAddress);
+            avatarState.level = level;
+
+            // Battles recompute the level from exp, so keep the two consistent.
+            avatarState.exp = exp >= 0 ? exp : _tableSheets.CharacterLevelSheet[level].Exp;
+
+            avatarState.worldInformation = new WorldInformation(
+                0,
+                state.GetSheet<WorldSheet>(),
+                clearedStageId);
+            foreach (var equipment in Doomfist.GetAllParts(_tableSheets, level))
+            {
+                avatarState.inventory.AddItem(equipment, iLock: null);
+            }
+
+            return state
+                .SetAvatarState(_avatarAddress, avatarState)
+                .SetLegacyState(
+                    _avatarAddress.Derive("world_ids"),
+                    List.Empty.Add(11.Serialize()));
+        }
+
+        private IWorld PlayWorld11(
+            IWorld state,
+            int stageId,
+            int totalPlayCount = 1,
+            long blockIndex = 100,
+            bool equip = true)
+        {
+            var avatarState = state.GetAvatarState(_avatarAddress);
+            var action = new HackAndSlash
+            {
+                Costumes = new List<Guid>(),
+                Equipments = equip
+                    ? avatarState.inventory.Equipments.Select(e => e.NonFungibleId).ToList()
+                    : new List<Guid>(),
+                Foods = new List<Guid>(),
+                RuneInfos = new List<RuneSlotInfo>(),
+                WorldId = 11,
+                StageId = stageId,
+                AvatarAddress = _avatarAddress,
+                TotalPlayCount = totalPlayCount,
+            };
+
+            return action.Execute(
+                new ActionContext
+                {
+                    PreviousState = state,
+                    Signer = _agentAddress,
+                    RandomSeed = 0,
+                    BlockIndex = blockIndex,
+                });
         }
     }
 }
