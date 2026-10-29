@@ -1,0 +1,342 @@
+﻿<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Class WorldOpenCounter | Lib9c </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Class WorldOpenCounter | Lib9c ">
+      
+      <meta name="description" content="Counts player progress for the global counters and confirms world openings whose conditions are met.">
+      <link rel="icon" href="../favicon.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      <meta name="docfx:rel" content="../">
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/planetarium/lib9c/new/feature/infinite-tower-floor-band-v2/apiSpec/new?filename=Nekoyume_Action_WorldOpenCounter.md&amp;value=---%0Auid%3A%20Nekoyume.Action.WorldOpenCounter%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./../public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
+  </head>
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="ManagedReference">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../logo.svg" alt="Lib9c">
+            Lib9c
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled="" placeholder="Search" autocomplete="off" aria-label="Search">
+              </form>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="Nekoyume.Action.WorldOpenCounter">
+
+
+
+  <h1 id="Nekoyume_Action_WorldOpenCounter" data-uid="Nekoyume.Action.WorldOpenCounter" class="text-break">
+Class WorldOpenCounter  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/infinite-tower-floor-band-v2/Lib9c/Action/WorldOpenCounter.cs/#L12"><i class="bi bi-code-slash"></i></a>
+  </h1>
+
+  <div class="facts text-secondary">
+    <dl><dt>Namespace</dt><dd><a class="xref" href="Nekoyume.html">Nekoyume</a>.<a class="xref" href="Nekoyume.Action.html">Action</a></dd></dl>
+  <dl><dt>Assembly</dt><dd>Lib9c.dll</dd></dl>
+  </div>
+
+  <div class="markdown summary"><p>Counts player progress for the global counters and confirms world openings whose
+conditions are met.</p>
+</div>
+  <div class="markdown conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static class WorldOpenCounter</code></pre>
+  </div>
+
+
+
+
+  <dl class="typelist inheritance">
+    <dt>Inheritance</dt>
+    <dd>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
+      <div><span class="xref">WorldOpenCounter</span></div>
+    </dd>
+  </dl>
+
+
+
+  <dl class="typelist inheritedMembers">
+    <dt>Inherited Members</dt>
+    <dd>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)">object.Equals(object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)">object.Equals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gethashcode">object.GetHashCode()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gettype">object.GetType()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone">object.MemberwiseClone()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.referenceequals">object.ReferenceEquals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.tostring">object.ToString()</a>
+    </div>
+  </dd></dl>
+
+
+
+
+
+
+  <h2 class="section" id="methods">Methods
+</h2>
+
+
+  <a id="Nekoyume_Action_WorldOpenCounter_ConfirmSatisfiedAfterPatch_" data-uid="Nekoyume.Action.WorldOpenCounter.ConfirmSatisfiedAfterPatch*"></a>
+
+  <h3 id="Nekoyume_Action_WorldOpenCounter_ConfirmSatisfiedAfterPatch_Libplanet_Action_State_IWorld_System_String_System_Int64_" data-uid="Nekoyume.Action.WorldOpenCounter.ConfirmSatisfiedAfterPatch(Libplanet.Action.State.IWorld,System.String,System.Int64)">
+  ConfirmSatisfiedAfterPatch(IWorld, string, long)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/infinite-tower-floor-band-v2/Lib9c/Action/WorldOpenCounter.cs/#L97"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Confirms every pending opening whose conditions are already met, after
+<code class="paramref">tableName</code> was patched. A table patch can lower a threshold below a
+counter that no longer moves often (a rarely cleared stage, a rarely crafted recipe);
+confirming here means such an opening does not wait for the next matching play. Only a
+<a class="xref" href="Nekoyume.TableData.WorldOpenSheet.html">WorldOpenSheet</a> or <a class="xref" href="Nekoyume.TableData.WorldOpenConditionSheet.html">WorldOpenConditionSheet</a> patch triggers it;
+any other sheet, or absent world-open sheets, writes nothing.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static IWorld ConfirmSatisfiedAfterPatch(IWorld states, string tableName, long blockIndex)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>states</code> <span class="xref">IWorld</span></dt>
+    <dd><p>The world after the patched sheet was stored.</p>
+</dd>
+    <dt><code>tableName</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd><p>The patched sheet's name.</p>
+</dd>
+    <dt><code>blockIndex</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
+    <dd><p>The block being evaluated; recorded as the confirmed block.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><span class="xref">IWorld</span></dt>
+    <dd><p>The updated world, or <code class="paramref">states</code> itself when nothing was
+written.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Action_WorldOpenCounter_IsSatisfied_" data-uid="Nekoyume.Action.WorldOpenCounter.IsSatisfied*"></a>
+
+  <h3 id="Nekoyume_Action_WorldOpenCounter_IsSatisfied_Libplanet_Action_State_IWorldState_Nekoyume_TableData_WorldOpenConditionSheet_System_Int32_" data-uid="Nekoyume.Action.WorldOpenCounter.IsSatisfied(Libplanet.Action.State.IWorldState,Nekoyume.TableData.WorldOpenConditionSheet,System.Int32)">
+  IsSatisfied(IWorldState, WorldOpenConditionSheet, int)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/infinite-tower-floor-band-v2/Lib9c/Action/WorldOpenCounter.cs/#L133"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Whether any condition group of <code class="paramref">openId</code> is fully met (all conditions in
+a group must hold; any one group suffices). An opening without condition rows is never
+satisfied.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static bool IsSatisfied(IWorldState state, WorldOpenConditionSheet conditions, int openId)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>state</code> <span class="xref">IWorldState</span></dt>
+    <dd></dd>
+    <dt><code>conditions</code> <a class="xref" href="Nekoyume.TableData.WorldOpenConditionSheet.html">WorldOpenConditionSheet</a></dt>
+    <dd></dd>
+    <dt><code>openId</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Action_WorldOpenCounter_Tick_" data-uid="Nekoyume.Action.WorldOpenCounter.Tick*"></a>
+
+  <h3 id="Nekoyume_Action_WorldOpenCounter_Tick_Libplanet_Action_State_IWorld_Nekoyume_TableData_GlobalCounterType_System_Int32_System_Int64_System_Int32_System_Int64_" data-uid="Nekoyume.Action.WorldOpenCounter.Tick(Libplanet.Action.State.IWorld,Nekoyume.TableData.GlobalCounterType,System.Int32,System.Int64,System.Int32,System.Int64)">
+  Tick(IWorld, GlobalCounterType, int, long, int, long)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/infinite-tower-floor-band-v2/Lib9c/Action/WorldOpenCounter.cs/#L37"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Adds <code class="paramref">delta</code> to every counter of <code class="paramref">type</code> covering
+<code class="paramref">target</code> that a pending opening references, then confirms the
+openings whose conditions are now met. Writes nothing when no sheet defines such a
+counter, so ordinary actions cost nothing extra.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static IWorld Tick(IWorld states, GlobalCounterType type, int target, long delta, int avatarLevel, long blockIndex)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>states</code> <span class="xref">IWorld</span></dt>
+    <dd><p>The world to update.</p>
+</dd>
+    <dt><code>type</code> <a class="xref" href="Nekoyume.TableData.GlobalCounterType.html">GlobalCounterType</a></dt>
+    <dd><p>What happened.</p>
+</dd>
+    <dt><code>target</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The stage or recipe id it happened to.</p>
+</dd>
+    <dt><code>delta</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
+    <dd><p>How much to add; a non-positive delta writes nothing.</p>
+</dd>
+    <dt><code>avatarLevel</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The acting avatar's level, checked against
+<code>min_avatar_level</code>.</p>
+</dd>
+    <dt><code>blockIndex</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
+    <dd><p>The block being evaluated; recorded as the confirmed block.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><span class="xref">IWorld</span></dt>
+    <dd><p>The updated world, or <code class="paramref">states</code> itself when nothing was
+written.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+  <h4 class="section" id="Nekoyume_Action_WorldOpenCounter_Tick_Libplanet_Action_State_IWorld_Nekoyume_TableData_GlobalCounterType_System_Int32_System_Int64_System_Int32_System_Int64__remarks">Remarks</h4>
+  <div class="markdown level1 remarks"><p>Matching counters are processed one at a time in ascending id (not CSV order), and
+whether an opening is still pending is re-read for each counter. So if counter A's
+tick confirms opening X, a later counter B that only X references is not written in
+the same call: X is no longer pending by then. A counter shared by several pending
+openings is written once per call, not once per opening.</p>
+</div>
+
+
+
+
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/planetarium/lib9c/blob/feature/infinite-tower-floor-band-v2/Lib9c/Action/WorldOpenCounter.cs/#L12" class="edit-link">Edit this page</a>
+        </div>
+
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

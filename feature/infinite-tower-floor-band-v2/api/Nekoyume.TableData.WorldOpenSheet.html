@@ -1,0 +1,463 @@
+﻿<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Class WorldOpenSheet | Lib9c </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Class WorldOpenSheet | Lib9c ">
+      
+      <meta name="description" content="Defines when each hard world segment opens: up to which stage, which opening it follows, and the block window (earliest, fallback, activation delay) around it. The conditions that open it are in .  Columns: id, world_id, stage_end, prerequisite_open_id (empty for none), min_block_index, fallback_block_index, effective_delay_block.  does not validate across rows, so a test can build an invalid sheet directly;  does, at patch time.  A patch cannot change what an id means once recorded; see .">
+      <link rel="icon" href="../favicon.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      <meta name="docfx:rel" content="../">
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/planetarium/lib9c/new/feature/infinite-tower-floor-band-v2/apiSpec/new?filename=Nekoyume_TableData_WorldOpenSheet.md&amp;value=---%0Auid%3A%20Nekoyume.TableData.WorldOpenSheet%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./../public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
+  </head>
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="ManagedReference">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../logo.svg" alt="Lib9c">
+            Lib9c
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled="" placeholder="Search" autocomplete="off" aria-label="Search">
+              </form>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="Nekoyume.TableData.WorldOpenSheet">
+
+
+
+  <h1 id="Nekoyume_TableData_WorldOpenSheet" data-uid="Nekoyume.TableData.WorldOpenSheet" class="text-break">
+Class WorldOpenSheet  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/infinite-tower-floor-band-v2/Lib9c/TableData/WorldOpen/WorldOpenSheet.cs/#L25"><i class="bi bi-code-slash"></i></a>
+  </h1>
+
+  <div class="facts text-secondary">
+    <dl><dt>Namespace</dt><dd><a class="xref" href="Nekoyume.html">Nekoyume</a>.<a class="xref" href="Nekoyume.TableData.html">TableData</a></dd></dl>
+  <dl><dt>Assembly</dt><dd>Lib9c.dll</dd></dl>
+  </div>
+
+  <div class="markdown summary"><p>Defines when each hard world segment opens: up to which stage, which opening it follows,
+and the block window (earliest, fallback, activation delay) around it. The conditions that
+open it are in <a class="xref" href="Nekoyume.TableData.WorldOpenConditionSheet.html">WorldOpenConditionSheet</a>.</p>
+<p>
+Columns: <code>id</code>, <code>world_id</code>, <code>stage_end</code>, <code>prerequisite_open_id</code>
+(empty for none), <code>min_block_index</code>, <code>fallback_block_index</code>,
+<code>effective_delay_block</code>.
+</p><p><a class="xref" href="Nekoyume.TableData.WorldOpenSheet.Row.html#Nekoyume_TableData_WorldOpenSheet_Row_Set_System_Collections_Generic_IReadOnlyList_System_String__">Set(IReadOnlyList&lt;string&gt;)</a> does not validate across rows, so a test can build an invalid sheet
+directly; <a class="xref" href="Nekoyume.TableData.WorldOpenSheet.html#Nekoyume_TableData_WorldOpenSheet_ValidateCsv_System_String_">ValidateCsv(string)</a> does, at patch time.
+</p><p>
+A patch cannot change what an id means once recorded; see
+<a class="xref" href="Nekoyume.Action.WorldOpenIdentity.html">WorldOpenIdentity</a>.
+</p>
+</div>
+  <div class="markdown conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[Serializable]
+public class WorldOpenSheet : Sheet&lt;int, WorldOpenSheet.Row&gt;, IDictionary&lt;int, WorldOpenSheet.Row&gt;, ICollection&lt;KeyValuePair&lt;int, WorldOpenSheet.Row&gt;&gt;, IEnumerable&lt;KeyValuePair&lt;int, WorldOpenSheet.Row&gt;&gt;, IEnumerable, ISheet</code></pre>
+  </div>
+
+
+
+
+  <dl class="typelist inheritance">
+    <dt>Inheritance</dt>
+    <dd>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
+      <div><a class="xref" href="Nekoyume.TableData.Sheet-2.html">Sheet</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a>, <a class="xref" href="Nekoyume.TableData.WorldOpenSheet.html">WorldOpenSheet</a>.<a class="xref" href="Nekoyume.TableData.WorldOpenSheet.Row.html">Row</a>&gt;</div>
+      <div><span class="xref">WorldOpenSheet</span></div>
+    </dd>
+  </dl>
+
+  <dl class="typelist implements">
+    <dt>Implements</dt>
+    <dd>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.idictionary-2">IDictionary</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a>, <a class="xref" href="Nekoyume.TableData.WorldOpenSheet.html">WorldOpenSheet</a>.<a class="xref" href="Nekoyume.TableData.WorldOpenSheet.Row.html">Row</a>&gt;</div>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.icollection-1">ICollection</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.keyvaluepair-2">KeyValuePair</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a>, <a class="xref" href="Nekoyume.TableData.WorldOpenSheet.html">WorldOpenSheet</a>.<a class="xref" href="Nekoyume.TableData.WorldOpenSheet.Row.html">Row</a>&gt;&gt;</div>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1">IEnumerable</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.keyvaluepair-2">KeyValuePair</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a>, <a class="xref" href="Nekoyume.TableData.WorldOpenSheet.html">WorldOpenSheet</a>.<a class="xref" href="Nekoyume.TableData.WorldOpenSheet.Row.html">Row</a>&gt;&gt;</div>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.ienumerable">IEnumerable</a></div>
+      <div><a class="xref" href="Nekoyume.TableData.ISheet.html">ISheet</a></div>
+    </dd>
+  </dl>
+
+
+  <dl class="typelist inheritedMembers">
+    <dt>Inherited Members</dt>
+    <dd>
+    <div>
+      <a class="xref" href="Nekoyume.TableData.Sheet-2.html#Nekoyume_TableData_Sheet_2_Name">Sheet&lt;int, WorldOpenSheet.Row&gt;.Name</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.TableData.Sheet-2.html#Nekoyume_TableData_Sheet_2_OrderedList">Sheet&lt;int, WorldOpenSheet.Row&gt;.OrderedList</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.TableData.Sheet-2.html#Nekoyume_TableData_Sheet_2_First">Sheet&lt;int, WorldOpenSheet.Row&gt;.First</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.TableData.Sheet-2.html#Nekoyume_TableData_Sheet_2_Last">Sheet&lt;int, WorldOpenSheet.Row&gt;.Last</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.TableData.Sheet-2.html#Nekoyume_TableData_Sheet_2_Keys">Sheet&lt;int, WorldOpenSheet.Row&gt;.Keys</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.TableData.Sheet-2.html#Nekoyume_TableData_Sheet_2_Values">Sheet&lt;int, WorldOpenSheet.Row&gt;.Values</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.TableData.Sheet-2.html#Nekoyume_TableData_Sheet_2_Count">Sheet&lt;int, WorldOpenSheet.Row&gt;.Count</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.TableData.Sheet-2.html#Nekoyume_TableData_Sheet_2_IsReadOnly">Sheet&lt;int, WorldOpenSheet.Row&gt;.IsReadOnly</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.TableData.Sheet-2.html#Nekoyume_TableData_Sheet_2_Item__0_">Sheet&lt;int, WorldOpenSheet.Row&gt;.this[int]</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.TableData.Sheet-2.html#Nekoyume_TableData_Sheet_2_Set_System_String_System_Boolean_">Sheet&lt;int, WorldOpenSheet.Row&gt;.Set(string, bool)</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.TableData.Sheet-2.html#Nekoyume_TableData_Sheet_2_Set__1_Nekoyume_TableData_Sheet__0___0__System_Boolean_">Sheet&lt;int, WorldOpenSheet.Row&gt;.Set&lt;T&gt;(Sheet&lt;int, T&gt;, bool)</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.TableData.Sheet-2.html#Nekoyume_TableData_Sheet_2_GetEnumerator">Sheet&lt;int, WorldOpenSheet.Row&gt;.GetEnumerator()</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.TableData.Sheet-2.html#Nekoyume_TableData_Sheet_2_TryGetValue__0__1__System_Boolean_">Sheet&lt;int, WorldOpenSheet.Row&gt;.TryGetValue(int, out WorldOpenSheet.Row, bool)</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.TableData.Sheet-2.html#Nekoyume_TableData_Sheet_2_AddRow__0__1_">Sheet&lt;int, WorldOpenSheet.Row&gt;.AddRow(int, WorldOpenSheet.Row)</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.TableData.Sheet-2.html#Nekoyume_TableData_Sheet_2_Add__0__1_">Sheet&lt;int, WorldOpenSheet.Row&gt;.Add(int, WorldOpenSheet.Row)</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.TableData.Sheet-2.html#Nekoyume_TableData_Sheet_2_ContainsKey__0_">Sheet&lt;int, WorldOpenSheet.Row&gt;.ContainsKey(int)</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.TableData.Sheet-2.html#Nekoyume_TableData_Sheet_2_Remove__0_">Sheet&lt;int, WorldOpenSheet.Row&gt;.Remove(int)</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.TableData.Sheet-2.html#Nekoyume_TableData_Sheet_2_TryGetValue__0__1__">Sheet&lt;int, WorldOpenSheet.Row&gt;.TryGetValue(int, out WorldOpenSheet.Row)</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.TableData.Sheet-2.html#Nekoyume_TableData_Sheet_2_Add_System_Collections_Generic_KeyValuePair__0__1__">Sheet&lt;int, WorldOpenSheet.Row&gt;.Add(KeyValuePair&lt;int, WorldOpenSheet.Row&gt;)</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.TableData.Sheet-2.html#Nekoyume_TableData_Sheet_2_Clear">Sheet&lt;int, WorldOpenSheet.Row&gt;.Clear()</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.TableData.Sheet-2.html#Nekoyume_TableData_Sheet_2_Contains_System_Collections_Generic_KeyValuePair__0__1__">Sheet&lt;int, WorldOpenSheet.Row&gt;.Contains(KeyValuePair&lt;int, WorldOpenSheet.Row&gt;)</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.TableData.Sheet-2.html#Nekoyume_TableData_Sheet_2_CopyTo_System_Collections_Generic_KeyValuePair__0__1____System_Int32_">Sheet&lt;int, WorldOpenSheet.Row&gt;.CopyTo(KeyValuePair&lt;int, WorldOpenSheet.Row&gt;[], int)</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.TableData.Sheet-2.html#Nekoyume_TableData_Sheet_2_Remove_System_Collections_Generic_KeyValuePair__0__1__">Sheet&lt;int, WorldOpenSheet.Row&gt;.Remove(KeyValuePair&lt;int, WorldOpenSheet.Row&gt;)</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.TableData.Sheet-2.html#Nekoyume_TableData_Sheet_2_Serialize">Sheet&lt;int, WorldOpenSheet.Row&gt;.Serialize()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)">object.Equals(object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)">object.Equals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gethashcode">object.GetHashCode()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gettype">object.GetType()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone">object.MemberwiseClone()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.referenceequals">object.ReferenceEquals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.tostring">object.ToString()</a>
+    </div>
+  </dd></dl>
+
+
+
+
+
+
+  <h2 class="section" id="constructors">Constructors
+</h2>
+
+
+  <a id="Nekoyume_TableData_WorldOpenSheet__ctor_" data-uid="Nekoyume.TableData.WorldOpenSheet.#ctor*"></a>
+
+  <h3 id="Nekoyume_TableData_WorldOpenSheet__ctor" data-uid="Nekoyume.TableData.WorldOpenSheet.#ctor">
+  WorldOpenSheet()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/infinite-tower-floor-band-v2/Lib9c/TableData/WorldOpen/WorldOpenSheet.cs/#L112"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Creates an empty sheet.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public WorldOpenSheet()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <h2 class="section" id="fields">Fields
+</h2>
+
+
+
+  <h3 id="Nekoyume_TableData_WorldOpenSheet_ColumnNames" data-uid="Nekoyume.TableData.WorldOpenSheet.ColumnNames">
+  ColumnNames
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/infinite-tower-floor-band-v2/Lib9c/TableData/WorldOpen/WorldOpenSheet.cs/#L31"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Column names in their expected order, after <code>_</code> prefixed columns are dropped.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static readonly string[] ColumnNames</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a>[]</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+  <h2 class="section" id="methods">Methods
+</h2>
+
+
+  <a id="Nekoyume_TableData_WorldOpenSheet_AddRow_" data-uid="Nekoyume.TableData.WorldOpenSheet.AddRow*"></a>
+
+  <h3 id="Nekoyume_TableData_WorldOpenSheet_AddRow_System_Int32_Nekoyume_TableData_WorldOpenSheet_Row_" data-uid="Nekoyume.TableData.WorldOpenSheet.AddRow(System.Int32,Nekoyume.TableData.WorldOpenSheet.Row)">
+  AddRow(int, Row)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/infinite-tower-floor-band-v2/Lib9c/TableData/WorldOpen/WorldOpenSheet.cs/#L133"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Adds a parsed row. A row without a usable id is dropped and a duplicated id keeps the
+first row instead of throwing.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected override void AddRow(int key, WorldOpenSheet.Row value)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>key</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+    <dt><code>value</code> <a class="xref" href="Nekoyume.TableData.WorldOpenSheet.html">WorldOpenSheet</a>.<a class="xref" href="Nekoyume.TableData.WorldOpenSheet.Row.html">Row</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_TableData_WorldOpenSheet_ByWorld_" data-uid="Nekoyume.TableData.WorldOpenSheet.ByWorld*"></a>
+
+  <h3 id="Nekoyume_TableData_WorldOpenSheet_ByWorld_System_Int32_" data-uid="Nekoyume.TableData.WorldOpenSheet.ByWorld(System.Int32)">
+  ByWorld(int)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/infinite-tower-floor-band-v2/Lib9c/TableData/WorldOpen/WorldOpenSheet.cs/#L119"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>The openings of <code class="paramref">worldId</code>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public IEnumerable&lt;WorldOpenSheet.Row&gt; ByWorld(int worldId)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>worldId</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1">IEnumerable</a>&lt;<a class="xref" href="Nekoyume.TableData.WorldOpenSheet.html">WorldOpenSheet</a>.<a class="xref" href="Nekoyume.TableData.WorldOpenSheet.Row.html">Row</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_TableData_WorldOpenSheet_ValidateCsv_" data-uid="Nekoyume.TableData.WorldOpenSheet.ValidateCsv*"></a>
+
+  <h3 id="Nekoyume_TableData_WorldOpenSheet_ValidateCsv_System_String_" data-uid="Nekoyume.TableData.WorldOpenSheet.ValidateCsv(System.String)">
+  ValidateCsv(string)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/infinite-tower-floor-band-v2/Lib9c/TableData/WorldOpen/WorldOpenSheet.cs/#L159"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Parses <code class="paramref">csv</code> strictly so that a malformed sheet fails the
+<code>patch_table_sheet</code> transaction instead of landing on the chain.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static void ValidateCsv(string csv)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>csv</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <h4 class="section" id="Nekoyume_TableData_WorldOpenSheet_ValidateCsv_System_String__remarks">Remarks</h4>
+  <div class="markdown level1 remarks"><p>References to other sheets (conditions, counters) are not checked here.</p>
+</div>
+
+  <h4 class="section">Exceptions</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Nekoyume.TableData.SheetRowValidateException.html">SheetRowValidateException</a></dt>
+    <dd><p>The header does not match <a class="xref" href="Nekoyume.TableData.WorldOpenSheet.html#Nekoyume_TableData_WorldOpenSheet_ColumnNames">ColumnNames</a>; an id is not a positive unique
+integer; a cell does not parse; <code>fallback_block_index</code> is not positive;
+<code>min_block_index</code> is negative or greater than the fallback;
+<code>effective_delay_block</code> is negative or greater than the fallback; a prerequisite is unknown, refers to itself
+or is part of a cycle; <code>stage_end</code> does not increase along a prerequisite; or a
+row other than the one with the lowest <code>stage_end</code> does not take the row just
+below it (by <code>stage_end</code>, across all worlds) as its prerequisite.</p>
+</dd>
+  </dl>
+
+
+
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/planetarium/lib9c/blob/feature/infinite-tower-floor-band-v2/Lib9c/TableData/WorldOpen/WorldOpenSheet.cs/#L25" class="edit-link">Edit this page</a>
+        </div>
+
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>
