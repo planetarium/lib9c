@@ -416,6 +416,30 @@ Contains gift ID, block index range, and items to be given.</p>
       <dd></dd>
     </dl>
     <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.TableData.GlobalCounterSheet.html">GlobalCounterSheet</a></dt>
+      <dd><p>Defines the global counters that world-open conditions
+(<a class="xref" href="Nekoyume.TableData.WorldOpenConditionSheet.html">WorldOpenConditionSheet</a>) are measured with: what each counter counts, over
+which targets, and the minimum avatar level that contributes.</p>
+<p>
+Columns: <code>id</code>, <code>type</code>, <code>target_begin</code>, <code>target_end</code>,
+<code>min_avatar_level</code>. The target is a stage id or a recipe id depending on
+<code>type</code>; <code>[target_begin, target_end]</code> is inclusive.
+</p><p>
+Reading is total, like <a class="xref" href="Nekoyume.TableData.BoostScheduleSheet.html">BoostScheduleSheet</a>: a row that does not parse is kept
+but marked invalid and never matches. <a class="xref" href="Nekoyume.TableData.GlobalCounterSheet.html#Nekoyume_TableData_GlobalCounterSheet_ValidateCsv_System_String_">ValidateCsv(string)</a> rejects such a row at
+patch time.
+</p><p>
+A patch cannot change what an id means once recorded; see
+<a class="xref" href="Nekoyume.Action.WorldOpenIdentity.html">WorldOpenIdentity</a>.
+</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.TableData.GlobalCounterSheet.Row.html">GlobalCounterSheet.Row</a></dt>
+      <dd><p>One counter definition.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
       <dt><a class="xref" href="Nekoyume.TableData.GoldQuestSheet.html">GoldQuestSheet</a></dt>
       <dd></dd>
     </dl>
@@ -1083,6 +1107,52 @@ The count of reward is calculated by the rate and the amount of staked currency.
       <dd></dd>
     </dl>
     <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.TableData.WorldOpenConditionSheet.html">WorldOpenConditionSheet</a></dt>
+      <dd><p>The conditions that open a <a class="xref" href="Nekoyume.TableData.WorldOpenSheet.html">WorldOpenSheet</a> opening: within one
+<code>condition_group</code> every counter must reach its threshold, and any one group being
+satisfied opens it (AND within a group, OR across groups).</p>
+<p>
+Columns: <code>open_id</code>, <code>condition_group</code>, <code>counter_id</code>, <code>threshold</code>.
+Cross-sheet references (<code>open_id</code>, <code>counter_id</code>) are not validated here.
+</p><p><code>open_id</code> is not unique, so a row's key is a synthetic sequential number assigned in
+the order rows are added (CSV order, starting at 1). Look rows up with
+<a class="xref" href="Nekoyume.TableData.WorldOpenConditionSheet.html#Nekoyume_TableData_WorldOpenConditionSheet_GroupsOf_System_Int32_">GroupsOf(int)</a> or <a class="xref" href="Nekoyume.TableData.WorldOpenConditionSheet.html#Nekoyume_TableData_WorldOpenConditionSheet_OpenIdsReferencing_System_Int32_">OpenIdsReferencing(int)</a> rather than by key. A blank line
+is kept as an invalid row (open_id 0); both lookups skip invalid rows, so code reading
+<code>OrderedList</code> directly must check <a class="xref" href="Nekoyume.TableData.WorldOpenConditionSheet.Row.html#Nekoyume_TableData_WorldOpenConditionSheet_Row_IsValid">IsValid</a> too.
+</p><p>
+A patch cannot change what an id means once recorded; see
+<a class="xref" href="Nekoyume.Action.WorldOpenIdentity.html">WorldOpenIdentity</a>.
+</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.TableData.WorldOpenConditionSheet.Row.html">WorldOpenConditionSheet.Row</a></dt>
+      <dd><p>One counter requirement of a condition group.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.TableData.WorldOpenSheet.html">WorldOpenSheet</a></dt>
+      <dd><p>Defines when each hard world segment opens: up to which stage, which opening it follows,
+and the block window (earliest, fallback, activation delay) around it. The conditions that
+open it are in <a class="xref" href="Nekoyume.TableData.WorldOpenConditionSheet.html">WorldOpenConditionSheet</a>.</p>
+<p>
+Columns: <code>id</code>, <code>world_id</code>, <code>stage_end</code>, <code>prerequisite_open_id</code>
+(empty for none), <code>min_block_index</code>, <code>fallback_block_index</code>,
+<code>effective_delay_block</code>.
+</p><p><a class="xref" href="Nekoyume.TableData.WorldOpenSheet.Row.html#Nekoyume_TableData_WorldOpenSheet_Row_Set_System_Collections_Generic_IReadOnlyList_System_String__">Set(IReadOnlyList&lt;string&gt;)</a> does not validate across rows, so a test can build an invalid sheet
+directly; <a class="xref" href="Nekoyume.TableData.WorldOpenSheet.html#Nekoyume_TableData_WorldOpenSheet_ValidateCsv_System_String_">ValidateCsv(string)</a> does, at patch time.
+</p><p>
+A patch cannot change what an id means once recorded; see
+<a class="xref" href="Nekoyume.Action.WorldOpenIdentity.html">WorldOpenIdentity</a>.
+</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.TableData.WorldOpenSheet.Row.html">WorldOpenSheet.Row</a></dt>
+      <dd><p>One opening.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
       <dt><a class="xref" href="Nekoyume.TableData.WorldQuestSheet.html">WorldQuestSheet</a></dt>
       <dd></dd>
     </dl>
@@ -1164,6 +1234,11 @@ Enums
     <dl class="jumplist">
       <dt><a class="xref" href="Nekoyume.TableData.CreateAvatarFavSheet.Target.html">CreateAvatarFavSheet.Target</a></dt>
       <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.TableData.GlobalCounterType.html">GlobalCounterType</a></dt>
+      <dd><p>What a <a class="xref" href="Nekoyume.TableData.GlobalCounterSheet.html">GlobalCounterSheet</a> counter counts.</p>
+</dd>
     </dl>
     <dl class="jumplist">
       <dt><a class="xref" href="Nekoyume.TableData.RewardType.html">RewardType</a></dt>

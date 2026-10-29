@@ -1155,6 +1155,11 @@ var compressedAction = new SetAddressStateCompressed(states);</code></pre>
       <dd></dd>
     </dl>
     <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.StageNotOpenedException.html">StageNotOpenedException</a></dt>
+      <dd><p>A stage was entered before its hard world segment opened.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
       <dt><a class="xref" href="Nekoyume.Action.Stake.html">Stake</a></dt>
       <dd></dd>
     </dl>
@@ -1175,6 +1180,13 @@ var compressedAction = new SetAddressStateCompressed(states);</code></pre>
       <dt><a class="xref" href="Nekoyume.Action.Synthesize.html">Synthesize</a></dt>
       <dd><p>Synthesize action is a type of action that synthesizes items.
 <returns>MaterialIds: Id list of items as material</returns><returns><br>ChargeAp: Whether to charge action points with action execution</returns></p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.TableSheetPatchValidation.html">TableSheetPatchValidation</a></dt>
+      <dd><p>The per-sheet checks <a class="xref" href="Nekoyume.Action.PatchTableSheet.html">PatchTableSheet</a> and
+<a class="xref" href="Nekoyume.Action.PatchTableSheetCompressed.html">PatchTableSheetCompressed</a> run before a CSV lands on the chain. Both actions
+call this one helper so the two paths can never disagree about what is accepted.</p>
 </dd>
     </dl>
     <dl class="jumplist">
@@ -1244,6 +1256,27 @@ The required CRYSTAL is calculated from <a class="xref" href="Nekoyume.TableData
     <dl class="jumplist">
       <dt><a class="xref" href="Nekoyume.Action.WeeklyArenaStateNotContainsAvatarAddressException.html">WeeklyArenaStateNotContainsAvatarAddressException</a></dt>
       <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.WorldOpenCounter.html">WorldOpenCounter</a></dt>
+      <dd><p>Counts player progress for the global counters and confirms world openings whose
+conditions are met.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.WorldOpenGate.html">WorldOpenGate</a></dt>
+      <dd><p>Decides whether a stage may be entered. Stages from
+<a class="xref" href="Nekoyume.GameConfig.html#Nekoyume_GameConfig_ProgressGatedStageBegin">ProgressGatedStageBegin</a> are locked until an applied
+<a class="xref" href="Nekoyume.TableData.WorldOpenSheet.html">WorldOpenSheet</a> row covers them.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.WorldOpenIdentity.html">WorldOpenIdentity</a></dt>
+      <dd><p>Keeps what each world-open id means fixed across table patches. The first patch that
+carries an id records its identity; a later patch that gives the id a different identity is
+rejected. An id may be dropped from the sheet (retired), but its record stays, so it can
+only come back with the same identity. To fix a wrong rule, drop it and add a new id.</p>
+</dd>
     </dl>
     <h3 id="structs">
 Structs

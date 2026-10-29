@@ -23589,6 +23589,40 @@ references:
   fullName.vb: Nekoyume.Action.StageNotClearedException.New
   nameWithType: StageNotClearedException.StageNotClearedException
   nameWithType.vb: StageNotClearedException.New
+- uid: Nekoyume.Action.StageNotOpenedException
+  name: StageNotOpenedException
+  href: api/Nekoyume.Action.StageNotOpenedException.html
+  commentId: T:Nekoyume.Action.StageNotOpenedException
+  fullName: Nekoyume.Action.StageNotOpenedException
+  nameWithType: StageNotOpenedException
+- uid: Nekoyume.Action.StageNotOpenedException.#ctor(System.Int32,System.Int32)
+  name: StageNotOpenedException(int, int)
+  href: api/Nekoyume.Action.StageNotOpenedException.html#Nekoyume_Action_StageNotOpenedException__ctor_System_Int32_System_Int32_
+  commentId: M:Nekoyume.Action.StageNotOpenedException.#ctor(System.Int32,System.Int32)
+  name.vb: New(Integer, Integer)
+  fullName: Nekoyume.Action.StageNotOpenedException.StageNotOpenedException(int, int)
+  fullName.vb: Nekoyume.Action.StageNotOpenedException.New(Integer, Integer)
+  nameWithType: StageNotOpenedException.StageNotOpenedException(int, int)
+  nameWithType.vb: StageNotOpenedException.New(Integer, Integer)
+- uid: Nekoyume.Action.StageNotOpenedException.#ctor(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)
+  name: StageNotOpenedException(SerializationInfo, StreamingContext)
+  href: api/Nekoyume.Action.StageNotOpenedException.html#Nekoyume_Action_StageNotOpenedException__ctor_System_Runtime_Serialization_SerializationInfo_System_Runtime_Serialization_StreamingContext_
+  commentId: M:Nekoyume.Action.StageNotOpenedException.#ctor(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)
+  name.vb: New(SerializationInfo, StreamingContext)
+  fullName: Nekoyume.Action.StageNotOpenedException.StageNotOpenedException(System.Runtime.Serialization.SerializationInfo, System.Runtime.Serialization.StreamingContext)
+  fullName.vb: Nekoyume.Action.StageNotOpenedException.New(System.Runtime.Serialization.SerializationInfo, System.Runtime.Serialization.StreamingContext)
+  nameWithType: StageNotOpenedException.StageNotOpenedException(SerializationInfo, StreamingContext)
+  nameWithType.vb: StageNotOpenedException.New(SerializationInfo, StreamingContext)
+- uid: Nekoyume.Action.StageNotOpenedException.#ctor*
+  name: StageNotOpenedException
+  href: api/Nekoyume.Action.StageNotOpenedException.html#Nekoyume_Action_StageNotOpenedException__ctor_
+  commentId: Overload:Nekoyume.Action.StageNotOpenedException.#ctor
+  isSpec: "True"
+  name.vb: New
+  fullName: Nekoyume.Action.StageNotOpenedException.StageNotOpenedException
+  fullName.vb: Nekoyume.Action.StageNotOpenedException.New
+  nameWithType: StageNotOpenedException.StageNotOpenedException
+  nameWithType.vb: StageNotOpenedException.New
 - uid: Nekoyume.Action.Stake
   name: Stake
   href: api/Nekoyume.Action.Stake.html
@@ -23997,6 +24031,28 @@ references:
   isSpec: "True"
   fullName: Nekoyume.Action.Synthesize.PlainValueInternal
   nameWithType: Synthesize.PlainValueInternal
+- uid: Nekoyume.Action.TableSheetPatchValidation
+  name: TableSheetPatchValidation
+  href: api/Nekoyume.Action.TableSheetPatchValidation.html
+  commentId: T:Nekoyume.Action.TableSheetPatchValidation
+  fullName: Nekoyume.Action.TableSheetPatchValidation
+  nameWithType: TableSheetPatchValidation
+- uid: Nekoyume.Action.TableSheetPatchValidation.Validate(System.String,System.String)
+  name: Validate(string, string)
+  href: api/Nekoyume.Action.TableSheetPatchValidation.html#Nekoyume_Action_TableSheetPatchValidation_Validate_System_String_System_String_
+  commentId: M:Nekoyume.Action.TableSheetPatchValidation.Validate(System.String,System.String)
+  name.vb: Validate(String, String)
+  fullName: Nekoyume.Action.TableSheetPatchValidation.Validate(string, string)
+  fullName.vb: Nekoyume.Action.TableSheetPatchValidation.Validate(String, String)
+  nameWithType: TableSheetPatchValidation.Validate(string, string)
+  nameWithType.vb: TableSheetPatchValidation.Validate(String, String)
+- uid: Nekoyume.Action.TableSheetPatchValidation.Validate*
+  name: Validate
+  href: api/Nekoyume.Action.TableSheetPatchValidation.html#Nekoyume_Action_TableSheetPatchValidation_Validate_
+  commentId: Overload:Nekoyume.Action.TableSheetPatchValidation.Validate
+  isSpec: "True"
+  fullName: Nekoyume.Action.TableSheetPatchValidation.Validate
+  nameWithType: TableSheetPatchValidation.Validate
 - uid: Nekoyume.Action.TotalSupplyDoesNotExistException
   name: TotalSupplyDoesNotExistException
   href: api/Nekoyume.Action.TotalSupplyDoesNotExistException.html
@@ -26341,6 +26397,120 @@ references:
   fullName.vb: Nekoyume.Action.WeeklyArenaStateNotContainsAvatarAddressException.New
   nameWithType: WeeklyArenaStateNotContainsAvatarAddressException.WeeklyArenaStateNotContainsAvatarAddressException
   nameWithType.vb: WeeklyArenaStateNotContainsAvatarAddressException.New
+- uid: Nekoyume.Action.WorldOpenCounter
+  name: WorldOpenCounter
+  href: api/Nekoyume.Action.WorldOpenCounter.html
+  commentId: T:Nekoyume.Action.WorldOpenCounter
+  fullName: Nekoyume.Action.WorldOpenCounter
+  nameWithType: WorldOpenCounter
+- uid: Nekoyume.Action.WorldOpenCounter.ConfirmSatisfiedAfterPatch(Libplanet.Action.State.IWorld,System.String,System.Int64)
+  name: ConfirmSatisfiedAfterPatch(IWorld, string, long)
+  href: api/Nekoyume.Action.WorldOpenCounter.html#Nekoyume_Action_WorldOpenCounter_ConfirmSatisfiedAfterPatch_Libplanet_Action_State_IWorld_System_String_System_Int64_
+  commentId: M:Nekoyume.Action.WorldOpenCounter.ConfirmSatisfiedAfterPatch(Libplanet.Action.State.IWorld,System.String,System.Int64)
+  name.vb: ConfirmSatisfiedAfterPatch(IWorld, String, Long)
+  fullName: Nekoyume.Action.WorldOpenCounter.ConfirmSatisfiedAfterPatch(Libplanet.Action.State.IWorld, string, long)
+  fullName.vb: Nekoyume.Action.WorldOpenCounter.ConfirmSatisfiedAfterPatch(Libplanet.Action.State.IWorld, String, Long)
+  nameWithType: WorldOpenCounter.ConfirmSatisfiedAfterPatch(IWorld, string, long)
+  nameWithType.vb: WorldOpenCounter.ConfirmSatisfiedAfterPatch(IWorld, String, Long)
+- uid: Nekoyume.Action.WorldOpenCounter.ConfirmSatisfiedAfterPatch*
+  name: ConfirmSatisfiedAfterPatch
+  href: api/Nekoyume.Action.WorldOpenCounter.html#Nekoyume_Action_WorldOpenCounter_ConfirmSatisfiedAfterPatch_
+  commentId: Overload:Nekoyume.Action.WorldOpenCounter.ConfirmSatisfiedAfterPatch
+  isSpec: "True"
+  fullName: Nekoyume.Action.WorldOpenCounter.ConfirmSatisfiedAfterPatch
+  nameWithType: WorldOpenCounter.ConfirmSatisfiedAfterPatch
+- uid: Nekoyume.Action.WorldOpenCounter.IsSatisfied(Libplanet.Action.State.IWorldState,Nekoyume.TableData.WorldOpenConditionSheet,System.Int32)
+  name: IsSatisfied(IWorldState, WorldOpenConditionSheet, int)
+  href: api/Nekoyume.Action.WorldOpenCounter.html#Nekoyume_Action_WorldOpenCounter_IsSatisfied_Libplanet_Action_State_IWorldState_Nekoyume_TableData_WorldOpenConditionSheet_System_Int32_
+  commentId: M:Nekoyume.Action.WorldOpenCounter.IsSatisfied(Libplanet.Action.State.IWorldState,Nekoyume.TableData.WorldOpenConditionSheet,System.Int32)
+  name.vb: IsSatisfied(IWorldState, WorldOpenConditionSheet, Integer)
+  fullName: Nekoyume.Action.WorldOpenCounter.IsSatisfied(Libplanet.Action.State.IWorldState, Nekoyume.TableData.WorldOpenConditionSheet, int)
+  fullName.vb: Nekoyume.Action.WorldOpenCounter.IsSatisfied(Libplanet.Action.State.IWorldState, Nekoyume.TableData.WorldOpenConditionSheet, Integer)
+  nameWithType: WorldOpenCounter.IsSatisfied(IWorldState, WorldOpenConditionSheet, int)
+  nameWithType.vb: WorldOpenCounter.IsSatisfied(IWorldState, WorldOpenConditionSheet, Integer)
+- uid: Nekoyume.Action.WorldOpenCounter.IsSatisfied*
+  name: IsSatisfied
+  href: api/Nekoyume.Action.WorldOpenCounter.html#Nekoyume_Action_WorldOpenCounter_IsSatisfied_
+  commentId: Overload:Nekoyume.Action.WorldOpenCounter.IsSatisfied
+  isSpec: "True"
+  fullName: Nekoyume.Action.WorldOpenCounter.IsSatisfied
+  nameWithType: WorldOpenCounter.IsSatisfied
+- uid: Nekoyume.Action.WorldOpenCounter.Tick(Libplanet.Action.State.IWorld,Nekoyume.TableData.GlobalCounterType,System.Int32,System.Int64,System.Int32,System.Int64)
+  name: Tick(IWorld, GlobalCounterType, int, long, int, long)
+  href: api/Nekoyume.Action.WorldOpenCounter.html#Nekoyume_Action_WorldOpenCounter_Tick_Libplanet_Action_State_IWorld_Nekoyume_TableData_GlobalCounterType_System_Int32_System_Int64_System_Int32_System_Int64_
+  commentId: M:Nekoyume.Action.WorldOpenCounter.Tick(Libplanet.Action.State.IWorld,Nekoyume.TableData.GlobalCounterType,System.Int32,System.Int64,System.Int32,System.Int64)
+  name.vb: Tick(IWorld, GlobalCounterType, Integer, Long, Integer, Long)
+  fullName: Nekoyume.Action.WorldOpenCounter.Tick(Libplanet.Action.State.IWorld, Nekoyume.TableData.GlobalCounterType, int, long, int, long)
+  fullName.vb: Nekoyume.Action.WorldOpenCounter.Tick(Libplanet.Action.State.IWorld, Nekoyume.TableData.GlobalCounterType, Integer, Long, Integer, Long)
+  nameWithType: WorldOpenCounter.Tick(IWorld, GlobalCounterType, int, long, int, long)
+  nameWithType.vb: WorldOpenCounter.Tick(IWorld, GlobalCounterType, Integer, Long, Integer, Long)
+- uid: Nekoyume.Action.WorldOpenCounter.Tick*
+  name: Tick
+  href: api/Nekoyume.Action.WorldOpenCounter.html#Nekoyume_Action_WorldOpenCounter_Tick_
+  commentId: Overload:Nekoyume.Action.WorldOpenCounter.Tick
+  isSpec: "True"
+  fullName: Nekoyume.Action.WorldOpenCounter.Tick
+  nameWithType: WorldOpenCounter.Tick
+- uid: Nekoyume.Action.WorldOpenGate
+  name: WorldOpenGate
+  href: api/Nekoyume.Action.WorldOpenGate.html
+  commentId: T:Nekoyume.Action.WorldOpenGate
+  fullName: Nekoyume.Action.WorldOpenGate
+  nameWithType: WorldOpenGate
+- uid: Nekoyume.Action.WorldOpenGate.GetOpenedStageEnd(Libplanet.Action.State.IWorldState,Nekoyume.TableData.WorldSheet.Row,System.Int64)
+  name: GetOpenedStageEnd(IWorldState, Row, long)
+  href: api/Nekoyume.Action.WorldOpenGate.html#Nekoyume_Action_WorldOpenGate_GetOpenedStageEnd_Libplanet_Action_State_IWorldState_Nekoyume_TableData_WorldSheet_Row_System_Int64_
+  commentId: M:Nekoyume.Action.WorldOpenGate.GetOpenedStageEnd(Libplanet.Action.State.IWorldState,Nekoyume.TableData.WorldSheet.Row,System.Int64)
+  name.vb: GetOpenedStageEnd(IWorldState, Row, Long)
+  fullName: Nekoyume.Action.WorldOpenGate.GetOpenedStageEnd(Libplanet.Action.State.IWorldState, Nekoyume.TableData.WorldSheet.Row, long)
+  fullName.vb: Nekoyume.Action.WorldOpenGate.GetOpenedStageEnd(Libplanet.Action.State.IWorldState, Nekoyume.TableData.WorldSheet.Row, Long)
+  nameWithType: WorldOpenGate.GetOpenedStageEnd(IWorldState, WorldSheet.Row, long)
+  nameWithType.vb: WorldOpenGate.GetOpenedStageEnd(IWorldState, WorldSheet.Row, Long)
+- uid: Nekoyume.Action.WorldOpenGate.GetOpenedStageEnd*
+  name: GetOpenedStageEnd
+  href: api/Nekoyume.Action.WorldOpenGate.html#Nekoyume_Action_WorldOpenGate_GetOpenedStageEnd_
+  commentId: Overload:Nekoyume.Action.WorldOpenGate.GetOpenedStageEnd
+  isSpec: "True"
+  fullName: Nekoyume.Action.WorldOpenGate.GetOpenedStageEnd
+  nameWithType: WorldOpenGate.GetOpenedStageEnd
+- uid: Nekoyume.Action.WorldOpenGate.IsStageOpen(Libplanet.Action.State.IWorldState,Nekoyume.TableData.WorldSheet.Row,System.Int32,System.Int64)
+  name: IsStageOpen(IWorldState, Row, int, long)
+  href: api/Nekoyume.Action.WorldOpenGate.html#Nekoyume_Action_WorldOpenGate_IsStageOpen_Libplanet_Action_State_IWorldState_Nekoyume_TableData_WorldSheet_Row_System_Int32_System_Int64_
+  commentId: M:Nekoyume.Action.WorldOpenGate.IsStageOpen(Libplanet.Action.State.IWorldState,Nekoyume.TableData.WorldSheet.Row,System.Int32,System.Int64)
+  name.vb: IsStageOpen(IWorldState, Row, Integer, Long)
+  fullName: Nekoyume.Action.WorldOpenGate.IsStageOpen(Libplanet.Action.State.IWorldState, Nekoyume.TableData.WorldSheet.Row, int, long)
+  fullName.vb: Nekoyume.Action.WorldOpenGate.IsStageOpen(Libplanet.Action.State.IWorldState, Nekoyume.TableData.WorldSheet.Row, Integer, Long)
+  nameWithType: WorldOpenGate.IsStageOpen(IWorldState, WorldSheet.Row, int, long)
+  nameWithType.vb: WorldOpenGate.IsStageOpen(IWorldState, WorldSheet.Row, Integer, Long)
+- uid: Nekoyume.Action.WorldOpenGate.IsStageOpen*
+  name: IsStageOpen
+  href: api/Nekoyume.Action.WorldOpenGate.html#Nekoyume_Action_WorldOpenGate_IsStageOpen_
+  commentId: Overload:Nekoyume.Action.WorldOpenGate.IsStageOpen
+  isSpec: "True"
+  fullName: Nekoyume.Action.WorldOpenGate.IsStageOpen
+  nameWithType: WorldOpenGate.IsStageOpen
+- uid: Nekoyume.Action.WorldOpenIdentity
+  name: WorldOpenIdentity
+  href: api/Nekoyume.Action.WorldOpenIdentity.html
+  commentId: T:Nekoyume.Action.WorldOpenIdentity
+  fullName: Nekoyume.Action.WorldOpenIdentity
+  nameWithType: WorldOpenIdentity
+- uid: Nekoyume.Action.WorldOpenIdentity.CheckAndRecord(Libplanet.Action.State.IWorld,System.String,System.String)
+  name: CheckAndRecord(IWorld, string, string)
+  href: api/Nekoyume.Action.WorldOpenIdentity.html#Nekoyume_Action_WorldOpenIdentity_CheckAndRecord_Libplanet_Action_State_IWorld_System_String_System_String_
+  commentId: M:Nekoyume.Action.WorldOpenIdentity.CheckAndRecord(Libplanet.Action.State.IWorld,System.String,System.String)
+  name.vb: CheckAndRecord(IWorld, String, String)
+  fullName: Nekoyume.Action.WorldOpenIdentity.CheckAndRecord(Libplanet.Action.State.IWorld, string, string)
+  fullName.vb: Nekoyume.Action.WorldOpenIdentity.CheckAndRecord(Libplanet.Action.State.IWorld, String, String)
+  nameWithType: WorldOpenIdentity.CheckAndRecord(IWorld, string, string)
+  nameWithType.vb: WorldOpenIdentity.CheckAndRecord(IWorld, String, String)
+- uid: Nekoyume.Action.WorldOpenIdentity.CheckAndRecord*
+  name: CheckAndRecord
+  href: api/Nekoyume.Action.WorldOpenIdentity.html#Nekoyume_Action_WorldOpenIdentity_CheckAndRecord_
+  commentId: Overload:Nekoyume.Action.WorldOpenIdentity.CheckAndRecord
+  isSpec: "True"
+  fullName: Nekoyume.Action.WorldOpenIdentity.CheckAndRecord
+  nameWithType: WorldOpenIdentity.CheckAndRecord
 - uid: Nekoyume.ActionObsoleteAttributeExtension
   name: ActionObsoleteAttributeExtension
   href: api/Nekoyume.ActionObsoleteAttributeExtension.html
@@ -27132,6 +27302,12 @@ references:
   isSpec: "True"
   fullName: Nekoyume.Addresses.GetWorldBossKillRewardRecordAddress
   nameWithType: Addresses.GetWorldBossKillRewardRecordAddress
+- uid: Nekoyume.Addresses.GlobalCounter
+  name: GlobalCounter
+  href: api/Nekoyume.Addresses.html#Nekoyume_Addresses_GlobalCounter
+  commentId: F:Nekoyume.Addresses.GlobalCounter
+  fullName: Nekoyume.Addresses.GlobalCounter
+  nameWithType: Addresses.GlobalCounter
 - uid: Nekoyume.Addresses.GoldCurrency
   name: GoldCurrency
   href: api/Nekoyume.Addresses.html#Nekoyume_Addresses_GoldCurrency
@@ -27481,6 +27657,12 @@ references:
   commentId: F:Nekoyume.Addresses.WorldInformation
   fullName: Nekoyume.Addresses.WorldInformation
   nameWithType: Addresses.WorldInformation
+- uid: Nekoyume.Addresses.WorldOpen
+  name: WorldOpen
+  href: api/Nekoyume.Addresses.html#Nekoyume_Addresses_WorldOpen
+  commentId: F:Nekoyume.Addresses.WorldOpen
+  fullName: Nekoyume.Addresses.WorldOpen
+  nameWithType: Addresses.WorldOpen
 - uid: Nekoyume.AppProtocolVersionExtra
   name: AppProtocolVersionExtra
   href: api/Nekoyume.AppProtocolVersionExtra.html
@@ -39585,6 +39767,12 @@ references:
   commentId: F:Nekoyume.GameConfig.MimisbrunnrWorldId
   fullName: Nekoyume.GameConfig.MimisbrunnrWorldId
   nameWithType: GameConfig.MimisbrunnrWorldId
+- uid: Nekoyume.GameConfig.ProgressGatedStageBegin
+  name: ProgressGatedStageBegin
+  href: api/Nekoyume.GameConfig.html#Nekoyume_GameConfig_ProgressGatedStageBegin
+  commentId: F:Nekoyume.GameConfig.ProgressGatedStageBegin
+  fullName: Nekoyume.GameConfig.ProgressGatedStageBegin
+  nameWithType: GameConfig.ProgressGatedStageBegin
 - uid: Nekoyume.GameConfig.RequireCharacterLevel
   name: GameConfig.RequireCharacterLevel
   href: api/Nekoyume.GameConfig.RequireCharacterLevel.html
@@ -80430,6 +80618,60 @@ references:
   isSpec: "True"
   fullName: Nekoyume.Module.GiftModule.SetClaimedGifts
   nameWithType: GiftModule.SetClaimedGifts
+- uid: Nekoyume.Module.GlobalCounterModule
+  name: GlobalCounterModule
+  href: api/Nekoyume.Module.GlobalCounterModule.html
+  commentId: T:Nekoyume.Module.GlobalCounterModule
+  fullName: Nekoyume.Module.GlobalCounterModule
+  nameWithType: GlobalCounterModule
+- uid: Nekoyume.Module.GlobalCounterModule.AddCounter(Libplanet.Action.State.IWorld,System.Int32,System.Int64)
+  name: AddCounter(IWorld, int, long)
+  href: api/Nekoyume.Module.GlobalCounterModule.html#Nekoyume_Module_GlobalCounterModule_AddCounter_Libplanet_Action_State_IWorld_System_Int32_System_Int64_
+  commentId: M:Nekoyume.Module.GlobalCounterModule.AddCounter(Libplanet.Action.State.IWorld,System.Int32,System.Int64)
+  name.vb: AddCounter(IWorld, Integer, Long)
+  fullName: Nekoyume.Module.GlobalCounterModule.AddCounter(Libplanet.Action.State.IWorld, int, long)
+  fullName.vb: Nekoyume.Module.GlobalCounterModule.AddCounter(Libplanet.Action.State.IWorld, Integer, Long)
+  nameWithType: GlobalCounterModule.AddCounter(IWorld, int, long)
+  nameWithType.vb: GlobalCounterModule.AddCounter(IWorld, Integer, Long)
+- uid: Nekoyume.Module.GlobalCounterModule.AddCounter*
+  name: AddCounter
+  href: api/Nekoyume.Module.GlobalCounterModule.html#Nekoyume_Module_GlobalCounterModule_AddCounter_
+  commentId: Overload:Nekoyume.Module.GlobalCounterModule.AddCounter
+  isSpec: "True"
+  fullName: Nekoyume.Module.GlobalCounterModule.AddCounter
+  nameWithType: GlobalCounterModule.AddCounter
+- uid: Nekoyume.Module.GlobalCounterModule.CounterKey(System.Int32)
+  name: CounterKey(int)
+  href: api/Nekoyume.Module.GlobalCounterModule.html#Nekoyume_Module_GlobalCounterModule_CounterKey_System_Int32_
+  commentId: M:Nekoyume.Module.GlobalCounterModule.CounterKey(System.Int32)
+  name.vb: CounterKey(Integer)
+  fullName: Nekoyume.Module.GlobalCounterModule.CounterKey(int)
+  fullName.vb: Nekoyume.Module.GlobalCounterModule.CounterKey(Integer)
+  nameWithType: GlobalCounterModule.CounterKey(int)
+  nameWithType.vb: GlobalCounterModule.CounterKey(Integer)
+- uid: Nekoyume.Module.GlobalCounterModule.CounterKey*
+  name: CounterKey
+  href: api/Nekoyume.Module.GlobalCounterModule.html#Nekoyume_Module_GlobalCounterModule_CounterKey_
+  commentId: Overload:Nekoyume.Module.GlobalCounterModule.CounterKey
+  isSpec: "True"
+  fullName: Nekoyume.Module.GlobalCounterModule.CounterKey
+  nameWithType: GlobalCounterModule.CounterKey
+- uid: Nekoyume.Module.GlobalCounterModule.GetCounter(Libplanet.Action.State.IWorldState,System.Int32)
+  name: GetCounter(IWorldState, int)
+  href: api/Nekoyume.Module.GlobalCounterModule.html#Nekoyume_Module_GlobalCounterModule_GetCounter_Libplanet_Action_State_IWorldState_System_Int32_
+  commentId: M:Nekoyume.Module.GlobalCounterModule.GetCounter(Libplanet.Action.State.IWorldState,System.Int32)
+  name.vb: GetCounter(IWorldState, Integer)
+  fullName: Nekoyume.Module.GlobalCounterModule.GetCounter(Libplanet.Action.State.IWorldState, int)
+  fullName.vb: Nekoyume.Module.GlobalCounterModule.GetCounter(Libplanet.Action.State.IWorldState, Integer)
+  nameWithType: GlobalCounterModule.GetCounter(IWorldState, int)
+  nameWithType.vb: GlobalCounterModule.GetCounter(IWorldState, Integer)
+- uid: Nekoyume.Module.GlobalCounterModule.GetCounter*
+  name: GetCounter
+  href: api/Nekoyume.Module.GlobalCounterModule.html#Nekoyume_Module_GlobalCounterModule_GetCounter_
+  commentId: Overload:Nekoyume.Module.GlobalCounterModule.GetCounter
+  isSpec: "True"
+  fullName: Nekoyume.Module.GlobalCounterModule.GetCounter
+  nameWithType: GlobalCounterModule.GetCounter
 - uid: Nekoyume.Module.Guild
   name: Nekoyume.Module.Guild
   href: api/Nekoyume.Module.Guild.html
@@ -82013,6 +82255,108 @@ references:
   isSpec: "True"
   fullName: Nekoyume.Module.ValidatorDelegation.ValidatorListModule.TryGetValidatorList
   nameWithType: ValidatorListModule.TryGetValidatorList
+- uid: Nekoyume.Module.WorldOpenModule
+  name: WorldOpenModule
+  href: api/Nekoyume.Module.WorldOpenModule.html
+  commentId: T:Nekoyume.Module.WorldOpenModule
+  fullName: Nekoyume.Module.WorldOpenModule
+  nameWithType: WorldOpenModule
+- uid: Nekoyume.Module.WorldOpenModule.ConfirmOpen(Libplanet.Action.State.IWorld,System.Int32,System.Int64)
+  name: ConfirmOpen(IWorld, int, long)
+  href: api/Nekoyume.Module.WorldOpenModule.html#Nekoyume_Module_WorldOpenModule_ConfirmOpen_Libplanet_Action_State_IWorld_System_Int32_System_Int64_
+  commentId: M:Nekoyume.Module.WorldOpenModule.ConfirmOpen(Libplanet.Action.State.IWorld,System.Int32,System.Int64)
+  name.vb: ConfirmOpen(IWorld, Integer, Long)
+  fullName: Nekoyume.Module.WorldOpenModule.ConfirmOpen(Libplanet.Action.State.IWorld, int, long)
+  fullName.vb: Nekoyume.Module.WorldOpenModule.ConfirmOpen(Libplanet.Action.State.IWorld, Integer, Long)
+  nameWithType: WorldOpenModule.ConfirmOpen(IWorld, int, long)
+  nameWithType.vb: WorldOpenModule.ConfirmOpen(IWorld, Integer, Long)
+- uid: Nekoyume.Module.WorldOpenModule.ConfirmOpen*
+  name: ConfirmOpen
+  href: api/Nekoyume.Module.WorldOpenModule.html#Nekoyume_Module_WorldOpenModule_ConfirmOpen_
+  commentId: Overload:Nekoyume.Module.WorldOpenModule.ConfirmOpen
+  isSpec: "True"
+  fullName: Nekoyume.Module.WorldOpenModule.ConfirmOpen
+  nameWithType: WorldOpenModule.ConfirmOpen
+- uid: Nekoyume.Module.WorldOpenModule.IsApplied(Libplanet.Action.State.IWorldState,Nekoyume.TableData.WorldOpenSheet,Nekoyume.TableData.WorldOpenSheet.Row,System.Int64)
+  name: IsApplied(IWorldState, WorldOpenSheet, Row, long)
+  href: api/Nekoyume.Module.WorldOpenModule.html#Nekoyume_Module_WorldOpenModule_IsApplied_Libplanet_Action_State_IWorldState_Nekoyume_TableData_WorldOpenSheet_Nekoyume_TableData_WorldOpenSheet_Row_System_Int64_
+  commentId: M:Nekoyume.Module.WorldOpenModule.IsApplied(Libplanet.Action.State.IWorldState,Nekoyume.TableData.WorldOpenSheet,Nekoyume.TableData.WorldOpenSheet.Row,System.Int64)
+  name.vb: IsApplied(IWorldState, WorldOpenSheet, Row, Long)
+  fullName: Nekoyume.Module.WorldOpenModule.IsApplied(Libplanet.Action.State.IWorldState, Nekoyume.TableData.WorldOpenSheet, Nekoyume.TableData.WorldOpenSheet.Row, long)
+  fullName.vb: Nekoyume.Module.WorldOpenModule.IsApplied(Libplanet.Action.State.IWorldState, Nekoyume.TableData.WorldOpenSheet, Nekoyume.TableData.WorldOpenSheet.Row, Long)
+  nameWithType: WorldOpenModule.IsApplied(IWorldState, WorldOpenSheet, WorldOpenSheet.Row, long)
+  nameWithType.vb: WorldOpenModule.IsApplied(IWorldState, WorldOpenSheet, WorldOpenSheet.Row, Long)
+- uid: Nekoyume.Module.WorldOpenModule.IsApplied*
+  name: IsApplied
+  href: api/Nekoyume.Module.WorldOpenModule.html#Nekoyume_Module_WorldOpenModule_IsApplied_
+  commentId: Overload:Nekoyume.Module.WorldOpenModule.IsApplied
+  isSpec: "True"
+  fullName: Nekoyume.Module.WorldOpenModule.IsApplied
+  nameWithType: WorldOpenModule.IsApplied
+- uid: Nekoyume.Module.WorldOpenModule.IsPending(Libplanet.Action.State.IWorldState,Nekoyume.TableData.WorldOpenSheet.Row,System.Int64)
+  name: IsPending(IWorldState, Row, long)
+  href: api/Nekoyume.Module.WorldOpenModule.html#Nekoyume_Module_WorldOpenModule_IsPending_Libplanet_Action_State_IWorldState_Nekoyume_TableData_WorldOpenSheet_Row_System_Int64_
+  commentId: M:Nekoyume.Module.WorldOpenModule.IsPending(Libplanet.Action.State.IWorldState,Nekoyume.TableData.WorldOpenSheet.Row,System.Int64)
+  name.vb: IsPending(IWorldState, Row, Long)
+  fullName: Nekoyume.Module.WorldOpenModule.IsPending(Libplanet.Action.State.IWorldState, Nekoyume.TableData.WorldOpenSheet.Row, long)
+  fullName.vb: Nekoyume.Module.WorldOpenModule.IsPending(Libplanet.Action.State.IWorldState, Nekoyume.TableData.WorldOpenSheet.Row, Long)
+  nameWithType: WorldOpenModule.IsPending(IWorldState, WorldOpenSheet.Row, long)
+  nameWithType.vb: WorldOpenModule.IsPending(IWorldState, WorldOpenSheet.Row, Long)
+- uid: Nekoyume.Module.WorldOpenModule.IsPending*
+  name: IsPending
+  href: api/Nekoyume.Module.WorldOpenModule.html#Nekoyume_Module_WorldOpenModule_IsPending_
+  commentId: Overload:Nekoyume.Module.WorldOpenModule.IsPending
+  isSpec: "True"
+  fullName: Nekoyume.Module.WorldOpenModule.IsPending
+  nameWithType: WorldOpenModule.IsPending
+- uid: Nekoyume.Module.WorldOpenModule.OpenKey(System.Int32)
+  name: OpenKey(int)
+  href: api/Nekoyume.Module.WorldOpenModule.html#Nekoyume_Module_WorldOpenModule_OpenKey_System_Int32_
+  commentId: M:Nekoyume.Module.WorldOpenModule.OpenKey(System.Int32)
+  name.vb: OpenKey(Integer)
+  fullName: Nekoyume.Module.WorldOpenModule.OpenKey(int)
+  fullName.vb: Nekoyume.Module.WorldOpenModule.OpenKey(Integer)
+  nameWithType: WorldOpenModule.OpenKey(int)
+  nameWithType.vb: WorldOpenModule.OpenKey(Integer)
+- uid: Nekoyume.Module.WorldOpenModule.OpenKey*
+  name: OpenKey
+  href: api/Nekoyume.Module.WorldOpenModule.html#Nekoyume_Module_WorldOpenModule_OpenKey_
+  commentId: Overload:Nekoyume.Module.WorldOpenModule.OpenKey
+  isSpec: "True"
+  fullName: Nekoyume.Module.WorldOpenModule.OpenKey
+  nameWithType: WorldOpenModule.OpenKey
+- uid: Nekoyume.Module.WorldOpenModule.TryGetAppliedBlock(Libplanet.Action.State.IWorldState,Nekoyume.TableData.WorldOpenSheet,Nekoyume.TableData.WorldOpenSheet.Row,System.Int64@)
+  name: TryGetAppliedBlock(IWorldState, WorldOpenSheet, Row, out long)
+  href: api/Nekoyume.Module.WorldOpenModule.html#Nekoyume_Module_WorldOpenModule_TryGetAppliedBlock_Libplanet_Action_State_IWorldState_Nekoyume_TableData_WorldOpenSheet_Nekoyume_TableData_WorldOpenSheet_Row_System_Int64__
+  commentId: M:Nekoyume.Module.WorldOpenModule.TryGetAppliedBlock(Libplanet.Action.State.IWorldState,Nekoyume.TableData.WorldOpenSheet,Nekoyume.TableData.WorldOpenSheet.Row,System.Int64@)
+  name.vb: TryGetAppliedBlock(IWorldState, WorldOpenSheet, Row, Long)
+  fullName: Nekoyume.Module.WorldOpenModule.TryGetAppliedBlock(Libplanet.Action.State.IWorldState, Nekoyume.TableData.WorldOpenSheet, Nekoyume.TableData.WorldOpenSheet.Row, out long)
+  fullName.vb: Nekoyume.Module.WorldOpenModule.TryGetAppliedBlock(Libplanet.Action.State.IWorldState, Nekoyume.TableData.WorldOpenSheet, Nekoyume.TableData.WorldOpenSheet.Row, Long)
+  nameWithType: WorldOpenModule.TryGetAppliedBlock(IWorldState, WorldOpenSheet, WorldOpenSheet.Row, out long)
+  nameWithType.vb: WorldOpenModule.TryGetAppliedBlock(IWorldState, WorldOpenSheet, WorldOpenSheet.Row, Long)
+- uid: Nekoyume.Module.WorldOpenModule.TryGetAppliedBlock*
+  name: TryGetAppliedBlock
+  href: api/Nekoyume.Module.WorldOpenModule.html#Nekoyume_Module_WorldOpenModule_TryGetAppliedBlock_
+  commentId: Overload:Nekoyume.Module.WorldOpenModule.TryGetAppliedBlock
+  isSpec: "True"
+  fullName: Nekoyume.Module.WorldOpenModule.TryGetAppliedBlock
+  nameWithType: WorldOpenModule.TryGetAppliedBlock
+- uid: Nekoyume.Module.WorldOpenModule.TryGetConfirmedBlock(Libplanet.Action.State.IWorldState,System.Int32,System.Int64@)
+  name: TryGetConfirmedBlock(IWorldState, int, out long)
+  href: api/Nekoyume.Module.WorldOpenModule.html#Nekoyume_Module_WorldOpenModule_TryGetConfirmedBlock_Libplanet_Action_State_IWorldState_System_Int32_System_Int64__
+  commentId: M:Nekoyume.Module.WorldOpenModule.TryGetConfirmedBlock(Libplanet.Action.State.IWorldState,System.Int32,System.Int64@)
+  name.vb: TryGetConfirmedBlock(IWorldState, Integer, Long)
+  fullName: Nekoyume.Module.WorldOpenModule.TryGetConfirmedBlock(Libplanet.Action.State.IWorldState, int, out long)
+  fullName.vb: Nekoyume.Module.WorldOpenModule.TryGetConfirmedBlock(Libplanet.Action.State.IWorldState, Integer, Long)
+  nameWithType: WorldOpenModule.TryGetConfirmedBlock(IWorldState, int, out long)
+  nameWithType.vb: WorldOpenModule.TryGetConfirmedBlock(IWorldState, Integer, Long)
+- uid: Nekoyume.Module.WorldOpenModule.TryGetConfirmedBlock*
+  name: TryGetConfirmedBlock
+  href: api/Nekoyume.Module.WorldOpenModule.html#Nekoyume_Module_WorldOpenModule_TryGetConfirmedBlock_
+  commentId: Overload:Nekoyume.Module.WorldOpenModule.TryGetConfirmedBlock
+  isSpec: "True"
+  fullName: Nekoyume.Module.WorldOpenModule.TryGetConfirmedBlock
+  nameWithType: WorldOpenModule.TryGetConfirmedBlock
 - uid: Nekoyume.Planet
   name: Planet
   href: api/Nekoyume.Planet.html
@@ -90928,6 +91272,222 @@ references:
   isSpec: "True"
   fullName: Nekoyume.TableData.GeneralQuestSheet.Row.Set
   nameWithType: GeneralQuestSheet.Row.Set
+- uid: Nekoyume.TableData.GlobalCounterSheet
+  name: GlobalCounterSheet
+  href: api/Nekoyume.TableData.GlobalCounterSheet.html
+  commentId: T:Nekoyume.TableData.GlobalCounterSheet
+  fullName: Nekoyume.TableData.GlobalCounterSheet
+  nameWithType: GlobalCounterSheet
+- uid: Nekoyume.TableData.GlobalCounterSheet.#ctor
+  name: GlobalCounterSheet()
+  href: api/Nekoyume.TableData.GlobalCounterSheet.html#Nekoyume_TableData_GlobalCounterSheet__ctor
+  commentId: M:Nekoyume.TableData.GlobalCounterSheet.#ctor
+  name.vb: New()
+  fullName: Nekoyume.TableData.GlobalCounterSheet.GlobalCounterSheet()
+  fullName.vb: Nekoyume.TableData.GlobalCounterSheet.New()
+  nameWithType: GlobalCounterSheet.GlobalCounterSheet()
+  nameWithType.vb: GlobalCounterSheet.New()
+- uid: Nekoyume.TableData.GlobalCounterSheet.#ctor*
+  name: GlobalCounterSheet
+  href: api/Nekoyume.TableData.GlobalCounterSheet.html#Nekoyume_TableData_GlobalCounterSheet__ctor_
+  commentId: Overload:Nekoyume.TableData.GlobalCounterSheet.#ctor
+  isSpec: "True"
+  name.vb: New
+  fullName: Nekoyume.TableData.GlobalCounterSheet.GlobalCounterSheet
+  fullName.vb: Nekoyume.TableData.GlobalCounterSheet.New
+  nameWithType: GlobalCounterSheet.GlobalCounterSheet
+  nameWithType.vb: GlobalCounterSheet.New
+- uid: Nekoyume.TableData.GlobalCounterSheet.AddRow(System.Int32,Nekoyume.TableData.GlobalCounterSheet.Row)
+  name: AddRow(int, Row)
+  href: api/Nekoyume.TableData.GlobalCounterSheet.html#Nekoyume_TableData_GlobalCounterSheet_AddRow_System_Int32_Nekoyume_TableData_GlobalCounterSheet_Row_
+  commentId: M:Nekoyume.TableData.GlobalCounterSheet.AddRow(System.Int32,Nekoyume.TableData.GlobalCounterSheet.Row)
+  name.vb: AddRow(Integer, Row)
+  fullName: Nekoyume.TableData.GlobalCounterSheet.AddRow(int, Nekoyume.TableData.GlobalCounterSheet.Row)
+  fullName.vb: Nekoyume.TableData.GlobalCounterSheet.AddRow(Integer, Nekoyume.TableData.GlobalCounterSheet.Row)
+  nameWithType: GlobalCounterSheet.AddRow(int, GlobalCounterSheet.Row)
+  nameWithType.vb: GlobalCounterSheet.AddRow(Integer, GlobalCounterSheet.Row)
+- uid: Nekoyume.TableData.GlobalCounterSheet.AddRow*
+  name: AddRow
+  href: api/Nekoyume.TableData.GlobalCounterSheet.html#Nekoyume_TableData_GlobalCounterSheet_AddRow_
+  commentId: Overload:Nekoyume.TableData.GlobalCounterSheet.AddRow
+  isSpec: "True"
+  fullName: Nekoyume.TableData.GlobalCounterSheet.AddRow
+  nameWithType: GlobalCounterSheet.AddRow
+- uid: Nekoyume.TableData.GlobalCounterSheet.ColumnNames
+  name: ColumnNames
+  href: api/Nekoyume.TableData.GlobalCounterSheet.html#Nekoyume_TableData_GlobalCounterSheet_ColumnNames
+  commentId: F:Nekoyume.TableData.GlobalCounterSheet.ColumnNames
+  fullName: Nekoyume.TableData.GlobalCounterSheet.ColumnNames
+  nameWithType: GlobalCounterSheet.ColumnNames
+- uid: Nekoyume.TableData.GlobalCounterSheet.Matching(Nekoyume.TableData.GlobalCounterType,System.Int32)
+  name: Matching(GlobalCounterType, int)
+  href: api/Nekoyume.TableData.GlobalCounterSheet.html#Nekoyume_TableData_GlobalCounterSheet_Matching_Nekoyume_TableData_GlobalCounterType_System_Int32_
+  commentId: M:Nekoyume.TableData.GlobalCounterSheet.Matching(Nekoyume.TableData.GlobalCounterType,System.Int32)
+  name.vb: Matching(GlobalCounterType, Integer)
+  fullName: Nekoyume.TableData.GlobalCounterSheet.Matching(Nekoyume.TableData.GlobalCounterType, int)
+  fullName.vb: Nekoyume.TableData.GlobalCounterSheet.Matching(Nekoyume.TableData.GlobalCounterType, Integer)
+  nameWithType: GlobalCounterSheet.Matching(GlobalCounterType, int)
+  nameWithType.vb: GlobalCounterSheet.Matching(GlobalCounterType, Integer)
+- uid: Nekoyume.TableData.GlobalCounterSheet.Matching*
+  name: Matching
+  href: api/Nekoyume.TableData.GlobalCounterSheet.html#Nekoyume_TableData_GlobalCounterSheet_Matching_
+  commentId: Overload:Nekoyume.TableData.GlobalCounterSheet.Matching
+  isSpec: "True"
+  fullName: Nekoyume.TableData.GlobalCounterSheet.Matching
+  nameWithType: GlobalCounterSheet.Matching
+- uid: Nekoyume.TableData.GlobalCounterSheet.Row
+  name: GlobalCounterSheet.Row
+  href: api/Nekoyume.TableData.GlobalCounterSheet.Row.html
+  commentId: T:Nekoyume.TableData.GlobalCounterSheet.Row
+  fullName: Nekoyume.TableData.GlobalCounterSheet.Row
+  nameWithType: GlobalCounterSheet.Row
+- uid: Nekoyume.TableData.GlobalCounterSheet.Row.Id
+  name: Id
+  href: api/Nekoyume.TableData.GlobalCounterSheet.Row.html#Nekoyume_TableData_GlobalCounterSheet_Row_Id
+  commentId: P:Nekoyume.TableData.GlobalCounterSheet.Row.Id
+  fullName: Nekoyume.TableData.GlobalCounterSheet.Row.Id
+  nameWithType: GlobalCounterSheet.Row.Id
+- uid: Nekoyume.TableData.GlobalCounterSheet.Row.Id*
+  name: Id
+  href: api/Nekoyume.TableData.GlobalCounterSheet.Row.html#Nekoyume_TableData_GlobalCounterSheet_Row_Id_
+  commentId: Overload:Nekoyume.TableData.GlobalCounterSheet.Row.Id
+  isSpec: "True"
+  fullName: Nekoyume.TableData.GlobalCounterSheet.Row.Id
+  nameWithType: GlobalCounterSheet.Row.Id
+- uid: Nekoyume.TableData.GlobalCounterSheet.Row.IsValid
+  name: IsValid
+  href: api/Nekoyume.TableData.GlobalCounterSheet.Row.html#Nekoyume_TableData_GlobalCounterSheet_Row_IsValid
+  commentId: P:Nekoyume.TableData.GlobalCounterSheet.Row.IsValid
+  fullName: Nekoyume.TableData.GlobalCounterSheet.Row.IsValid
+  nameWithType: GlobalCounterSheet.Row.IsValid
+- uid: Nekoyume.TableData.GlobalCounterSheet.Row.IsValid*
+  name: IsValid
+  href: api/Nekoyume.TableData.GlobalCounterSheet.Row.html#Nekoyume_TableData_GlobalCounterSheet_Row_IsValid_
+  commentId: Overload:Nekoyume.TableData.GlobalCounterSheet.Row.IsValid
+  isSpec: "True"
+  fullName: Nekoyume.TableData.GlobalCounterSheet.Row.IsValid
+  nameWithType: GlobalCounterSheet.Row.IsValid
+- uid: Nekoyume.TableData.GlobalCounterSheet.Row.Key
+  name: Key
+  href: api/Nekoyume.TableData.GlobalCounterSheet.Row.html#Nekoyume_TableData_GlobalCounterSheet_Row_Key
+  commentId: P:Nekoyume.TableData.GlobalCounterSheet.Row.Key
+  fullName: Nekoyume.TableData.GlobalCounterSheet.Row.Key
+  nameWithType: GlobalCounterSheet.Row.Key
+- uid: Nekoyume.TableData.GlobalCounterSheet.Row.Key*
+  name: Key
+  href: api/Nekoyume.TableData.GlobalCounterSheet.Row.html#Nekoyume_TableData_GlobalCounterSheet_Row_Key_
+  commentId: Overload:Nekoyume.TableData.GlobalCounterSheet.Row.Key
+  isSpec: "True"
+  fullName: Nekoyume.TableData.GlobalCounterSheet.Row.Key
+  nameWithType: GlobalCounterSheet.Row.Key
+- uid: Nekoyume.TableData.GlobalCounterSheet.Row.MinAvatarLevel
+  name: MinAvatarLevel
+  href: api/Nekoyume.TableData.GlobalCounterSheet.Row.html#Nekoyume_TableData_GlobalCounterSheet_Row_MinAvatarLevel
+  commentId: P:Nekoyume.TableData.GlobalCounterSheet.Row.MinAvatarLevel
+  fullName: Nekoyume.TableData.GlobalCounterSheet.Row.MinAvatarLevel
+  nameWithType: GlobalCounterSheet.Row.MinAvatarLevel
+- uid: Nekoyume.TableData.GlobalCounterSheet.Row.MinAvatarLevel*
+  name: MinAvatarLevel
+  href: api/Nekoyume.TableData.GlobalCounterSheet.Row.html#Nekoyume_TableData_GlobalCounterSheet_Row_MinAvatarLevel_
+  commentId: Overload:Nekoyume.TableData.GlobalCounterSheet.Row.MinAvatarLevel
+  isSpec: "True"
+  fullName: Nekoyume.TableData.GlobalCounterSheet.Row.MinAvatarLevel
+  nameWithType: GlobalCounterSheet.Row.MinAvatarLevel
+- uid: Nekoyume.TableData.GlobalCounterSheet.Row.Set(System.Collections.Generic.IReadOnlyList{System.String})
+  name: Set(IReadOnlyList<string>)
+  href: api/Nekoyume.TableData.GlobalCounterSheet.Row.html#Nekoyume_TableData_GlobalCounterSheet_Row_Set_System_Collections_Generic_IReadOnlyList_System_String__
+  commentId: M:Nekoyume.TableData.GlobalCounterSheet.Row.Set(System.Collections.Generic.IReadOnlyList{System.String})
+  name.vb: Set(IReadOnlyList(Of String))
+  fullName: Nekoyume.TableData.GlobalCounterSheet.Row.Set(System.Collections.Generic.IReadOnlyList<string>)
+  fullName.vb: Nekoyume.TableData.GlobalCounterSheet.Row.Set(System.Collections.Generic.IReadOnlyList(Of String))
+  nameWithType: GlobalCounterSheet.Row.Set(IReadOnlyList<string>)
+  nameWithType.vb: GlobalCounterSheet.Row.Set(IReadOnlyList(Of String))
+- uid: Nekoyume.TableData.GlobalCounterSheet.Row.Set*
+  name: Set
+  href: api/Nekoyume.TableData.GlobalCounterSheet.Row.html#Nekoyume_TableData_GlobalCounterSheet_Row_Set_
+  commentId: Overload:Nekoyume.TableData.GlobalCounterSheet.Row.Set
+  isSpec: "True"
+  fullName: Nekoyume.TableData.GlobalCounterSheet.Row.Set
+  nameWithType: GlobalCounterSheet.Row.Set
+- uid: Nekoyume.TableData.GlobalCounterSheet.Row.TargetBegin
+  name: TargetBegin
+  href: api/Nekoyume.TableData.GlobalCounterSheet.Row.html#Nekoyume_TableData_GlobalCounterSheet_Row_TargetBegin
+  commentId: P:Nekoyume.TableData.GlobalCounterSheet.Row.TargetBegin
+  fullName: Nekoyume.TableData.GlobalCounterSheet.Row.TargetBegin
+  nameWithType: GlobalCounterSheet.Row.TargetBegin
+- uid: Nekoyume.TableData.GlobalCounterSheet.Row.TargetBegin*
+  name: TargetBegin
+  href: api/Nekoyume.TableData.GlobalCounterSheet.Row.html#Nekoyume_TableData_GlobalCounterSheet_Row_TargetBegin_
+  commentId: Overload:Nekoyume.TableData.GlobalCounterSheet.Row.TargetBegin
+  isSpec: "True"
+  fullName: Nekoyume.TableData.GlobalCounterSheet.Row.TargetBegin
+  nameWithType: GlobalCounterSheet.Row.TargetBegin
+- uid: Nekoyume.TableData.GlobalCounterSheet.Row.TargetEnd
+  name: TargetEnd
+  href: api/Nekoyume.TableData.GlobalCounterSheet.Row.html#Nekoyume_TableData_GlobalCounterSheet_Row_TargetEnd
+  commentId: P:Nekoyume.TableData.GlobalCounterSheet.Row.TargetEnd
+  fullName: Nekoyume.TableData.GlobalCounterSheet.Row.TargetEnd
+  nameWithType: GlobalCounterSheet.Row.TargetEnd
+- uid: Nekoyume.TableData.GlobalCounterSheet.Row.TargetEnd*
+  name: TargetEnd
+  href: api/Nekoyume.TableData.GlobalCounterSheet.Row.html#Nekoyume_TableData_GlobalCounterSheet_Row_TargetEnd_
+  commentId: Overload:Nekoyume.TableData.GlobalCounterSheet.Row.TargetEnd
+  isSpec: "True"
+  fullName: Nekoyume.TableData.GlobalCounterSheet.Row.TargetEnd
+  nameWithType: GlobalCounterSheet.Row.TargetEnd
+- uid: Nekoyume.TableData.GlobalCounterSheet.Row.Type
+  name: Type
+  href: api/Nekoyume.TableData.GlobalCounterSheet.Row.html#Nekoyume_TableData_GlobalCounterSheet_Row_Type
+  commentId: P:Nekoyume.TableData.GlobalCounterSheet.Row.Type
+  fullName: Nekoyume.TableData.GlobalCounterSheet.Row.Type
+  nameWithType: GlobalCounterSheet.Row.Type
+- uid: Nekoyume.TableData.GlobalCounterSheet.Row.Type*
+  name: Type
+  href: api/Nekoyume.TableData.GlobalCounterSheet.Row.html#Nekoyume_TableData_GlobalCounterSheet_Row_Type_
+  commentId: Overload:Nekoyume.TableData.GlobalCounterSheet.Row.Type
+  isSpec: "True"
+  fullName: Nekoyume.TableData.GlobalCounterSheet.Row.Type
+  nameWithType: GlobalCounterSheet.Row.Type
+- uid: Nekoyume.TableData.GlobalCounterSheet.ValidateCsv(System.String)
+  name: ValidateCsv(string)
+  href: api/Nekoyume.TableData.GlobalCounterSheet.html#Nekoyume_TableData_GlobalCounterSheet_ValidateCsv_System_String_
+  commentId: M:Nekoyume.TableData.GlobalCounterSheet.ValidateCsv(System.String)
+  name.vb: ValidateCsv(String)
+  fullName: Nekoyume.TableData.GlobalCounterSheet.ValidateCsv(string)
+  fullName.vb: Nekoyume.TableData.GlobalCounterSheet.ValidateCsv(String)
+  nameWithType: GlobalCounterSheet.ValidateCsv(string)
+  nameWithType.vb: GlobalCounterSheet.ValidateCsv(String)
+- uid: Nekoyume.TableData.GlobalCounterSheet.ValidateCsv*
+  name: ValidateCsv
+  href: api/Nekoyume.TableData.GlobalCounterSheet.html#Nekoyume_TableData_GlobalCounterSheet_ValidateCsv_
+  commentId: Overload:Nekoyume.TableData.GlobalCounterSheet.ValidateCsv
+  isSpec: "True"
+  fullName: Nekoyume.TableData.GlobalCounterSheet.ValidateCsv
+  nameWithType: GlobalCounterSheet.ValidateCsv
+- uid: Nekoyume.TableData.GlobalCounterType
+  name: GlobalCounterType
+  href: api/Nekoyume.TableData.GlobalCounterType.html
+  commentId: T:Nekoyume.TableData.GlobalCounterType
+  fullName: Nekoyume.TableData.GlobalCounterType
+  nameWithType: GlobalCounterType
+- uid: Nekoyume.TableData.GlobalCounterType.RECIPE_CRAFT
+  name: RECIPE_CRAFT
+  href: api/Nekoyume.TableData.GlobalCounterType.html#Nekoyume_TableData_GlobalCounterType_RECIPE_CRAFT
+  commentId: F:Nekoyume.TableData.GlobalCounterType.RECIPE_CRAFT
+  fullName: Nekoyume.TableData.GlobalCounterType.RECIPE_CRAFT
+  nameWithType: GlobalCounterType.RECIPE_CRAFT
+- uid: Nekoyume.TableData.GlobalCounterType.STAGE_FIRST_CLEAR
+  name: STAGE_FIRST_CLEAR
+  href: api/Nekoyume.TableData.GlobalCounterType.html#Nekoyume_TableData_GlobalCounterType_STAGE_FIRST_CLEAR
+  commentId: F:Nekoyume.TableData.GlobalCounterType.STAGE_FIRST_CLEAR
+  fullName: Nekoyume.TableData.GlobalCounterType.STAGE_FIRST_CLEAR
+  nameWithType: GlobalCounterType.STAGE_FIRST_CLEAR
+- uid: Nekoyume.TableData.GlobalCounterType.STAGE_PLAY
+  name: STAGE_PLAY
+  href: api/Nekoyume.TableData.GlobalCounterType.html#Nekoyume_TableData_GlobalCounterType_STAGE_PLAY
+  commentId: F:Nekoyume.TableData.GlobalCounterType.STAGE_PLAY
+  fullName: Nekoyume.TableData.GlobalCounterType.STAGE_PLAY
+  nameWithType: GlobalCounterType.STAGE_PLAY
 - uid: Nekoyume.TableData.GoldQuestSheet
   name: GoldQuestSheet
   href: api/Nekoyume.TableData.GoldQuestSheet.html
@@ -103341,6 +103901,419 @@ references:
   isSpec: "True"
   fullName: Nekoyume.TableData.WorldBossStatSheetExtension.ToStats
   nameWithType: WorldBossStatSheetExtension.ToStats
+- uid: Nekoyume.TableData.WorldOpenConditionSheet
+  name: WorldOpenConditionSheet
+  href: api/Nekoyume.TableData.WorldOpenConditionSheet.html
+  commentId: T:Nekoyume.TableData.WorldOpenConditionSheet
+  fullName: Nekoyume.TableData.WorldOpenConditionSheet
+  nameWithType: WorldOpenConditionSheet
+- uid: Nekoyume.TableData.WorldOpenConditionSheet.#ctor
+  name: WorldOpenConditionSheet()
+  href: api/Nekoyume.TableData.WorldOpenConditionSheet.html#Nekoyume_TableData_WorldOpenConditionSheet__ctor
+  commentId: M:Nekoyume.TableData.WorldOpenConditionSheet.#ctor
+  name.vb: New()
+  fullName: Nekoyume.TableData.WorldOpenConditionSheet.WorldOpenConditionSheet()
+  fullName.vb: Nekoyume.TableData.WorldOpenConditionSheet.New()
+  nameWithType: WorldOpenConditionSheet.WorldOpenConditionSheet()
+  nameWithType.vb: WorldOpenConditionSheet.New()
+- uid: Nekoyume.TableData.WorldOpenConditionSheet.#ctor*
+  name: WorldOpenConditionSheet
+  href: api/Nekoyume.TableData.WorldOpenConditionSheet.html#Nekoyume_TableData_WorldOpenConditionSheet__ctor_
+  commentId: Overload:Nekoyume.TableData.WorldOpenConditionSheet.#ctor
+  isSpec: "True"
+  name.vb: New
+  fullName: Nekoyume.TableData.WorldOpenConditionSheet.WorldOpenConditionSheet
+  fullName.vb: Nekoyume.TableData.WorldOpenConditionSheet.New
+  nameWithType: WorldOpenConditionSheet.WorldOpenConditionSheet
+  nameWithType.vb: WorldOpenConditionSheet.New
+- uid: Nekoyume.TableData.WorldOpenConditionSheet.AddRow(System.Int32,Nekoyume.TableData.WorldOpenConditionSheet.Row)
+  name: AddRow(int, Row)
+  href: api/Nekoyume.TableData.WorldOpenConditionSheet.html#Nekoyume_TableData_WorldOpenConditionSheet_AddRow_System_Int32_Nekoyume_TableData_WorldOpenConditionSheet_Row_
+  commentId: M:Nekoyume.TableData.WorldOpenConditionSheet.AddRow(System.Int32,Nekoyume.TableData.WorldOpenConditionSheet.Row)
+  name.vb: AddRow(Integer, Row)
+  fullName: Nekoyume.TableData.WorldOpenConditionSheet.AddRow(int, Nekoyume.TableData.WorldOpenConditionSheet.Row)
+  fullName.vb: Nekoyume.TableData.WorldOpenConditionSheet.AddRow(Integer, Nekoyume.TableData.WorldOpenConditionSheet.Row)
+  nameWithType: WorldOpenConditionSheet.AddRow(int, WorldOpenConditionSheet.Row)
+  nameWithType.vb: WorldOpenConditionSheet.AddRow(Integer, WorldOpenConditionSheet.Row)
+- uid: Nekoyume.TableData.WorldOpenConditionSheet.AddRow*
+  name: AddRow
+  href: api/Nekoyume.TableData.WorldOpenConditionSheet.html#Nekoyume_TableData_WorldOpenConditionSheet_AddRow_
+  commentId: Overload:Nekoyume.TableData.WorldOpenConditionSheet.AddRow
+  isSpec: "True"
+  fullName: Nekoyume.TableData.WorldOpenConditionSheet.AddRow
+  nameWithType: WorldOpenConditionSheet.AddRow
+- uid: Nekoyume.TableData.WorldOpenConditionSheet.ColumnNames
+  name: ColumnNames
+  href: api/Nekoyume.TableData.WorldOpenConditionSheet.html#Nekoyume_TableData_WorldOpenConditionSheet_ColumnNames
+  commentId: F:Nekoyume.TableData.WorldOpenConditionSheet.ColumnNames
+  fullName: Nekoyume.TableData.WorldOpenConditionSheet.ColumnNames
+  nameWithType: WorldOpenConditionSheet.ColumnNames
+- uid: Nekoyume.TableData.WorldOpenConditionSheet.GroupsOf(System.Int32)
+  name: GroupsOf(int)
+  href: api/Nekoyume.TableData.WorldOpenConditionSheet.html#Nekoyume_TableData_WorldOpenConditionSheet_GroupsOf_System_Int32_
+  commentId: M:Nekoyume.TableData.WorldOpenConditionSheet.GroupsOf(System.Int32)
+  name.vb: GroupsOf(Integer)
+  fullName: Nekoyume.TableData.WorldOpenConditionSheet.GroupsOf(int)
+  fullName.vb: Nekoyume.TableData.WorldOpenConditionSheet.GroupsOf(Integer)
+  nameWithType: WorldOpenConditionSheet.GroupsOf(int)
+  nameWithType.vb: WorldOpenConditionSheet.GroupsOf(Integer)
+- uid: Nekoyume.TableData.WorldOpenConditionSheet.GroupsOf*
+  name: GroupsOf
+  href: api/Nekoyume.TableData.WorldOpenConditionSheet.html#Nekoyume_TableData_WorldOpenConditionSheet_GroupsOf_
+  commentId: Overload:Nekoyume.TableData.WorldOpenConditionSheet.GroupsOf
+  isSpec: "True"
+  fullName: Nekoyume.TableData.WorldOpenConditionSheet.GroupsOf
+  nameWithType: WorldOpenConditionSheet.GroupsOf
+- uid: Nekoyume.TableData.WorldOpenConditionSheet.OpenIdsReferencing(System.Int32)
+  name: OpenIdsReferencing(int)
+  href: api/Nekoyume.TableData.WorldOpenConditionSheet.html#Nekoyume_TableData_WorldOpenConditionSheet_OpenIdsReferencing_System_Int32_
+  commentId: M:Nekoyume.TableData.WorldOpenConditionSheet.OpenIdsReferencing(System.Int32)
+  name.vb: OpenIdsReferencing(Integer)
+  fullName: Nekoyume.TableData.WorldOpenConditionSheet.OpenIdsReferencing(int)
+  fullName.vb: Nekoyume.TableData.WorldOpenConditionSheet.OpenIdsReferencing(Integer)
+  nameWithType: WorldOpenConditionSheet.OpenIdsReferencing(int)
+  nameWithType.vb: WorldOpenConditionSheet.OpenIdsReferencing(Integer)
+- uid: Nekoyume.TableData.WorldOpenConditionSheet.OpenIdsReferencing*
+  name: OpenIdsReferencing
+  href: api/Nekoyume.TableData.WorldOpenConditionSheet.html#Nekoyume_TableData_WorldOpenConditionSheet_OpenIdsReferencing_
+  commentId: Overload:Nekoyume.TableData.WorldOpenConditionSheet.OpenIdsReferencing
+  isSpec: "True"
+  fullName: Nekoyume.TableData.WorldOpenConditionSheet.OpenIdsReferencing
+  nameWithType: WorldOpenConditionSheet.OpenIdsReferencing
+- uid: Nekoyume.TableData.WorldOpenConditionSheet.Row
+  name: WorldOpenConditionSheet.Row
+  href: api/Nekoyume.TableData.WorldOpenConditionSheet.Row.html
+  commentId: T:Nekoyume.TableData.WorldOpenConditionSheet.Row
+  fullName: Nekoyume.TableData.WorldOpenConditionSheet.Row
+  nameWithType: WorldOpenConditionSheet.Row
+- uid: Nekoyume.TableData.WorldOpenConditionSheet.Row.ConditionGroup
+  name: ConditionGroup
+  href: api/Nekoyume.TableData.WorldOpenConditionSheet.Row.html#Nekoyume_TableData_WorldOpenConditionSheet_Row_ConditionGroup
+  commentId: P:Nekoyume.TableData.WorldOpenConditionSheet.Row.ConditionGroup
+  fullName: Nekoyume.TableData.WorldOpenConditionSheet.Row.ConditionGroup
+  nameWithType: WorldOpenConditionSheet.Row.ConditionGroup
+- uid: Nekoyume.TableData.WorldOpenConditionSheet.Row.ConditionGroup*
+  name: ConditionGroup
+  href: api/Nekoyume.TableData.WorldOpenConditionSheet.Row.html#Nekoyume_TableData_WorldOpenConditionSheet_Row_ConditionGroup_
+  commentId: Overload:Nekoyume.TableData.WorldOpenConditionSheet.Row.ConditionGroup
+  isSpec: "True"
+  fullName: Nekoyume.TableData.WorldOpenConditionSheet.Row.ConditionGroup
+  nameWithType: WorldOpenConditionSheet.Row.ConditionGroup
+- uid: Nekoyume.TableData.WorldOpenConditionSheet.Row.CounterId
+  name: CounterId
+  href: api/Nekoyume.TableData.WorldOpenConditionSheet.Row.html#Nekoyume_TableData_WorldOpenConditionSheet_Row_CounterId
+  commentId: P:Nekoyume.TableData.WorldOpenConditionSheet.Row.CounterId
+  fullName: Nekoyume.TableData.WorldOpenConditionSheet.Row.CounterId
+  nameWithType: WorldOpenConditionSheet.Row.CounterId
+- uid: Nekoyume.TableData.WorldOpenConditionSheet.Row.CounterId*
+  name: CounterId
+  href: api/Nekoyume.TableData.WorldOpenConditionSheet.Row.html#Nekoyume_TableData_WorldOpenConditionSheet_Row_CounterId_
+  commentId: Overload:Nekoyume.TableData.WorldOpenConditionSheet.Row.CounterId
+  isSpec: "True"
+  fullName: Nekoyume.TableData.WorldOpenConditionSheet.Row.CounterId
+  nameWithType: WorldOpenConditionSheet.Row.CounterId
+- uid: Nekoyume.TableData.WorldOpenConditionSheet.Row.IsValid
+  name: IsValid
+  href: api/Nekoyume.TableData.WorldOpenConditionSheet.Row.html#Nekoyume_TableData_WorldOpenConditionSheet_Row_IsValid
+  commentId: P:Nekoyume.TableData.WorldOpenConditionSheet.Row.IsValid
+  fullName: Nekoyume.TableData.WorldOpenConditionSheet.Row.IsValid
+  nameWithType: WorldOpenConditionSheet.Row.IsValid
+- uid: Nekoyume.TableData.WorldOpenConditionSheet.Row.IsValid*
+  name: IsValid
+  href: api/Nekoyume.TableData.WorldOpenConditionSheet.Row.html#Nekoyume_TableData_WorldOpenConditionSheet_Row_IsValid_
+  commentId: Overload:Nekoyume.TableData.WorldOpenConditionSheet.Row.IsValid
+  isSpec: "True"
+  fullName: Nekoyume.TableData.WorldOpenConditionSheet.Row.IsValid
+  nameWithType: WorldOpenConditionSheet.Row.IsValid
+- uid: Nekoyume.TableData.WorldOpenConditionSheet.Row.Key
+  name: Key
+  href: api/Nekoyume.TableData.WorldOpenConditionSheet.Row.html#Nekoyume_TableData_WorldOpenConditionSheet_Row_Key
+  commentId: P:Nekoyume.TableData.WorldOpenConditionSheet.Row.Key
+  fullName: Nekoyume.TableData.WorldOpenConditionSheet.Row.Key
+  nameWithType: WorldOpenConditionSheet.Row.Key
+- uid: Nekoyume.TableData.WorldOpenConditionSheet.Row.Key*
+  name: Key
+  href: api/Nekoyume.TableData.WorldOpenConditionSheet.Row.html#Nekoyume_TableData_WorldOpenConditionSheet_Row_Key_
+  commentId: Overload:Nekoyume.TableData.WorldOpenConditionSheet.Row.Key
+  isSpec: "True"
+  fullName: Nekoyume.TableData.WorldOpenConditionSheet.Row.Key
+  nameWithType: WorldOpenConditionSheet.Row.Key
+- uid: Nekoyume.TableData.WorldOpenConditionSheet.Row.OpenId
+  name: OpenId
+  href: api/Nekoyume.TableData.WorldOpenConditionSheet.Row.html#Nekoyume_TableData_WorldOpenConditionSheet_Row_OpenId
+  commentId: P:Nekoyume.TableData.WorldOpenConditionSheet.Row.OpenId
+  fullName: Nekoyume.TableData.WorldOpenConditionSheet.Row.OpenId
+  nameWithType: WorldOpenConditionSheet.Row.OpenId
+- uid: Nekoyume.TableData.WorldOpenConditionSheet.Row.OpenId*
+  name: OpenId
+  href: api/Nekoyume.TableData.WorldOpenConditionSheet.Row.html#Nekoyume_TableData_WorldOpenConditionSheet_Row_OpenId_
+  commentId: Overload:Nekoyume.TableData.WorldOpenConditionSheet.Row.OpenId
+  isSpec: "True"
+  fullName: Nekoyume.TableData.WorldOpenConditionSheet.Row.OpenId
+  nameWithType: WorldOpenConditionSheet.Row.OpenId
+- uid: Nekoyume.TableData.WorldOpenConditionSheet.Row.Set(System.Collections.Generic.IReadOnlyList{System.String})
+  name: Set(IReadOnlyList<string>)
+  href: api/Nekoyume.TableData.WorldOpenConditionSheet.Row.html#Nekoyume_TableData_WorldOpenConditionSheet_Row_Set_System_Collections_Generic_IReadOnlyList_System_String__
+  commentId: M:Nekoyume.TableData.WorldOpenConditionSheet.Row.Set(System.Collections.Generic.IReadOnlyList{System.String})
+  name.vb: Set(IReadOnlyList(Of String))
+  fullName: Nekoyume.TableData.WorldOpenConditionSheet.Row.Set(System.Collections.Generic.IReadOnlyList<string>)
+  fullName.vb: Nekoyume.TableData.WorldOpenConditionSheet.Row.Set(System.Collections.Generic.IReadOnlyList(Of String))
+  nameWithType: WorldOpenConditionSheet.Row.Set(IReadOnlyList<string>)
+  nameWithType.vb: WorldOpenConditionSheet.Row.Set(IReadOnlyList(Of String))
+- uid: Nekoyume.TableData.WorldOpenConditionSheet.Row.Set*
+  name: Set
+  href: api/Nekoyume.TableData.WorldOpenConditionSheet.Row.html#Nekoyume_TableData_WorldOpenConditionSheet_Row_Set_
+  commentId: Overload:Nekoyume.TableData.WorldOpenConditionSheet.Row.Set
+  isSpec: "True"
+  fullName: Nekoyume.TableData.WorldOpenConditionSheet.Row.Set
+  nameWithType: WorldOpenConditionSheet.Row.Set
+- uid: Nekoyume.TableData.WorldOpenConditionSheet.Row.Threshold
+  name: Threshold
+  href: api/Nekoyume.TableData.WorldOpenConditionSheet.Row.html#Nekoyume_TableData_WorldOpenConditionSheet_Row_Threshold
+  commentId: P:Nekoyume.TableData.WorldOpenConditionSheet.Row.Threshold
+  fullName: Nekoyume.TableData.WorldOpenConditionSheet.Row.Threshold
+  nameWithType: WorldOpenConditionSheet.Row.Threshold
+- uid: Nekoyume.TableData.WorldOpenConditionSheet.Row.Threshold*
+  name: Threshold
+  href: api/Nekoyume.TableData.WorldOpenConditionSheet.Row.html#Nekoyume_TableData_WorldOpenConditionSheet_Row_Threshold_
+  commentId: Overload:Nekoyume.TableData.WorldOpenConditionSheet.Row.Threshold
+  isSpec: "True"
+  fullName: Nekoyume.TableData.WorldOpenConditionSheet.Row.Threshold
+  nameWithType: WorldOpenConditionSheet.Row.Threshold
+- uid: Nekoyume.TableData.WorldOpenConditionSheet.ValidateCsv(System.String)
+  name: ValidateCsv(string)
+  href: api/Nekoyume.TableData.WorldOpenConditionSheet.html#Nekoyume_TableData_WorldOpenConditionSheet_ValidateCsv_System_String_
+  commentId: M:Nekoyume.TableData.WorldOpenConditionSheet.ValidateCsv(System.String)
+  name.vb: ValidateCsv(String)
+  fullName: Nekoyume.TableData.WorldOpenConditionSheet.ValidateCsv(string)
+  fullName.vb: Nekoyume.TableData.WorldOpenConditionSheet.ValidateCsv(String)
+  nameWithType: WorldOpenConditionSheet.ValidateCsv(string)
+  nameWithType.vb: WorldOpenConditionSheet.ValidateCsv(String)
+- uid: Nekoyume.TableData.WorldOpenConditionSheet.ValidateCsv*
+  name: ValidateCsv
+  href: api/Nekoyume.TableData.WorldOpenConditionSheet.html#Nekoyume_TableData_WorldOpenConditionSheet_ValidateCsv_
+  commentId: Overload:Nekoyume.TableData.WorldOpenConditionSheet.ValidateCsv
+  isSpec: "True"
+  fullName: Nekoyume.TableData.WorldOpenConditionSheet.ValidateCsv
+  nameWithType: WorldOpenConditionSheet.ValidateCsv
+- uid: Nekoyume.TableData.WorldOpenSheet
+  name: WorldOpenSheet
+  href: api/Nekoyume.TableData.WorldOpenSheet.html
+  commentId: T:Nekoyume.TableData.WorldOpenSheet
+  fullName: Nekoyume.TableData.WorldOpenSheet
+  nameWithType: WorldOpenSheet
+- uid: Nekoyume.TableData.WorldOpenSheet.#ctor
+  name: WorldOpenSheet()
+  href: api/Nekoyume.TableData.WorldOpenSheet.html#Nekoyume_TableData_WorldOpenSheet__ctor
+  commentId: M:Nekoyume.TableData.WorldOpenSheet.#ctor
+  name.vb: New()
+  fullName: Nekoyume.TableData.WorldOpenSheet.WorldOpenSheet()
+  fullName.vb: Nekoyume.TableData.WorldOpenSheet.New()
+  nameWithType: WorldOpenSheet.WorldOpenSheet()
+  nameWithType.vb: WorldOpenSheet.New()
+- uid: Nekoyume.TableData.WorldOpenSheet.#ctor*
+  name: WorldOpenSheet
+  href: api/Nekoyume.TableData.WorldOpenSheet.html#Nekoyume_TableData_WorldOpenSheet__ctor_
+  commentId: Overload:Nekoyume.TableData.WorldOpenSheet.#ctor
+  isSpec: "True"
+  name.vb: New
+  fullName: Nekoyume.TableData.WorldOpenSheet.WorldOpenSheet
+  fullName.vb: Nekoyume.TableData.WorldOpenSheet.New
+  nameWithType: WorldOpenSheet.WorldOpenSheet
+  nameWithType.vb: WorldOpenSheet.New
+- uid: Nekoyume.TableData.WorldOpenSheet.AddRow(System.Int32,Nekoyume.TableData.WorldOpenSheet.Row)
+  name: AddRow(int, Row)
+  href: api/Nekoyume.TableData.WorldOpenSheet.html#Nekoyume_TableData_WorldOpenSheet_AddRow_System_Int32_Nekoyume_TableData_WorldOpenSheet_Row_
+  commentId: M:Nekoyume.TableData.WorldOpenSheet.AddRow(System.Int32,Nekoyume.TableData.WorldOpenSheet.Row)
+  name.vb: AddRow(Integer, Row)
+  fullName: Nekoyume.TableData.WorldOpenSheet.AddRow(int, Nekoyume.TableData.WorldOpenSheet.Row)
+  fullName.vb: Nekoyume.TableData.WorldOpenSheet.AddRow(Integer, Nekoyume.TableData.WorldOpenSheet.Row)
+  nameWithType: WorldOpenSheet.AddRow(int, WorldOpenSheet.Row)
+  nameWithType.vb: WorldOpenSheet.AddRow(Integer, WorldOpenSheet.Row)
+- uid: Nekoyume.TableData.WorldOpenSheet.AddRow*
+  name: AddRow
+  href: api/Nekoyume.TableData.WorldOpenSheet.html#Nekoyume_TableData_WorldOpenSheet_AddRow_
+  commentId: Overload:Nekoyume.TableData.WorldOpenSheet.AddRow
+  isSpec: "True"
+  fullName: Nekoyume.TableData.WorldOpenSheet.AddRow
+  nameWithType: WorldOpenSheet.AddRow
+- uid: Nekoyume.TableData.WorldOpenSheet.ByWorld(System.Int32)
+  name: ByWorld(int)
+  href: api/Nekoyume.TableData.WorldOpenSheet.html#Nekoyume_TableData_WorldOpenSheet_ByWorld_System_Int32_
+  commentId: M:Nekoyume.TableData.WorldOpenSheet.ByWorld(System.Int32)
+  name.vb: ByWorld(Integer)
+  fullName: Nekoyume.TableData.WorldOpenSheet.ByWorld(int)
+  fullName.vb: Nekoyume.TableData.WorldOpenSheet.ByWorld(Integer)
+  nameWithType: WorldOpenSheet.ByWorld(int)
+  nameWithType.vb: WorldOpenSheet.ByWorld(Integer)
+- uid: Nekoyume.TableData.WorldOpenSheet.ByWorld*
+  name: ByWorld
+  href: api/Nekoyume.TableData.WorldOpenSheet.html#Nekoyume_TableData_WorldOpenSheet_ByWorld_
+  commentId: Overload:Nekoyume.TableData.WorldOpenSheet.ByWorld
+  isSpec: "True"
+  fullName: Nekoyume.TableData.WorldOpenSheet.ByWorld
+  nameWithType: WorldOpenSheet.ByWorld
+- uid: Nekoyume.TableData.WorldOpenSheet.ColumnNames
+  name: ColumnNames
+  href: api/Nekoyume.TableData.WorldOpenSheet.html#Nekoyume_TableData_WorldOpenSheet_ColumnNames
+  commentId: F:Nekoyume.TableData.WorldOpenSheet.ColumnNames
+  fullName: Nekoyume.TableData.WorldOpenSheet.ColumnNames
+  nameWithType: WorldOpenSheet.ColumnNames
+- uid: Nekoyume.TableData.WorldOpenSheet.Row
+  name: WorldOpenSheet.Row
+  href: api/Nekoyume.TableData.WorldOpenSheet.Row.html
+  commentId: T:Nekoyume.TableData.WorldOpenSheet.Row
+  fullName: Nekoyume.TableData.WorldOpenSheet.Row
+  nameWithType: WorldOpenSheet.Row
+- uid: Nekoyume.TableData.WorldOpenSheet.Row.EffectiveDelayBlock
+  name: EffectiveDelayBlock
+  href: api/Nekoyume.TableData.WorldOpenSheet.Row.html#Nekoyume_TableData_WorldOpenSheet_Row_EffectiveDelayBlock
+  commentId: P:Nekoyume.TableData.WorldOpenSheet.Row.EffectiveDelayBlock
+  fullName: Nekoyume.TableData.WorldOpenSheet.Row.EffectiveDelayBlock
+  nameWithType: WorldOpenSheet.Row.EffectiveDelayBlock
+- uid: Nekoyume.TableData.WorldOpenSheet.Row.EffectiveDelayBlock*
+  name: EffectiveDelayBlock
+  href: api/Nekoyume.TableData.WorldOpenSheet.Row.html#Nekoyume_TableData_WorldOpenSheet_Row_EffectiveDelayBlock_
+  commentId: Overload:Nekoyume.TableData.WorldOpenSheet.Row.EffectiveDelayBlock
+  isSpec: "True"
+  fullName: Nekoyume.TableData.WorldOpenSheet.Row.EffectiveDelayBlock
+  nameWithType: WorldOpenSheet.Row.EffectiveDelayBlock
+- uid: Nekoyume.TableData.WorldOpenSheet.Row.FallbackBlockIndex
+  name: FallbackBlockIndex
+  href: api/Nekoyume.TableData.WorldOpenSheet.Row.html#Nekoyume_TableData_WorldOpenSheet_Row_FallbackBlockIndex
+  commentId: P:Nekoyume.TableData.WorldOpenSheet.Row.FallbackBlockIndex
+  fullName: Nekoyume.TableData.WorldOpenSheet.Row.FallbackBlockIndex
+  nameWithType: WorldOpenSheet.Row.FallbackBlockIndex
+- uid: Nekoyume.TableData.WorldOpenSheet.Row.FallbackBlockIndex*
+  name: FallbackBlockIndex
+  href: api/Nekoyume.TableData.WorldOpenSheet.Row.html#Nekoyume_TableData_WorldOpenSheet_Row_FallbackBlockIndex_
+  commentId: Overload:Nekoyume.TableData.WorldOpenSheet.Row.FallbackBlockIndex
+  isSpec: "True"
+  fullName: Nekoyume.TableData.WorldOpenSheet.Row.FallbackBlockIndex
+  nameWithType: WorldOpenSheet.Row.FallbackBlockIndex
+- uid: Nekoyume.TableData.WorldOpenSheet.Row.Id
+  name: Id
+  href: api/Nekoyume.TableData.WorldOpenSheet.Row.html#Nekoyume_TableData_WorldOpenSheet_Row_Id
+  commentId: P:Nekoyume.TableData.WorldOpenSheet.Row.Id
+  fullName: Nekoyume.TableData.WorldOpenSheet.Row.Id
+  nameWithType: WorldOpenSheet.Row.Id
+- uid: Nekoyume.TableData.WorldOpenSheet.Row.Id*
+  name: Id
+  href: api/Nekoyume.TableData.WorldOpenSheet.Row.html#Nekoyume_TableData_WorldOpenSheet_Row_Id_
+  commentId: Overload:Nekoyume.TableData.WorldOpenSheet.Row.Id
+  isSpec: "True"
+  fullName: Nekoyume.TableData.WorldOpenSheet.Row.Id
+  nameWithType: WorldOpenSheet.Row.Id
+- uid: Nekoyume.TableData.WorldOpenSheet.Row.IsValid
+  name: IsValid
+  href: api/Nekoyume.TableData.WorldOpenSheet.Row.html#Nekoyume_TableData_WorldOpenSheet_Row_IsValid
+  commentId: P:Nekoyume.TableData.WorldOpenSheet.Row.IsValid
+  fullName: Nekoyume.TableData.WorldOpenSheet.Row.IsValid
+  nameWithType: WorldOpenSheet.Row.IsValid
+- uid: Nekoyume.TableData.WorldOpenSheet.Row.IsValid*
+  name: IsValid
+  href: api/Nekoyume.TableData.WorldOpenSheet.Row.html#Nekoyume_TableData_WorldOpenSheet_Row_IsValid_
+  commentId: Overload:Nekoyume.TableData.WorldOpenSheet.Row.IsValid
+  isSpec: "True"
+  fullName: Nekoyume.TableData.WorldOpenSheet.Row.IsValid
+  nameWithType: WorldOpenSheet.Row.IsValid
+- uid: Nekoyume.TableData.WorldOpenSheet.Row.Key
+  name: Key
+  href: api/Nekoyume.TableData.WorldOpenSheet.Row.html#Nekoyume_TableData_WorldOpenSheet_Row_Key
+  commentId: P:Nekoyume.TableData.WorldOpenSheet.Row.Key
+  fullName: Nekoyume.TableData.WorldOpenSheet.Row.Key
+  nameWithType: WorldOpenSheet.Row.Key
+- uid: Nekoyume.TableData.WorldOpenSheet.Row.Key*
+  name: Key
+  href: api/Nekoyume.TableData.WorldOpenSheet.Row.html#Nekoyume_TableData_WorldOpenSheet_Row_Key_
+  commentId: Overload:Nekoyume.TableData.WorldOpenSheet.Row.Key
+  isSpec: "True"
+  fullName: Nekoyume.TableData.WorldOpenSheet.Row.Key
+  nameWithType: WorldOpenSheet.Row.Key
+- uid: Nekoyume.TableData.WorldOpenSheet.Row.MinBlockIndex
+  name: MinBlockIndex
+  href: api/Nekoyume.TableData.WorldOpenSheet.Row.html#Nekoyume_TableData_WorldOpenSheet_Row_MinBlockIndex
+  commentId: P:Nekoyume.TableData.WorldOpenSheet.Row.MinBlockIndex
+  fullName: Nekoyume.TableData.WorldOpenSheet.Row.MinBlockIndex
+  nameWithType: WorldOpenSheet.Row.MinBlockIndex
+- uid: Nekoyume.TableData.WorldOpenSheet.Row.MinBlockIndex*
+  name: MinBlockIndex
+  href: api/Nekoyume.TableData.WorldOpenSheet.Row.html#Nekoyume_TableData_WorldOpenSheet_Row_MinBlockIndex_
+  commentId: Overload:Nekoyume.TableData.WorldOpenSheet.Row.MinBlockIndex
+  isSpec: "True"
+  fullName: Nekoyume.TableData.WorldOpenSheet.Row.MinBlockIndex
+  nameWithType: WorldOpenSheet.Row.MinBlockIndex
+- uid: Nekoyume.TableData.WorldOpenSheet.Row.PrerequisiteOpenId
+  name: PrerequisiteOpenId
+  href: api/Nekoyume.TableData.WorldOpenSheet.Row.html#Nekoyume_TableData_WorldOpenSheet_Row_PrerequisiteOpenId
+  commentId: P:Nekoyume.TableData.WorldOpenSheet.Row.PrerequisiteOpenId
+  fullName: Nekoyume.TableData.WorldOpenSheet.Row.PrerequisiteOpenId
+  nameWithType: WorldOpenSheet.Row.PrerequisiteOpenId
+- uid: Nekoyume.TableData.WorldOpenSheet.Row.PrerequisiteOpenId*
+  name: PrerequisiteOpenId
+  href: api/Nekoyume.TableData.WorldOpenSheet.Row.html#Nekoyume_TableData_WorldOpenSheet_Row_PrerequisiteOpenId_
+  commentId: Overload:Nekoyume.TableData.WorldOpenSheet.Row.PrerequisiteOpenId
+  isSpec: "True"
+  fullName: Nekoyume.TableData.WorldOpenSheet.Row.PrerequisiteOpenId
+  nameWithType: WorldOpenSheet.Row.PrerequisiteOpenId
+- uid: Nekoyume.TableData.WorldOpenSheet.Row.Set(System.Collections.Generic.IReadOnlyList{System.String})
+  name: Set(IReadOnlyList<string>)
+  href: api/Nekoyume.TableData.WorldOpenSheet.Row.html#Nekoyume_TableData_WorldOpenSheet_Row_Set_System_Collections_Generic_IReadOnlyList_System_String__
+  commentId: M:Nekoyume.TableData.WorldOpenSheet.Row.Set(System.Collections.Generic.IReadOnlyList{System.String})
+  name.vb: Set(IReadOnlyList(Of String))
+  fullName: Nekoyume.TableData.WorldOpenSheet.Row.Set(System.Collections.Generic.IReadOnlyList<string>)
+  fullName.vb: Nekoyume.TableData.WorldOpenSheet.Row.Set(System.Collections.Generic.IReadOnlyList(Of String))
+  nameWithType: WorldOpenSheet.Row.Set(IReadOnlyList<string>)
+  nameWithType.vb: WorldOpenSheet.Row.Set(IReadOnlyList(Of String))
+- uid: Nekoyume.TableData.WorldOpenSheet.Row.Set*
+  name: Set
+  href: api/Nekoyume.TableData.WorldOpenSheet.Row.html#Nekoyume_TableData_WorldOpenSheet_Row_Set_
+  commentId: Overload:Nekoyume.TableData.WorldOpenSheet.Row.Set
+  isSpec: "True"
+  fullName: Nekoyume.TableData.WorldOpenSheet.Row.Set
+  nameWithType: WorldOpenSheet.Row.Set
+- uid: Nekoyume.TableData.WorldOpenSheet.Row.StageEnd
+  name: StageEnd
+  href: api/Nekoyume.TableData.WorldOpenSheet.Row.html#Nekoyume_TableData_WorldOpenSheet_Row_StageEnd
+  commentId: P:Nekoyume.TableData.WorldOpenSheet.Row.StageEnd
+  fullName: Nekoyume.TableData.WorldOpenSheet.Row.StageEnd
+  nameWithType: WorldOpenSheet.Row.StageEnd
+- uid: Nekoyume.TableData.WorldOpenSheet.Row.StageEnd*
+  name: StageEnd
+  href: api/Nekoyume.TableData.WorldOpenSheet.Row.html#Nekoyume_TableData_WorldOpenSheet_Row_StageEnd_
+  commentId: Overload:Nekoyume.TableData.WorldOpenSheet.Row.StageEnd
+  isSpec: "True"
+  fullName: Nekoyume.TableData.WorldOpenSheet.Row.StageEnd
+  nameWithType: WorldOpenSheet.Row.StageEnd
+- uid: Nekoyume.TableData.WorldOpenSheet.Row.WorldId
+  name: WorldId
+  href: api/Nekoyume.TableData.WorldOpenSheet.Row.html#Nekoyume_TableData_WorldOpenSheet_Row_WorldId
+  commentId: P:Nekoyume.TableData.WorldOpenSheet.Row.WorldId
+  fullName: Nekoyume.TableData.WorldOpenSheet.Row.WorldId
+  nameWithType: WorldOpenSheet.Row.WorldId
+- uid: Nekoyume.TableData.WorldOpenSheet.Row.WorldId*
+  name: WorldId
+  href: api/Nekoyume.TableData.WorldOpenSheet.Row.html#Nekoyume_TableData_WorldOpenSheet_Row_WorldId_
+  commentId: Overload:Nekoyume.TableData.WorldOpenSheet.Row.WorldId
+  isSpec: "True"
+  fullName: Nekoyume.TableData.WorldOpenSheet.Row.WorldId
+  nameWithType: WorldOpenSheet.Row.WorldId
+- uid: Nekoyume.TableData.WorldOpenSheet.ValidateCsv(System.String)
+  name: ValidateCsv(string)
+  href: api/Nekoyume.TableData.WorldOpenSheet.html#Nekoyume_TableData_WorldOpenSheet_ValidateCsv_System_String_
+  commentId: M:Nekoyume.TableData.WorldOpenSheet.ValidateCsv(System.String)
+  name.vb: ValidateCsv(String)
+  fullName: Nekoyume.TableData.WorldOpenSheet.ValidateCsv(string)
+  fullName.vb: Nekoyume.TableData.WorldOpenSheet.ValidateCsv(String)
+  nameWithType: WorldOpenSheet.ValidateCsv(string)
+  nameWithType.vb: WorldOpenSheet.ValidateCsv(String)
+- uid: Nekoyume.TableData.WorldOpenSheet.ValidateCsv*
+  name: ValidateCsv
+  href: api/Nekoyume.TableData.WorldOpenSheet.html#Nekoyume_TableData_WorldOpenSheet_ValidateCsv_
+  commentId: Overload:Nekoyume.TableData.WorldOpenSheet.ValidateCsv
+  isSpec: "True"
+  fullName: Nekoyume.TableData.WorldOpenSheet.ValidateCsv
+  nameWithType: WorldOpenSheet.ValidateCsv
 - uid: Nekoyume.TableData.WorldQuestSheet
   name: WorldQuestSheet
   href: api/Nekoyume.TableData.WorldQuestSheet.html

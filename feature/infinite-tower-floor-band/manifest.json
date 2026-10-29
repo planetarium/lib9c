@@ -3212,6 +3212,16 @@
     },
     {
       "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.Action.StageNotOpenedException.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.Action.StageNotOpenedException.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
       "source_relative_path": "api/Nekoyume.Action.Stake.yml",
       "output": {
         ".html": {
@@ -3256,6 +3266,16 @@
       "output": {
         ".html": {
           "relative_path": "api/Nekoyume.Action.Synthesize.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.Action.TableSheetPatchValidation.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.Action.TableSheetPatchValidation.html"
         }
       },
       "version": ""
@@ -3566,6 +3586,36 @@
       "output": {
         ".html": {
           "relative_path": "api/Nekoyume.Action.WeeklyArenaStateNotContainsAvatarAddressException.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.Action.WorldOpenCounter.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.Action.WorldOpenCounter.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.Action.WorldOpenGate.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.Action.WorldOpenGate.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.Action.WorldOpenIdentity.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.Action.WorldOpenIdentity.html"
         }
       },
       "version": ""
@@ -8712,6 +8762,16 @@
     },
     {
       "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.Module.GlobalCounterModule.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.Module.GlobalCounterModule.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
       "source_relative_path": "api/Nekoyume.Module.Guild.GuildBanModule.yml",
       "output": {
         ".html": {
@@ -8876,6 +8936,16 @@
       "output": {
         ".html": {
           "relative_path": "api/Nekoyume.Module.ValidatorDelegation.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.Module.WorldOpenModule.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.Module.WorldOpenModule.html"
         }
       },
       "version": ""
@@ -10416,6 +10486,36 @@
       "output": {
         ".html": {
           "relative_path": "api/Nekoyume.TableData.GeneralQuestSheet.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.TableData.GlobalCounterSheet.Row.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.TableData.GlobalCounterSheet.Row.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.TableData.GlobalCounterSheet.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.TableData.GlobalCounterSheet.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.TableData.GlobalCounterType.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.TableData.GlobalCounterType.html"
         }
       },
       "version": ""
@@ -12266,6 +12366,46 @@
       "output": {
         ".html": {
           "relative_path": "api/Nekoyume.TableData.WorldBossStatSheetExtension.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.TableData.WorldOpenConditionSheet.Row.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.TableData.WorldOpenConditionSheet.Row.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.TableData.WorldOpenConditionSheet.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.TableData.WorldOpenConditionSheet.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.TableData.WorldOpenSheet.Row.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.TableData.WorldOpenSheet.Row.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.TableData.WorldOpenSheet.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.TableData.WorldOpenSheet.html"
         }
       },
       "version": ""
