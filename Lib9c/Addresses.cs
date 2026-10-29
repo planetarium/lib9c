@@ -285,6 +285,22 @@ namespace Nekoyume
 
         #endregion
 
+        #region WorldOpen
+
+        /// <summary>
+        /// An account address for the global counters that drive hard world openings.
+        /// </summary>
+        public static readonly Address GlobalCounter
+            = new Address("0000000000000000000000000000000000000500");
+
+        /// <summary>
+        /// An account address for the confirmed hard world openings.
+        /// </summary>
+        public static readonly Address WorldOpen
+            = new Address("0000000000000000000000000000000000000501");
+
+        #endregion
+
         public static Address GetSheetAddress<T>() where T : ISheet => GetSheetAddress(typeof(T).Name);
 
         public static Address GetSheetAddress(string sheetName) => TableSheet.Derive(sheetName);

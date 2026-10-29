@@ -2,8 +2,14 @@ using System;
 
 namespace Nekoyume
 {
+    /// <summary>
+    /// Game-wide constants shared by actions and the client.
+    /// </summary>
     public static class GameConfig
     {
+        /// <summary>
+        /// Whether this build is an editor/development build (<c>LIB9C_DEV_EXTENSIONS</c> or <c>UNITY_EDITOR</c> defined).
+        /// </summary>
         // ReSharper disable once ConvertToConstant.Global
 #if LIB9C_DEV_EXTENSIONS || UNITY_EDITOR
         public static readonly bool IsEditor = true;
@@ -11,8 +17,22 @@ namespace Nekoyume
         public static readonly bool IsEditor = false;
 #endif
 
+        /// <summary>
+        /// The number of avatar slots available per agent (valid avatar indices are 0 to SlotCount - 1).
+        /// </summary>
         public const int SlotCount = 3;
+
+        /// <summary>
+        /// Regular expression pattern that a valid avatar nickname must match
+        /// (2 to 20 ASCII letters or digits).
+        /// </summary>
         public const string AvatarNickNamePattern = @"^[0-9a-zA-Z]{2,20}$";
+
+        /// <summary>
+        /// The first stage that is locked by default and opens only through
+        /// <see cref="Nekoyume.TableData.WorldOpenSheet"/>. Stages below it are always open.
+        /// </summary>
+        public const int ProgressGatedStageBegin = 521;
 
         public const int MimisbrunnrWorldId = 10001;
         public const int MimisbrunnrStartStageId = 10000001;
