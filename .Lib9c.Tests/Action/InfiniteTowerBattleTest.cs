@@ -2110,6 +2110,117 @@ namespace Lib9c.Tests.Action
             Assert.True(slot2.IsLock, "Slot 2 should remain locked (was locked in Adventure)");
         }
 
+        [Fact]
+        public void Execute_WithFloorRange_FirstFloorOfRange_ShouldNotRequirePreviousFloor()
+        {
+            var (state, agentAddress, avatarAddress) = CreateFloorRangeState(clearedFloor: 0);
+
+            var nextState = ExecuteFloorRangeBattle(state, agentAddress, avatarAddress, 121);
+
+            Assert.NotNull(nextState.GetInfiniteTowerInfo(avatarAddress, 1));
+        }
+
+        [Fact]
+        public void Execute_WithFloorRange_NextFloorAfterClearingFirst_ShouldSucceed()
+        {
+            var (state, agentAddress, avatarAddress) = CreateFloorRangeState(clearedFloor: 121);
+
+            var nextState = ExecuteFloorRangeBattle(state, agentAddress, avatarAddress, 122);
+
+            Assert.NotNull(nextState.GetInfiniteTowerInfo(avatarAddress, 1));
+        }
+
+        [Fact]
+        public void Execute_WithFloorRange_SkippingFirstFloor_ShouldThrow()
+        {
+            var (state, agentAddress, avatarAddress) = CreateFloorRangeState(clearedFloor: 0);
+
+            var exception = Assert.Throws<Nekoyume.Action.StageNotClearedException>(() =>
+                ExecuteFloorRangeBattle(state, agentAddress, avatarAddress, 122));
+            Assert.Contains("required(121), current(0)", exception.Message);
+        }
+
+        [Fact]
+        public void Execute_WithFloorRange_FloorOutsideRange_ShouldThrow()
+        {
+            var (state, agentAddress, avatarAddress) = CreateFloorRangeState(clearedFloor: 0);
+
+            Assert.Throws<InvalidOperationException>(() =>
+                ExecuteFloorRangeBattle(state, agentAddress, avatarAddress, 1));
+        }
+
+        /// <summary>
+        /// Creates a state whose schedule uses floor ids 121~240, with floors 121 and 122
+        /// copied from floor 1 so a season's floors can sit beside the previous season's.
+        /// </summary>
+        private (IWorld State, Address AgentAddress, Address AvatarAddress) CreateFloorRangeState(int clearedFloor)
+        {
+            var sheets = new Dictionary<string, string>(_sheets);
+            var floorLines = sheets[nameof(InfiniteTowerFloorSheet)].Split('\n');
+            var floor1 = floorLines.First(l => l.StartsWith("1,1,")).TrimEnd('\r');
+            sheets[nameof(InfiniteTowerFloorSheet)] = string.Join(
+                "\n",
+                floorLines.Append("121,1," + floor1.Substring(4)).Append("122,2," + floor1.Substring(4)));
+            var waveLines = sheets[nameof(InfiniteTowerFloorWaveSheet)].Split('\n');
+            var wave1 = waveLines.First(l => l.StartsWith("1,1,")).TrimEnd('\r');
+            sheets[nameof(InfiniteTowerFloorWaveSheet)] = string.Join(
+                "\n",
+                waveLines.Append("9121,121," + wave1.Substring(4)).Append("9122,122," + wave1.Substring(4)));
+            sheets[nameof(InfiniteTowerScheduleSheet)] =
+                "Id,InfiniteTowerId,StartBlockIndex,EndBlockIndex,DailyFreeTickets,MaxTickets,ResetIntervalBlocks,FloorBegin,FloorEnd\n" +
+                "1,1,0,1000000,3,10,10800,121,240";
+
+            var agentAddress = new PrivateKey().Address;
+            var avatarAddress = new PrivateKey().Address;
+            var state = new World(MockUtil.MockModernWorldState);
+            foreach (var (key, value) in sheets)
+            {
+                state = (World)state.SetLegacyState(Addresses.TableSheet.Derive(key), value.Serialize());
+            }
+
+            var gameConfigState = new GameConfigState(sheets[nameof(GameConfigSheet)]);
+            var avatarState = AvatarState.Create(
+                avatarAddress,
+                agentAddress,
+                0,
+                _tableSheets.GetAvatarSheets(),
+                default);
+            avatarState.level = 100;
+            state = (World)state
+                .SetLegacyState(gameConfigState.address, gameConfigState.Serialize())
+                .SetAgentState(agentAddress, new AgentState(agentAddress))
+                .SetAvatarState(avatarAddress, avatarState);
+
+            var infiniteTowerInfo = CreateInfiniteTowerInfo(avatarAddress, 1);
+            infiniteTowerInfo.AddTickets(5);
+            infiniteTowerInfo.ClearFloor(clearedFloor);
+            // Keep the season from resetting the cleared floor (StartBlockIndex is 0).
+            infiniteTowerInfo.GetType().GetProperty("LastResetBlockIndex")?.SetValue(infiniteTowerInfo, 1L);
+            return (state.SetInfiniteTowerInfo(avatarAddress, infiniteTowerInfo), agentAddress, avatarAddress);
+        }
+
+        private IWorld ExecuteFloorRangeBattle(IWorld state, Address agentAddress, Address avatarAddress, int floorId)
+        {
+            var action = new InfiniteTowerBattle
+            {
+                AvatarAddress = avatarAddress,
+                InfiniteTowerId = 1,
+                FloorId = floorId,
+                Equipments = new List<Guid>(),
+                Costumes = new List<Guid>(),
+                Foods = new List<Guid>(),
+                RuneInfos = new List<RuneSlotInfo>(),
+                BuyTicketIfNeeded = false,
+            };
+            return action.Execute(new ActionContext
+            {
+                BlockIndex = 100L,
+                PreviousState = state,
+                RandomSeed = 0,
+                Signer = agentAddress,
+            });
+        }
+
         /// <summary>
         /// Creates InfiniteTowerInfo with initial tickets from schedule sheet.
         /// </summary>
