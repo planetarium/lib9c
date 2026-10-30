@@ -100,6 +100,7 @@ namespace Lib9c.Tests.Action
         [InlineData(typeof(SetAddressStateCompressed))]
         [InlineData(typeof(PatchTableSheetCompressed))]
         [InlineData(typeof(GrantItems))]
+        [InlineData(typeof(GrantEquipmentPotential))]
         public void Serialize_With_MessagePack(Type actionType)
         {
             var action = GetAction(actionType);
@@ -515,6 +516,11 @@ namespace Lib9c.Tests.Action
                     CompressedTableCsv = new byte[] { 1, 2, 3, 4, 5 },
                 },
                 GrantItems _ => new GrantItems(),
+                GrantEquipmentPotential _ => new GrantEquipmentPotential
+                {
+                    AvatarAddress = new PrivateKey().Address,
+                    ItemId = Guid.NewGuid(),
+                },
                 EventDungeonBattleSweep _ => new EventDungeonBattleSweep
                 {
                     AvatarAddress = default,
