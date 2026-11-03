@@ -2237,6 +2237,93 @@ namespace Lib9c.Tests.Action
         }
 
         [Fact]
+        public void Execute_ExtendsStoredWorldRange_WhenSheetGrows()
+        {
+            // The avatar's world 11 was stored when the sheet still ended at 520; the patched
+            // sheet ends at 550 and the opening is applied.
+            var state = WithWorldOpenSheets(
+                WithStoredWorld11End(PrepareWorld11(clearedStageId: 520), storedEnd: 520, clearedStageId: 520),
+                null,
+                "1,11,550,,0,100,0\n",
+                null);
+            Assert.True(state.GetAvatarState(_avatarAddress).worldInformation.TryGetWorld(11, out var stored));
+            Assert.Equal(520, stored.StageEnd);
+
+            var next = PlayWorld11(state, 521);
+
+            var worldInformation = next.GetAvatarState(_avatarAddress).worldInformation;
+            Assert.True(worldInformation.TryGetWorld(11, out var world));
+            Assert.Equal(550, world.StageEnd);
+            Assert.True(worldInformation.IsStageCleared(521));
+        }
+
+        [Fact]
+        public void Execute_ClearingLastStage_AddsNextWorld()
+        {
+            var state = WithWorldOpenSheets(
+                WithWorldRows(
+                    PrepareWorld11(clearedStageId: 549),
+                    "11,Hard 2,501,550\n12,Hard 3,551,600\n",
+                    "11,11,550,12,0\n",
+                    549,
+                    550),
+                null,
+                "1,11,550,,0,100,0\n",
+                null);
+
+            var next = PlayWorld11(state, 550);
+
+            var worldInformation = next.GetAvatarState(_avatarAddress).worldInformation;
+            Assert.True(worldInformation.TryGetWorld(12, out var world12));
+            Assert.True(world12.IsUnlocked);
+            Assert.False(world12.IsStageCleared);
+        }
+
+        [Fact]
+        public void Execute_ClearingLastStage_Throws_WhenUnlockRowPrecedesWorldRow()
+        {
+            // WorldUnlockSheet names world 12 but WorldSheet has no row for it yet.
+            var state = WithWorldOpenSheets(
+                WithWorldRows(
+                    PrepareWorld11(clearedStageId: 549),
+                    "11,Hard 2,501,550\n",
+                    "11,11,550,12,0\n",
+                    549,
+                    550),
+                null,
+                "1,11,550,,0,100,0\n",
+                null);
+
+            Assert.Throws<FailedToUnlockWorldException>(() => PlayWorld11(state, 550));
+        }
+
+        [Fact]
+        public void Execute_EntersNewWorld_ClearedBeforeUnlockRowExisted()
+        {
+            // Stage 550 was cleared before world 12 existed, so the avatar has no world 12.
+            var state = WithWorldOpenSheets(
+                WithWorldRows(
+                    PrepareWorld11(clearedStageId: 550),
+                    "11,Hard 2,501,550\n12,Hard 3,551,600\n",
+                    "11,11,550,12,0\n",
+                    551),
+                null,
+                "1,11,550,,0,100,0\n2,12,600,,0,100,0\n",
+                null);
+            Assert.False(state.GetAvatarState(_avatarAddress).worldInformation.TryGetWorld(12, out _));
+            state = state.SetLegacyState(
+                _avatarAddress.Derive("world_ids"),
+                List.Empty.Add(11.Serialize()).Add(12.Serialize()));
+
+            var next = PlayWorld11(state, 551, worldId: 12);
+
+            var worldInformation = next.GetAvatarState(_avatarAddress).worldInformation;
+            Assert.True(worldInformation.TryGetWorld(12, out var world12));
+            Assert.True(world12.IsUnlocked);
+            Assert.True(worldInformation.IsStageCleared(551));
+        }
+
+        [Fact]
         public void Execute_StageNotOpened_Throws()
         {
             var state = PrepareWorld11(clearedStageId: 520);
@@ -2559,6 +2646,43 @@ namespace Lib9c.Tests.Action
         }
 
         /// <summary>
+        /// Rebuilds the avatar's world information from a sheet where world 11 ends at
+        /// <paramref name="storedEnd"/>, as for an avatar created before the sheet grew.
+        /// </summary>
+        private IWorld WithStoredWorld11End(IWorld state, int storedEnd, int clearedStageId)
+        {
+            var sheet = new WorldSheet();
+            sheet.Set(_sheets[nameof(WorldSheet)].TrimEnd() + $"\n11,Hard 2,501,{storedEnd}\n");
+            var avatarState = state.GetAvatarState(_avatarAddress);
+            avatarState.worldInformation = new WorldInformation(0, sheet, clearedStageId);
+            return state.SetAvatarState(_avatarAddress, avatarState);
+        }
+
+        /// <summary>
+        /// Replaces the hard world rows of WorldSheet with <paramref name="worldRows"/>, appends
+        /// <paramref name="unlockRows"/> to WorldUnlockSheet and copies stage 1 into
+        /// <paramref name="stageIds"/> (stage, wave and crystal buff rows).
+        /// </summary>
+        private IWorld WithWorldRows(IWorld state, string worldRows, string unlockRows, params int[] stageIds)
+        {
+            state = state
+                .SetLegacyState(
+                    Addresses.TableSheet.Derive(nameof(WorldSheet)),
+                    (_sheets[nameof(WorldSheet)].TrimEnd() + "\n" + worldRows).Serialize())
+                .SetLegacyState(
+                    Addresses.TableSheet.Derive(nameof(WorldUnlockSheet)),
+                    (_sheets[nameof(WorldUnlockSheet)].TrimEnd() + "\n" + unlockRows).Serialize());
+            foreach (var name in new[] { nameof(StageSheet), nameof(StageWaveSheet), nameof(CrystalStageBuffGachaSheet) })
+            {
+                state = state.SetLegacyState(
+                    Addresses.TableSheet.Derive(name),
+                    CopyRows(_sheets[name], 1, stageIds).Serialize());
+            }
+
+            return state;
+        }
+
+        /// <summary>
         /// World 11 spanning 501-550 with stages 520-521 copied from stage 1 (stage, wave and
         /// crystal buff rows), and an avatar that
         /// cleared up to <paramref name="clearedStageId"/> and unlocked world 11.
@@ -2606,7 +2730,8 @@ namespace Lib9c.Tests.Action
             int stageId,
             int totalPlayCount = 1,
             long blockIndex = 100,
-            bool equip = true)
+            bool equip = true,
+            int worldId = 11)
         {
             var avatarState = state.GetAvatarState(_avatarAddress);
             var action = new HackAndSlash
@@ -2617,7 +2742,7 @@ namespace Lib9c.Tests.Action
                     : new List<Guid>(),
                 Foods = new List<Guid>(),
                 RuneInfos = new List<RuneSlotInfo>(),
-                WorldId = 11,
+                WorldId = worldId,
                 StageId = stageId,
                 AvatarAddress = _avatarAddress,
                 TotalPlayCount = totalPlayCount,
