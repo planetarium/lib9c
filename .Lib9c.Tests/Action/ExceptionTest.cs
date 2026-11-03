@@ -292,6 +292,34 @@ namespace Lib9c.Tests.Action
             }
         }
 
+        [Fact]
+        public void Exception_WithInnerExceptionAndData_Serializable()
+        {
+            // Values that follow a nested exception must still be read at the right position:
+            // the nested exception is not a well-formed MessagePack map (see ExceptionFormatter).
+            var exc = new InvalidOperationException("outer", new ArgumentException("inner"));
+            exc.Data["key"] = "value";
+
+            var b = MessagePackSerializer.Serialize<Exception>(exc);
+            var des = MessagePackSerializer.Deserialize<Exception>(b);
+
+            Assert.Equal(exc.Message, des.Message);
+            Assert.NotNull(des.InnerException);
+            Assert.Equal("inner", des.InnerException!.Message);
+            Assert.Equal("value", des.Data["key"]);
+        }
+
+        [Fact]
+        public void Exception_WithZeroHResult_DeserializesWithDefaultHResult()
+        {
+            // Mono (Unity) rejects HResult 0 in the Exception serialization ctor.
+            var b = MessagePackSerializer.Serialize<Exception>(new ZeroHResultException("zero"));
+            var des = MessagePackSerializer.Deserialize<Exception>(b);
+
+            Assert.Equal("zero", des.Message);
+            Assert.Equal(unchecked((int)0x80131500), des.HResult);
+        }
+
         private static void AssertException<T>(Exception exc)
             where T : Exception
         {
@@ -310,6 +338,15 @@ namespace Lib9c.Tests.Action
             Assert.Equal(adminState.AdminAddress, adminState2.AdminAddress);
             Assert.Equal(adminState.address, adminState2.address);
             Assert.Equal(adminState.ValidUntil, adminState2.ValidUntil);
+        }
+
+        private class ZeroHResultException : Exception
+        {
+            public ZeroHResultException(string message)
+                : base(message)
+            {
+                HResult = 0;
+            }
         }
     }
 }
