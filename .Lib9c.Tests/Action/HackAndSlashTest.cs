@@ -2264,7 +2264,7 @@ namespace Lib9c.Tests.Action
                 WithWorldRows(
                     PrepareWorld11(clearedStageId: 549),
                     "11,Hard 2,501,550\n12,Hard 3,551,600\n",
-                    "11,11,550,12,0\n",
+                    "1011,11,550,12,0\n",
                     549,
                     550),
                 null,
@@ -2287,33 +2287,45 @@ namespace Lib9c.Tests.Action
                 WithWorldRows(
                     PrepareWorld11(clearedStageId: 549),
                     "11,Hard 2,501,550\n",
-                    "11,11,550,12,0\n",
+                    "1011,11,550,12,0\n",
                     549,
                     550),
                 null,
                 "1,11,550,,0,100,0\n",
                 null);
 
-            Assert.Throws<FailedToUnlockWorldException>(() => PlayWorld11(state, 550));
+            var exc = Assert.Throws<FailedToUnlockWorldException>(() => PlayWorld11(state, 550));
+            Assert.Contains("12", exc.Message);
         }
 
         [Fact]
-        public void Execute_EntersNewWorld_ClearedBeforeUnlockRowExisted()
+        public void Execute_EntersNewWorld_ClearedBeforeWorldRowExisted()
         {
-            // Stage 550 was cleared before world 12 existed, so the avatar has no world 12.
+            // Stage 550 was cleared before WorldSheet had world 12, so the avatar has no world 12.
             var state = WithWorldOpenSheets(
                 WithWorldRows(
                     PrepareWorld11(clearedStageId: 550),
                     "11,Hard 2,501,550\n12,Hard 3,551,600\n",
-                    "11,11,550,12,0\n",
+                    "1011,11,550,12,0\n",
                     551),
                 null,
                 "1,11,550,,0,100,0\n2,12,600,,0,100,0\n",
                 null);
             Assert.False(state.GetAvatarState(_avatarAddress).worldInformation.TryGetWorld(12, out _));
-            state = state.SetLegacyState(
-                _avatarAddress.Derive("world_ids"),
-                List.Empty.Add(11.Serialize()).Add(12.Serialize()));
+
+            // Entering a world needs it in world_ids, which only UnlockWorld adds (9->10 aside).
+            state = new UnlockWorld
+            {
+                WorldIds = new List<int> { 12, },
+                AvatarAddress = _avatarAddress,
+            }.Execute(
+                new ActionContext
+                {
+                    PreviousState = state,
+                    Signer = _agentAddress,
+                    RandomSeed = 0,
+                    BlockIndex = 100,
+                });
 
             var next = PlayWorld11(state, 551, worldId: 12);
 
@@ -2659,9 +2671,10 @@ namespace Lib9c.Tests.Action
         }
 
         /// <summary>
-        /// Replaces the hard world rows of WorldSheet with <paramref name="worldRows"/>, appends
-        /// <paramref name="unlockRows"/> to WorldUnlockSheet and copies stage 1 into
-        /// <paramref name="stageIds"/> (stage, wave and crystal buff rows).
+        /// Rewrites WorldSheet as the base sheet plus <paramref name="worldRows"/> and
+        /// WorldUnlockSheet as the base sheet plus <paramref name="unlockRows"/>, and rewrites the
+        /// stage, wave and crystal buff sheets with stage 1 copied into <paramref name="stageIds"/>
+        /// only (dropping the stages <see cref="PrepareWorld11"/> copied).
         /// </summary>
         private IWorld WithWorldRows(IWorld state, string worldRows, string unlockRows, params int[] stageIds)
         {
