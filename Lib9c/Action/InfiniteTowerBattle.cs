@@ -334,8 +334,9 @@ Equipments, context.BlockIndex, gameConfigState);
                 }
             }
 
-            // Check if floor is accessible
-            if (FloorId > 1 && !infiniteTowerInfo.IsCleared(FloorId - 1))
+            // Check if floor is accessible. A season starts at its schedule's FloorBegin,
+            // so the floor ids of later seasons can be placed in their own range ahead of time.
+            if (FloorId > scheduleRow.FloorBegin && !infiniteTowerInfo.IsCleared(FloorId - 1))
             {
                 throw new StageNotClearedException(
                     "InfiniteTowerBattle",
