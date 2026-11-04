@@ -11,6 +11,7 @@ using Nekoyume.Module.ValidatorDelegation;
 using Libplanet.Types.Blocks;
 using Lib9c;
 using Nekoyume.Action.Guild.Migration.LegacyModels;
+using Serilog;
 
 namespace Nekoyume.Action.ValidatorDelegation
 {
@@ -29,16 +30,23 @@ namespace Nekoyume.Action.ValidatorDelegation
         public override IWorld Execute(IActionContext context)
         {
             var world = context.PreviousState;
+            Log.Information(
+                "[AllocateGuildReward] Start block #{BlockIndex}",
+                context.BlockIndex);
 
             if (world.GetDelegationMigrationHeight() is not { } migrationHeight
                 || context.BlockIndex < migrationHeight)
             {
+                Log.Information("[AllocateGuildReward] Skipped (migration height not reached)");
                 return world;
             }
 
+            Log.Information("[AllocateGuildReward] Creating ValidatorRepository...");
             var repository = new ValidatorRepository(world, context);
+            Log.Information("[AllocateGuildReward] ValidatorRepository created");
             var rewardCurrency = Currencies.Mead;
             var proposerInfo = repository.GetProposerInfo();
+            Log.Information("[AllocateGuildReward] ProposerInfo retrieved");
 
             if (context.LastCommit is BlockCommit lastCommit)
             {
@@ -47,21 +55,31 @@ namespace Nekoyume.Action.ValidatorDelegation
                     (total, next)
                         => total + (next.ValidatorPower ?? BigInteger.Zero));
 
+                Log.Information(
+                    "[AllocateGuildReward] DistributeProposerReward start, votes={VoteCount}, power={Power}",
+                    lastCommit.Votes.Count(),
+                    validatorSetPower);
                 DistributeProposerReward(
                     repository,
                     rewardCurrency,
                     proposerInfo,
                     validatorSetPower,
                     lastCommit.Votes);
+                Log.Information("[AllocateGuildReward] DistributeProposerReward done");
 
+                Log.Information("[AllocateGuildReward] DistributeValidatorReward start");
                 DistributeValidatorReward(
                     repository,
                     rewardCurrency,
                     validatorSetPower,
                     lastCommit.Votes);
+                Log.Information("[AllocateGuildReward] DistributeValidatorReward done");
             }
 
             var communityFund = repository.GetBalance(Addresses.RewardPool, rewardCurrency);
+            Log.Information(
+                "[AllocateGuildReward] CommunityFund={CommunityFund}",
+                communityFund);
 
             if (communityFund.Sign > 0)
             {
@@ -71,6 +89,7 @@ namespace Nekoyume.Action.ValidatorDelegation
                     communityFund);
             }
 
+            Log.Information("[AllocateGuildReward] Complete block #{BlockIndex}", context.BlockIndex);
             return repository.World;
         }
 
@@ -140,14 +159,17 @@ namespace Nekoyume.Action.ValidatorDelegation
 
             if (rewardToAllocate.Sign <= 0)
             {
+                Log.Information("[AllocateGuildReward.DistributeValidatorReward] No reward to allocate");
                 return;
             }
 
             if (validatorSetPower == BigInteger.Zero)
             {
+                Log.Information("[AllocateGuildReward.DistributeValidatorReward] ValidatorSetPower is zero");
                 return;
             }
 
+            int index = 0;
             foreach (Vote vote in lastVotes)
             {
                 if (vote.Flag == VoteFlag.Null || vote.Flag == VoteFlag.Unknown)
@@ -155,9 +177,17 @@ namespace Nekoyume.Action.ValidatorDelegation
                     continue;
                 }
 
+                var validatorAddress = vote.ValidatorPublicKey.Address;
+                Log.Information(
+                    "[AllocateGuildReward.DistributeValidatorReward] Processing validator {Index} {Address}",
+                    index, validatorAddress);
+
                 if (!repository.TryGetDelegatee(
-                    vote.ValidatorPublicKey.Address, out var validatorDelegatee))
+                    validatorAddress, out var validatorDelegatee))
                 {
+                    Log.Information(
+                        "[AllocateGuildReward.DistributeValidatorReward] Delegatee not found for {Address}",
+                        validatorAddress);
                     continue;
                 }
 
@@ -167,12 +197,19 @@ namespace Nekoyume.Action.ValidatorDelegation
                     continue;
                 }
 
+                Log.Information(
+                    "[AllocateGuildReward.DistributeValidatorReward] AllocateReward for {Address}, power={Power}",
+                    validatorAddress, validatorPower);
                 validatorDelegatee.AllocateReward(
                     rewardToAllocate,
                     validatorPower,
                     validatorSetPower,
                     Addresses.RewardPool,
                     blockHeight);
+                Log.Information(
+                    "[AllocateGuildReward.DistributeValidatorReward] AllocateReward done for {Address}",
+                    validatorAddress);
+                index++;
             }
         }
     }
