@@ -6,7 +6,7 @@
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <meta name="title" content="Class BuffLimitSheet.Row | Lib9c ">
       
-      
+      <meta name="description" content="The limit of one buff group.">
       <link rel="icon" href="../favicon.ico">
       <link rel="stylesheet" href="../public/docfx.min.css">
       <link rel="stylesheet" href="../public/main.css">
@@ -89,7 +89,7 @@
 
 
   <h1 id="Nekoyume_TableData_BuffLimitSheet_Row" data-uid="Nekoyume.TableData.BuffLimitSheet.Row" class="text-break">
-Class BuffLimitSheet.Row  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/release/1.40.0/Lib9c/TableData/Skill/BuffLimitSheet.cs/#L12"><i class="bi bi-code-slash"></i></a>
+Class BuffLimitSheet.Row  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/release/1.40.0/Lib9c/TableData/Skill/BuffLimitSheet.cs/#L18"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
@@ -97,7 +97,8 @@ Class BuffLimitSheet.Row  <a class="header-action link-secondary" title="View so
   <dl><dt>Assembly</dt><dd>Lib9c.dll</dd></dl>
   </div>
 
-  <div class="markdown summary"></div>
+  <div class="markdown summary"><p>The limit of one buff group.</p>
+</div>
   <div class="markdown conceptual"></div>
 
   <div class="codewrapper">
@@ -163,10 +164,11 @@ Class BuffLimitSheet.Row  <a class="header-action link-secondary" title="View so
 
   <h3 id="Nekoyume_TableData_BuffLimitSheet_Row_GroupId" data-uid="Nekoyume.TableData.BuffLimitSheet.Row.GroupId">
   GroupId
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/release/1.40.0/Lib9c/TableData/Skill/BuffLimitSheet.cs/#L16"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/release/1.40.0/Lib9c/TableData/Skill/BuffLimitSheet.cs/#L26"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>The <a class="xref" href="Nekoyume.TableData.StatBuffSheet.Row.html#Nekoyume_TableData_StatBuffSheet_Row_GroupId">GroupId</a> this limit applies to.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
@@ -194,7 +196,7 @@ Class BuffLimitSheet.Row  <a class="header-action link-secondary" title="View so
 
   <h3 id="Nekoyume_TableData_BuffLimitSheet_Row_Key" data-uid="Nekoyume.TableData.BuffLimitSheet.Row.Key">
   Key
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/release/1.40.0/Lib9c/TableData/Skill/BuffLimitSheet.cs/#L14"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/release/1.40.0/Lib9c/TableData/Skill/BuffLimitSheet.cs/#L21"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -225,10 +227,11 @@ Class BuffLimitSheet.Row  <a class="header-action link-secondary" title="View so
 
   <h3 id="Nekoyume_TableData_BuffLimitSheet_Row_StatModifier" data-uid="Nekoyume.TableData.BuffLimitSheet.Row.StatModifier">
   StatModifier
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/release/1.40.0/Lib9c/TableData/Skill/BuffLimitSheet.cs/#L18"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/release/1.40.0/Lib9c/TableData/Skill/BuffLimitSheet.cs/#L31"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>How <a class="xref" href="Nekoyume.TableData.BuffLimitSheet.Row.html#Nekoyume_TableData_BuffLimitSheet_Row_Value">Value</a> limits the buff: a percentage of the stat or an absolute amount.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
@@ -256,14 +259,16 @@ Class BuffLimitSheet.Row  <a class="header-action link-secondary" title="View so
 
   <h3 id="Nekoyume_TableData_BuffLimitSheet_Row_Value" data-uid="Nekoyume.TableData.BuffLimitSheet.Row.Value">
   Value
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/release/1.40.0/Lib9c/TableData/Skill/BuffLimitSheet.cs/#L20"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/release/1.40.0/Lib9c/TableData/Skill/BuffLimitSheet.cs/#L37"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>The limit. An absolute (<a class="xref" href="Nekoyume.Model.Stat.StatModifier.OperationType.html#Nekoyume_Model_Stat_StatModifier_OperationType_Add">Add</a>) limit follows stat magnitudes,
+which pass <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32.maxvalue">MaxValue</a> in hard worlds, so it is a <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a>.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public int Value { get; set; }</code></pre>
+    <pre><code class="lang-csharp hljs">public long Value { get; set; }</code></pre>
   </div>
 
 
@@ -272,7 +277,7 @@ Class BuffLimitSheet.Row  <a class="header-action link-secondary" title="View so
 
   <h4 class="section">Property Value</h4>
   <dl class="parameters">
-    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
     <dd></dd>
   </dl>
 
@@ -291,10 +296,11 @@ Class BuffLimitSheet.Row  <a class="header-action link-secondary" title="View so
 
   <h3 id="Nekoyume_TableData_BuffLimitSheet_Row_GetModifier_Nekoyume_Model_Stat_StatType_" data-uid="Nekoyume.TableData.BuffLimitSheet.Row.GetModifier(Nekoyume.Model.Stat.StatType)">
   GetModifier(StatType)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/release/1.40.0/Lib9c/TableData/Skill/BuffLimitSheet.cs/#L29"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/release/1.40.0/Lib9c/TableData/Skill/BuffLimitSheet.cs/#L52"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>The limit as a <a class="xref" href="Nekoyume.Model.Stat.StatModifier.html">StatModifier</a> on <code class="paramref">statType</code>.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
@@ -304,13 +310,15 @@ Class BuffLimitSheet.Row  <a class="header-action link-secondary" title="View so
   <h4 class="section">Parameters</h4>
   <dl class="parameters">
     <dt><code>statType</code> <a class="xref" href="Nekoyume.Model.Stat.StatType.html">StatType</a></dt>
-    <dd></dd>
+    <dd><p>The stat the limited buff modifies.</p>
+</dd>
   </dl>
 
   <h4 class="section">Returns</h4>
   <dl class="parameters">
     <dt><a class="xref" href="Nekoyume.Model.Stat.StatModifier.html">StatModifier</a></dt>
-    <dd></dd>
+    <dd><p>The modifier that applies the limit.</p>
+</dd>
   </dl>
 
 
@@ -327,7 +335,7 @@ Class BuffLimitSheet.Row  <a class="header-action link-secondary" title="View so
 
   <h3 id="Nekoyume_TableData_BuffLimitSheet_Row_Set_System_Collections_Generic_IReadOnlyList_System_String__" data-uid="Nekoyume.TableData.BuffLimitSheet.Row.Set(System.Collections.Generic.IReadOnlyList{System.String})">
   Set(IReadOnlyList&lt;string&gt;)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/release/1.40.0/Lib9c/TableData/Skill/BuffLimitSheet.cs/#L22"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/release/1.40.0/Lib9c/TableData/Skill/BuffLimitSheet.cs/#L40"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -358,7 +366,7 @@ Class BuffLimitSheet.Row  <a class="header-action link-secondary" title="View so
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/planetarium/lib9c/blob/release/1.40.0/Lib9c/TableData/Skill/BuffLimitSheet.cs/#L12" class="edit-link">Edit this page</a>
+          <a href="https://github.com/planetarium/lib9c/blob/release/1.40.0/Lib9c/TableData/Skill/BuffLimitSheet.cs/#L18" class="edit-link">Edit this page</a>
         </div>
 
 
