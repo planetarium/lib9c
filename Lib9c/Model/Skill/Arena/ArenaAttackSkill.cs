@@ -45,7 +45,7 @@ namespace Nekoyume.Model.Skill.Arena
             // Apply stat power ratio
             var powerMultiplier = StatPowerRatio / 10000m;
             var statAdditionalPower = ReferencedStatType != StatType.NONE ?
-                NumberConversionHelper.SafeDecimalToInt32(caster.Stats.GetStat(ReferencedStatType) * powerMultiplier) : default;
+                NumberConversionHelper.SafeDecimalToInt64(caster.Stats.GetStat(ReferencedStatType) * powerMultiplier) : default;
 
             var multipliers = GetMultiplier(SkillRow.HitCount, 1m);
             var elementalType = isNormalAttack ? caster.OffensiveElementalType : SkillRow.ElementalType;

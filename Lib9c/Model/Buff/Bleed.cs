@@ -59,7 +59,7 @@ namespace Nekoyume.Model.Buff
             int simulatorWaveTurn)
         {
             var clone = (ArenaCharacter)affectedCharacter.Clone();
-            var originalDamage = NumberConversionHelper.SafeDecimalToInt32(decimal.Round(Power * RowData.ATKPowerRatio));
+            var originalDamage = NumberConversionHelper.SafeDecimalToInt64(decimal.Round(Power * RowData.ATKPowerRatio));
             var damage = affectedCharacter.GetDamage(originalDamage, false);
             affectedCharacter.CurrentHP -= damage;
 

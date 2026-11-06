@@ -49,7 +49,7 @@ namespace Nekoyume.Model.Skill
             // Apply stat power ratio
             var powerMultiplier = StatPowerRatio / 10000m;
             var statAdditionalPower = ReferencedStatType != StatType.NONE ?
-                NumberConversionHelper.SafeDecimalToInt32(caster.Stats.GetStat(ReferencedStatType) * powerMultiplier) : default;
+                NumberConversionHelper.SafeDecimalToInt64(caster.Stats.GetStat(ReferencedStatType) * powerMultiplier) : default;
             // Use NumberConversionHelper.SafeDecimalToInt64 to prevent overflow when dealing with large ATK values
             // This allows handling values beyond int.MaxValue safely
             long totalDamage = NumberConversionHelper.SafeDecimalToInt64(caster.Stats.GetStat(StatType.ATK) + Power + statAdditionalPower);
