@@ -32,6 +32,15 @@ namespace Nekoyume.Model.Buff
             return new Vampiric(this);
         }
 
+        /// <summary>
+        /// 공격 피해(<paramref name="skillInfo"/> 의 Effect)에 <see cref="BasisPoint"/>(만분율)를 곱한 만큼 회복한다.
+        /// 회복량은 long 이라 int.MaxValue 를 넘어도 잘리지 않는다.
+        /// </summary>
+        /// <param name="affectedCharacter">회복하는 캐릭터.</param>
+        /// <param name="skillInfo">흡혈을 일으킨 공격의 결과.</param>
+        /// <param name="simulatorWaveTurn">현재 웨이브 턴.</param>
+        /// <param name="copyCharacter">전투 로그용으로 캐릭터를 복제할지.</param>
+        /// <returns>회복을 기록한 틱.</returns>
         public BattleStatus.Skill GiveEffect(CharacterBase affectedCharacter, BattleStatus.Skill.SkillInfo skillInfo, int simulatorWaveTurn, bool copyCharacter = true)
         {
             var target = copyCharacter ? (CharacterBase) affectedCharacter.Clone() : null;
@@ -57,6 +66,13 @@ namespace Nekoyume.Model.Buff
                 ArraySegment<BattleStatus.Skill.SkillInfo>.Empty);
         }
 
+        /// <summary>
+        /// 아레나용 <see cref="GiveEffect"/>. 공격 피해에 <see cref="BasisPoint"/>(만분율)를 곱한 만큼 회복한다.
+        /// </summary>
+        /// <param name="affectedCharacter">회복하는 캐릭터.</param>
+        /// <param name="skillInfo">흡혈을 일으킨 공격의 결과.</param>
+        /// <param name="simulatorWaveTurn">현재 웨이브 턴.</param>
+        /// <returns>회복을 기록한 틱.</returns>
         public ArenaSkill GiveEffectForArena(ArenaCharacter affectedCharacter, ArenaSkill.ArenaSkillInfo skillInfo, int simulatorWaveTurn)
         {
             var clone = (ArenaCharacter)affectedCharacter.Clone();
