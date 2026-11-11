@@ -358,10 +358,12 @@ public class Vampiric : ActionBuff, ICloneable</code></pre>
 
   <h3 id="Nekoyume_Model_Buff_Vampiric_GiveEffect_Nekoyume_Model_CharacterBase_Nekoyume_Model_BattleStatus_Skill_SkillInfo_System_Int32_System_Boolean_" data-uid="Nekoyume.Model.Buff.Vampiric.GiveEffect(Nekoyume.Model.CharacterBase,Nekoyume.Model.BattleStatus.Skill.SkillInfo,System.Int32,System.Boolean)">
   GiveEffect(CharacterBase, SkillInfo, int, bool)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/release/1.40.0/Lib9c/Model/Buff/Vampiric.cs/#L35"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/release/1.40.0/Lib9c/Model/Buff/Vampiric.cs/#L44"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>공격 피해(<code class="paramref">skillInfo</code> 의 Effect)에 <a class="xref" href="Nekoyume.Model.Buff.Vampiric.html#Nekoyume_Model_Buff_Vampiric_BasisPoint">BasisPoint</a>(만분율)를 곱한 만큼 회복한다.
+회복량은 long 이라 int.MaxValue 를 넘어도 잘리지 않는다.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
@@ -371,19 +373,24 @@ public class Vampiric : ActionBuff, ICloneable</code></pre>
   <h4 class="section">Parameters</h4>
   <dl class="parameters">
     <dt><code>affectedCharacter</code> <a class="xref" href="Nekoyume.Model.CharacterBase.html">CharacterBase</a></dt>
-    <dd></dd>
+    <dd><p>회복하는 캐릭터.</p>
+</dd>
     <dt><code>skillInfo</code> <a class="xref" href="Nekoyume.Model.BattleStatus.Skill.html">Skill</a>.<a class="xref" href="Nekoyume.Model.BattleStatus.Skill.SkillInfo.html">SkillInfo</a></dt>
-    <dd></dd>
+    <dd><p>흡혈을 일으킨 공격의 결과.</p>
+</dd>
     <dt><code>simulatorWaveTurn</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
-    <dd></dd>
+    <dd><p>현재 웨이브 턴.</p>
+</dd>
     <dt><code>copyCharacter</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
-    <dd></dd>
+    <dd><p>전투 로그용으로 캐릭터를 복제할지.</p>
+</dd>
   </dl>
 
   <h4 class="section">Returns</h4>
   <dl class="parameters">
     <dt><a class="xref" href="Nekoyume.Model.BattleStatus.Skill.html">Skill</a></dt>
-    <dd></dd>
+    <dd><p>회복을 기록한 틱.</p>
+</dd>
   </dl>
 
 
@@ -400,10 +407,11 @@ public class Vampiric : ActionBuff, ICloneable</code></pre>
 
   <h3 id="Nekoyume_Model_Buff_Vampiric_GiveEffectForArena_Nekoyume_Model_ArenaCharacter_Nekoyume_Model_BattleStatus_Arena_ArenaSkill_ArenaSkillInfo_System_Int32_" data-uid="Nekoyume.Model.Buff.Vampiric.GiveEffectForArena(Nekoyume.Model.ArenaCharacter,Nekoyume.Model.BattleStatus.Arena.ArenaSkill.ArenaSkillInfo,System.Int32)">
   GiveEffectForArena(ArenaCharacter, ArenaSkillInfo, int)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/release/1.40.0/Lib9c/Model/Buff/Vampiric.cs/#L60"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/release/1.40.0/Lib9c/Model/Buff/Vampiric.cs/#L76"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>아레나용 <a class="xref" href="Nekoyume.Model.Buff.Vampiric.html#Nekoyume_Model_Buff_Vampiric_GiveEffect_Nekoyume_Model_CharacterBase_Nekoyume_Model_BattleStatus_Skill_SkillInfo_System_Int32_System_Boolean_">GiveEffect(CharacterBase, SkillInfo, int, bool)</a>. 공격 피해에 <a class="xref" href="Nekoyume.Model.Buff.Vampiric.html#Nekoyume_Model_Buff_Vampiric_BasisPoint">BasisPoint</a>(만분율)를 곱한 만큼 회복한다.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
@@ -413,17 +421,21 @@ public class Vampiric : ActionBuff, ICloneable</code></pre>
   <h4 class="section">Parameters</h4>
   <dl class="parameters">
     <dt><code>affectedCharacter</code> <a class="xref" href="Nekoyume.Model.ArenaCharacter.html">ArenaCharacter</a></dt>
-    <dd></dd>
+    <dd><p>회복하는 캐릭터.</p>
+</dd>
     <dt><code>skillInfo</code> <a class="xref" href="Nekoyume.Model.BattleStatus.Arena.ArenaSkill.html">ArenaSkill</a>.<a class="xref" href="Nekoyume.Model.BattleStatus.Arena.ArenaSkill.ArenaSkillInfo.html">ArenaSkillInfo</a></dt>
-    <dd></dd>
+    <dd><p>흡혈을 일으킨 공격의 결과.</p>
+</dd>
     <dt><code>simulatorWaveTurn</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
-    <dd></dd>
+    <dd><p>현재 웨이브 턴.</p>
+</dd>
   </dl>
 
   <h4 class="section">Returns</h4>
   <dl class="parameters">
     <dt><a class="xref" href="Nekoyume.Model.BattleStatus.Arena.ArenaSkill.html">ArenaSkill</a></dt>
-    <dd></dd>
+    <dd><p>회복을 기록한 틱.</p>
+</dd>
   </dl>
 
 
