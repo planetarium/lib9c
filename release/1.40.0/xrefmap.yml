@@ -39104,6 +39104,22 @@ references:
   isSpec: "True"
   fullName: Nekoyume.Extensions.RandomExtensions.GenerateAddress
   nameWithType: RandomExtensions.GenerateAddress
+- uid: Nekoyume.Extensions.RandomExtensions.NextLong(Libplanet.Action.IRandom,System.Int64,System.Int64)
+  name: NextLong(IRandom, long, long)
+  href: api/Nekoyume.Extensions.RandomExtensions.html#Nekoyume_Extensions_RandomExtensions_NextLong_Libplanet_Action_IRandom_System_Int64_System_Int64_
+  commentId: M:Nekoyume.Extensions.RandomExtensions.NextLong(Libplanet.Action.IRandom,System.Int64,System.Int64)
+  name.vb: NextLong(IRandom, Long, Long)
+  fullName: Nekoyume.Extensions.RandomExtensions.NextLong(Libplanet.Action.IRandom, long, long)
+  fullName.vb: Nekoyume.Extensions.RandomExtensions.NextLong(Libplanet.Action.IRandom, Long, Long)
+  nameWithType: RandomExtensions.NextLong(IRandom, long, long)
+  nameWithType.vb: RandomExtensions.NextLong(IRandom, Long, Long)
+- uid: Nekoyume.Extensions.RandomExtensions.NextLong*
+  name: NextLong
+  href: api/Nekoyume.Extensions.RandomExtensions.html#Nekoyume_Extensions_RandomExtensions_NextLong_
+  commentId: Overload:Nekoyume.Extensions.RandomExtensions.NextLong
+  isSpec: "True"
+  fullName: Nekoyume.Extensions.RandomExtensions.NextLong
+  nameWithType: RandomExtensions.NextLong
 - uid: Nekoyume.Extensions.SheetsExtensions
   name: SheetsExtensions
   href: api/Nekoyume.Extensions.SheetsExtensions.html
@@ -40826,6 +40842,15 @@ references:
   fullName.vb: Nekoyume.Helper.RuneHelper.ApplyEnhancementCostBoostQuantity(Nekoyume.TableData.BoostScheduleSheet.Row, Integer)
   nameWithType: RuneHelper.ApplyEnhancementCostBoostQuantity(BoostScheduleSheet.Row?, int)
   nameWithType.vb: RuneHelper.ApplyEnhancementCostBoostQuantity(BoostScheduleSheet.Row, Integer)
+- uid: Nekoyume.Helper.RuneHelper.ApplyEnhancementCostBoostQuantity(Nekoyume.TableData.BoostScheduleSheet.Row,System.Int64)
+  name: ApplyEnhancementCostBoostQuantity(Row?, long)
+  href: api/Nekoyume.Helper.RuneHelper.html#Nekoyume_Helper_RuneHelper_ApplyEnhancementCostBoostQuantity_Nekoyume_TableData_BoostScheduleSheet_Row_System_Int64_
+  commentId: M:Nekoyume.Helper.RuneHelper.ApplyEnhancementCostBoostQuantity(Nekoyume.TableData.BoostScheduleSheet.Row,System.Int64)
+  name.vb: ApplyEnhancementCostBoostQuantity(Row, Long)
+  fullName: Nekoyume.Helper.RuneHelper.ApplyEnhancementCostBoostQuantity(Nekoyume.TableData.BoostScheduleSheet.Row?, long)
+  fullName.vb: Nekoyume.Helper.RuneHelper.ApplyEnhancementCostBoostQuantity(Nekoyume.TableData.BoostScheduleSheet.Row, Long)
+  nameWithType: RuneHelper.ApplyEnhancementCostBoostQuantity(BoostScheduleSheet.Row?, long)
+  nameWithType.vb: RuneHelper.ApplyEnhancementCostBoostQuantity(BoostScheduleSheet.Row, Long)
 - uid: Nekoyume.Helper.RuneHelper.ApplyEnhancementCostBoostQuantity*
   name: ApplyEnhancementCostBoostQuantity
   href: api/Nekoyume.Helper.RuneHelper.html#Nekoyume_Helper_RuneHelper_ApplyEnhancementCostBoostQuantity_
@@ -96689,15 +96714,15 @@ references:
   commentId: T:Nekoyume.TableData.RuneCostSheet.RuneCostData
   fullName: Nekoyume.TableData.RuneCostSheet.RuneCostData
   nameWithType: RuneCostSheet.RuneCostData
-- uid: Nekoyume.TableData.RuneCostSheet.RuneCostData.#ctor(System.Int32,System.Int32,System.Int32,System.Int32,System.Int32,System.Int32)
-  name: RuneCostData(int, int, int, int, int, int)
-  href: api/Nekoyume.TableData.RuneCostSheet.RuneCostData.html#Nekoyume_TableData_RuneCostSheet_RuneCostData__ctor_System_Int32_System_Int32_System_Int32_System_Int32_System_Int32_System_Int32_
-  commentId: M:Nekoyume.TableData.RuneCostSheet.RuneCostData.#ctor(System.Int32,System.Int32,System.Int32,System.Int32,System.Int32,System.Int32)
-  name.vb: New(Integer, Integer, Integer, Integer, Integer, Integer)
-  fullName: Nekoyume.TableData.RuneCostSheet.RuneCostData.RuneCostData(int, int, int, int, int, int)
-  fullName.vb: Nekoyume.TableData.RuneCostSheet.RuneCostData.New(Integer, Integer, Integer, Integer, Integer, Integer)
-  nameWithType: RuneCostSheet.RuneCostData.RuneCostData(int, int, int, int, int, int)
-  nameWithType.vb: RuneCostSheet.RuneCostData.New(Integer, Integer, Integer, Integer, Integer, Integer)
+- uid: Nekoyume.TableData.RuneCostSheet.RuneCostData.#ctor(System.Int32,System.Int32,System.Int32,System.Int64,System.Int32,System.Int32)
+  name: RuneCostData(int, int, int, long, int, int)
+  href: api/Nekoyume.TableData.RuneCostSheet.RuneCostData.html#Nekoyume_TableData_RuneCostSheet_RuneCostData__ctor_System_Int32_System_Int32_System_Int32_System_Int64_System_Int32_System_Int32_
+  commentId: M:Nekoyume.TableData.RuneCostSheet.RuneCostData.#ctor(System.Int32,System.Int32,System.Int32,System.Int64,System.Int32,System.Int32)
+  name.vb: New(Integer, Integer, Integer, Long, Integer, Integer)
+  fullName: Nekoyume.TableData.RuneCostSheet.RuneCostData.RuneCostData(int, int, int, long, int, int)
+  fullName.vb: Nekoyume.TableData.RuneCostSheet.RuneCostData.New(Integer, Integer, Integer, Long, Integer, Integer)
+  nameWithType: RuneCostSheet.RuneCostData.RuneCostData(int, int, int, long, int, int)
+  nameWithType.vb: RuneCostSheet.RuneCostData.New(Integer, Integer, Integer, Long, Integer, Integer)
 - uid: Nekoyume.TableData.RuneCostSheet.RuneCostData.#ctor*
   name: RuneCostData
   href: api/Nekoyume.TableData.RuneCostSheet.RuneCostData.html#Nekoyume_TableData_RuneCostSheet_RuneCostData__ctor_

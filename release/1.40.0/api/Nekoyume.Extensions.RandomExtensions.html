@@ -89,7 +89,7 @@
 
 
   <h1 id="Nekoyume_Extensions_RandomExtensions" data-uid="Nekoyume.Extensions.RandomExtensions" class="text-break">
-Class RandomExtensions  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/release/1.40.0/Lib9c/Extensions/RandomExtensions.cs/#L6"><i class="bi bi-code-slash"></i></a>
+Class RandomExtensions  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/release/1.40.0/Lib9c/Extensions/RandomExtensions.cs/#L7"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
@@ -156,7 +156,7 @@ Class RandomExtensions  <a class="header-action link-secondary" title="View sour
 
   <h3 id="Nekoyume_Extensions_RandomExtensions_GenerateAddress_Libplanet_Action_IRandom_" data-uid="Nekoyume.Extensions.RandomExtensions.GenerateAddress(Libplanet.Action.IRandom)">
   GenerateAddress(IRandom)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/release/1.40.0/Lib9c/Extensions/RandomExtensions.cs/#L8"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/release/1.40.0/Lib9c/Extensions/RandomExtensions.cs/#L9"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -188,11 +188,70 @@ Class RandomExtensions  <a class="header-action link-secondary" title="View sour
 
 
 
+  <a id="Nekoyume_Extensions_RandomExtensions_NextLong_" data-uid="Nekoyume.Extensions.RandomExtensions.NextLong*"></a>
+
+  <h3 id="Nekoyume_Extensions_RandomExtensions_NextLong_Libplanet_Action_IRandom_System_Int64_System_Int64_" data-uid="Nekoyume.Extensions.RandomExtensions.NextLong(Libplanet.Action.IRandom,System.Int64,System.Int64)">
+  NextLong(IRandom, long, long)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/release/1.40.0/Lib9c/Extensions/RandomExtensions.cs/#L35"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Returns a value in <code>[<code class="paramref">minValue</code>, <code class="paramref">maxValue</code>)</code>,
+like <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">Next(int, int)</a> but for 64-bit bounds.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static long NextLong(this IRandom random, long minValue, long maxValue)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>random</code> <span class="xref">IRandom</span></dt>
+    <dd><p>The random source.</p>
+</dd>
+    <dt><code>minValue</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
+    <dd><p>The inclusive lower bound.</p>
+</dd>
+    <dt><code>maxValue</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
+    <dd><p>The exclusive upper bound.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
+    <dd><p>The drawn value.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+  <h4 class="section" id="Nekoyume_Extensions_RandomExtensions_NextLong_Libplanet_Action_IRandom_System_Int64_System_Int64__remarks">Remarks</h4>
+  <div class="markdown level1 remarks"><p>When both bounds fit in <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a>, this calls
+<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">Next(int, int)</a> and nothing else, so sheet values that already fit
+draw exactly what they drew before the sheet columns became <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a>.
+Only a wider range reads 8 bytes from <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">NextBytes(byte[])</a>; its modulo
+bias is at most range / 2^64, negligible for sheet-sized ranges.</p>
+</div>
+
+  <h4 class="section">Exceptions</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.argumentoutofrangeexception">ArgumentOutOfRangeException</a></dt>
+    <dd><p><code class="paramref">minValue</code> is greater than <code class="paramref">maxValue</code>.</p>
+</dd>
+  </dl>
+
+
+
 
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/planetarium/lib9c/blob/release/1.40.0/Lib9c/Extensions/RandomExtensions.cs/#L6" class="edit-link">Edit this page</a>
+          <a href="https://github.com/planetarium/lib9c/blob/release/1.40.0/Lib9c/Extensions/RandomExtensions.cs/#L7" class="edit-link">Edit this page</a>
         </div>
 
 

@@ -6,7 +6,7 @@
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <meta name="title" content="Class CustomCraftHelper | Lib9c ">
       
-      
+      <meta name="description" content="Helpers for CustomEquipmentCraft.">
       <link rel="icon" href="../favicon.ico">
       <link rel="stylesheet" href="../public/docfx.min.css">
       <link rel="stylesheet" href="../public/main.css">
@@ -89,7 +89,7 @@
 
 
   <h1 id="Nekoyume_Helper_CustomCraftHelper" data-uid="Nekoyume.Helper.CustomCraftHelper" class="text-break">
-Class CustomCraftHelper  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/release/1.40.0/Lib9c/Helper/CustomCraftHelper.cs/#L15"><i class="bi bi-code-slash"></i></a>
+Class CustomCraftHelper  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/release/1.40.0/Lib9c/Helper/CustomCraftHelper.cs/#L18"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
@@ -97,7 +97,8 @@ Class CustomCraftHelper  <a class="header-action link-secondary" title="View sou
   <dl><dt>Assembly</dt><dd>Lib9c.dll</dd></dl>
   </div>
 
-  <div class="markdown summary"></div>
+  <div class="markdown summary"><p>Helpers for <code>CustomEquipmentCraft</code>.</p>
+</div>
   <div class="markdown conceptual"></div>
 
   <div class="codewrapper">
@@ -156,7 +157,7 @@ Class CustomCraftHelper  <a class="header-action link-secondary" title="View sou
 
   <h3 id="Nekoyume_Helper_CustomCraftHelper_CalculateAdditionalCost_System_Int32_Nekoyume_TableData_CustomEquipmentCraft_CustomEquipmentCraftRelationshipSheet_" data-uid="Nekoyume.Helper.CustomCraftHelper.CalculateAdditionalCost(System.Int32,Nekoyume.TableData.CustomEquipmentCraft.CustomEquipmentCraftRelationshipSheet)">
   CalculateAdditionalCost(int, CustomEquipmentCraftRelationshipSheet)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/release/1.40.0/Lib9c/Helper/CustomCraftHelper.cs/#L32"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/release/1.40.0/Lib9c/Helper/CustomCraftHelper.cs/#L38"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -194,7 +195,7 @@ Class CustomCraftHelper  <a class="header-action link-secondary" title="View sou
 
   <h3 id="Nekoyume_Helper_CustomCraftHelper_CalculateCraftCost_System_Int32_System_Int32_Nekoyume_TableData_MaterialItemSheet_Nekoyume_TableData_CustomEquipmentCraft_CustomEquipmentCraftRecipeSheet_Row_Nekoyume_TableData_CustomEquipmentCraft_CustomEquipmentCraftRelationshipSheet_Row_System_Decimal_" data-uid="Nekoyume.Helper.CustomCraftHelper.CalculateCraftCost(System.Int32,System.Int32,Nekoyume.TableData.MaterialItemSheet,Nekoyume.TableData.CustomEquipmentCraft.CustomEquipmentCraftRecipeSheet.Row,Nekoyume.TableData.CustomEquipmentCraft.CustomEquipmentCraftRelationshipSheet.Row,System.Decimal)">
   CalculateCraftCost(int, int, MaterialItemSheet, Row, Row, decimal)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/release/1.40.0/Lib9c/Helper/CustomCraftHelper.cs/#L56"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/release/1.40.0/Lib9c/Helper/CustomCraftHelper.cs/#L62"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -240,14 +241,15 @@ Class CustomCraftHelper  <a class="header-action link-secondary" title="View sou
 
   <h3 id="Nekoyume_Helper_CustomCraftHelper_SelectCp_Nekoyume_TableData_CustomEquipmentCraft_CustomEquipmentCraftRelationshipSheet_Row_Libplanet_Action_IRandom_" data-uid="Nekoyume.Helper.CustomCraftHelper.SelectCp(Nekoyume.TableData.CustomEquipmentCraft.CustomEquipmentCraftRelationshipSheet.Row,Libplanet.Action.IRandom)">
   SelectCp(Row, IRandom)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/release/1.40.0/Lib9c/Helper/CustomCraftHelper.cs/#L17"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/release/1.40.0/Lib9c/Helper/CustomCraftHelper.cs/#L23"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Picks a CP group by its ratio, then a total CP within it.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public static int SelectCp(CustomEquipmentCraftRelationshipSheet.Row relationshipRow, IRandom random)</code></pre>
+    <pre><code class="lang-csharp hljs">public static long SelectCp(CustomEquipmentCraftRelationshipSheet.Row relationshipRow, IRandom random)</code></pre>
   </div>
 
   <h4 class="section">Parameters</h4>
@@ -260,7 +262,7 @@ Class CustomCraftHelper  <a class="header-action link-secondary" title="View sou
 
   <h4 class="section">Returns</h4>
   <dl class="parameters">
-    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
     <dd></dd>
   </dl>
 
@@ -278,7 +280,7 @@ Class CustomCraftHelper  <a class="header-action link-secondary" title="View sou
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/planetarium/lib9c/blob/release/1.40.0/Lib9c/Helper/CustomCraftHelper.cs/#L15" class="edit-link">Edit this page</a>
+          <a href="https://github.com/planetarium/lib9c/blob/release/1.40.0/Lib9c/Helper/CustomCraftHelper.cs/#L18" class="edit-link">Edit this page</a>
         </div>
 
 

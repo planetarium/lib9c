@@ -323,7 +323,7 @@ is positive. A non-positive <code class="paramref">baseCost</code> is returned u
   <div class="markdown level1 remarks"><p>
 Discount only: a row can never raise a cost. Raising one is not an event anyone has
 asked for, and it would let a mistyped row push the per-try sum in
-<a class="xref" href="Nekoyume.Helper.RuneHelper.html#Nekoyume_Helper_RuneHelper_TryEnhancement_System_Int32_Nekoyume_TableData_RuneCostSheet_Row_Libplanet_Action_IRandom_System_Int32_Nekoyume_Action_RuneEnhancement_LevelUpResult__Nekoyume_Helper_RuneEnhancementCostBoost_System_Int64_">TryEnhancement(int, Row, IRandom, int, out LevelUpResult, RuneEnhancementCostBoost?, long)</a> past <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32.maxvalue">MaxValue</a>, where it wraps negative
+<a class="xref" href="Nekoyume.Helper.RuneHelper.html#Nekoyume_Helper_RuneHelper_TryEnhancement_System_Int32_Nekoyume_TableData_RuneCostSheet_Row_Libplanet_Action_IRandom_System_Int32_Nekoyume_Action_RuneEnhancement_LevelUpResult__Nekoyume_Helper_RuneEnhancementCostBoost_System_Int64_">TryEnhancement(int, Row, IRandom, int, out LevelUpResult, RuneEnhancementCostBoost?, long)</a> past its type's maximum, where it wraps negative
 and the cost is skipped instead of charged.
 </p>
 <p>
@@ -337,11 +337,55 @@ sheet already sets to 0 stays 0, so a boost never creates a cost either.
 
 
 
+  <a id="Nekoyume_Helper_RuneHelper_ApplyEnhancementCostBoostQuantity_" data-uid="Nekoyume.Helper.RuneHelper.ApplyEnhancementCostBoostQuantity*"></a>
+
+  <h3 id="Nekoyume_Helper_RuneHelper_ApplyEnhancementCostBoostQuantity_Nekoyume_TableData_BoostScheduleSheet_Row_System_Int64_" data-uid="Nekoyume.Helper.RuneHelper.ApplyEnhancementCostBoostQuantity(Nekoyume.TableData.BoostScheduleSheet.Row,System.Int64)">
+  ApplyEnhancementCostBoostQuantity(Row?, long)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/release/1.40.0/Lib9c/Helper/RuneHelper.cs/#L276"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p><a class="xref" href="Nekoyume.Helper.RuneHelper.html#Nekoyume_Helper_RuneHelper_ApplyEnhancementCostBoostQuantity_Nekoyume_TableData_BoostScheduleSheet_Row_System_Int32_">ApplyEnhancementCostBoostQuantity(Row?, int)</a> for the
+64-bit crystal quantity: the same discount-only, at-least-1 rule.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static long ApplyEnhancementCostBoostQuantity(BoostScheduleSheet.Row? boost, long baseCost)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>boost</code> <a class="xref" href="Nekoyume.TableData.BoostScheduleSheet.html">BoostScheduleSheet</a>.<a class="xref" href="Nekoyume.TableData.BoostScheduleSheet.Row.html">Row</a></dt>
+    <dd><p>The row to apply, or <code>null</code> for none.</p>
+</dd>
+    <dt><code>baseCost</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
+    <dd><p>The sheet's quantity.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
+    <dd><p>The adjusted quantity, kept within <code>[1, baseCost]</code> when <code class="paramref">baseCost</code>
+is positive. A non-positive <code class="paramref">baseCost</code> is returned unchanged.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
   <a id="Nekoyume_Helper_RuneHelper_CalculateRuneLevelBonus_" data-uid="Nekoyume.Helper.RuneHelper.CalculateRuneLevelBonus*"></a>
 
   <h3 id="Nekoyume_Helper_RuneHelper_CalculateRuneLevelBonus_Nekoyume_Model_State_AllRuneState_Nekoyume_TableData_Rune_RuneListSheet_Nekoyume_TableData_Rune_RuneLevelBonusSheet_" data-uid="Nekoyume.Helper.RuneHelper.CalculateRuneLevelBonus(Nekoyume.Model.State.AllRuneState,Nekoyume.TableData.Rune.RuneListSheet,Nekoyume.TableData.Rune.RuneLevelBonusSheet)">
   CalculateRuneLevelBonus(AllRuneState, RuneListSheet, RuneLevelBonusSheet)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/release/1.40.0/Lib9c/Helper/RuneHelper.cs/#L273"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/release/1.40.0/Lib9c/Helper/RuneHelper.cs/#L293"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -381,7 +425,7 @@ sheet already sets to 0 stays 0, so a boost never creates a cost either.
 
   <h3 id="Nekoyume_Helper_RuneHelper_CalculateStakeReward_Libplanet_Types_Assets_FungibleAssetValue_System_Int32_" data-uid="Nekoyume.Helper.RuneHelper.CalculateStakeReward(Libplanet.Types.Assets.FungibleAssetValue,System.Int32)">
   CalculateStakeReward(FungibleAssetValue, int)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/release/1.40.0/Lib9c/Helper/RuneHelper.cs/#L266"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/release/1.40.0/Lib9c/Helper/RuneHelper.cs/#L286"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -419,7 +463,7 @@ sheet already sets to 0 stays 0, so a boost never creates a cost either.
 
   <h3 id="Nekoyume_Helper_RuneHelper_GetRuneOptions_System_Collections_Generic_IEnumerable_Nekoyume_Action_RuneSlotInfo__Nekoyume_Model_State_AllRuneState_Nekoyume_TableData_RuneOptionSheet_" data-uid="Nekoyume.Helper.RuneHelper.GetRuneOptions(System.Collections.Generic.IEnumerable{Nekoyume.Action.RuneSlotInfo},Nekoyume.Model.State.AllRuneState,Nekoyume.TableData.RuneOptionSheet)">
   GetRuneOptions(IEnumerable&lt;RuneSlotInfo&gt;, AllRuneState, RuneOptionSheet)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/release/1.40.0/Lib9c/Helper/RuneHelper.cs/#L330"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/release/1.40.0/Lib9c/Helper/RuneHelper.cs/#L350"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -459,7 +503,7 @@ sheet already sets to 0 stays 0, so a boost never creates a cost either.
 
   <h3 id="Nekoyume_Helper_RuneHelper_GetRuneOptions_System_Collections_Generic_IEnumerable_Nekoyume_TableData_RuneWeightSheet_RuneInfo__Nekoyume_Model_State_AllRuneState_Nekoyume_TableData_RuneOptionSheet_" data-uid="Nekoyume.Helper.RuneHelper.GetRuneOptions(System.Collections.Generic.IEnumerable{Nekoyume.TableData.RuneWeightSheet.RuneInfo},Nekoyume.Model.State.AllRuneState,Nekoyume.TableData.RuneOptionSheet)">
   GetRuneOptions(IEnumerable&lt;RuneInfo&gt;, AllRuneState, RuneOptionSheet)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/release/1.40.0/Lib9c/Helper/RuneHelper.cs/#L301"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/release/1.40.0/Lib9c/Helper/RuneHelper.cs/#L321"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
