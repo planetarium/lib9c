@@ -20,19 +20,48 @@ using Nekoyume.TableData.Summon;
 
 namespace Nekoyume.Action
 {
+    /// <summary>
+    /// Tries to raise a rune's level <see cref="TryCount"/> times, burning the cost of every try.
+    /// </summary>
     [Serializable]
     [ActionType("runeEnhancement2")]
     public class RuneEnhancement : GameAction, IRuneEnhancementV1
     {
+        /// <summary>
+        /// The avatar whose rune is enhanced.
+        /// </summary>
         public Address AvatarAddress;
+
+        /// <summary>
+        /// The rune to enhance.
+        /// </summary>
         public int RuneId;
+
+        /// <summary>
+        /// How many levels to try, each paying its own cost.
+        /// </summary>
         public int TryCount = 1;
 
+        /// <summary>
+        /// The outcome and cost of a run of enhancement tries.
+        /// </summary>
         public struct LevelUpResult
         {
+            /// <summary>
+            /// Tries that succeeded.
+            /// </summary>
             public int LevelUpCount { get; set; }
+            /// <summary>
+            /// NCG burned over all tries.
+            /// </summary>
             public int NcgCost { get; set; }
+            /// <summary>
+            /// Crystal burned over all tries.
+            /// </summary>
             public long CrystalCost { get; set; }
+            /// <summary>
+            /// Rune stones burned over all tries.
+            /// </summary>
             public int RuneCost { get; set; }
 
             public override string ToString() =>

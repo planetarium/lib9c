@@ -21,10 +21,22 @@ namespace Nekoyume.TableData.CustomEquipmentCraft
         }
 
         // Total CP range is divided to several groups with group ratio. (Max 10 groups)
+        /// <summary>
+        /// A total CP range and its selection weight.
+        /// </summary>
         public struct CpGroup
         {
+            /// <summary>
+            /// The weight of this group among the row's groups.
+            /// </summary>
             public int Ratio;
+            /// <summary>
+            /// The inclusive lower bound of the total CP.
+            /// </summary>
             public long MinCp;
+            /// <summary>
+            /// The inclusive upper bound of the total CP.
+            /// </summary>
             public long MaxCp;
 
             public long SelectCp(IRandom random)

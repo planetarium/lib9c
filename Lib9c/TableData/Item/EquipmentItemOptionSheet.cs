@@ -5,22 +5,62 @@ using static Nekoyume.TableData.TableExtensions;
 
 namespace Nekoyume.TableData
 {
+    /// <summary>
+    /// Stat and skill options that crafting can add to equipment.
+    /// </summary>
     public class EquipmentItemOptionSheet : Sheet<int, EquipmentItemOptionSheet.Row>
     {
+        /// <summary>
+        /// One option and the ranges its values are drawn from.
+        /// </summary>
         public class Row : SheetRow<int>
         {
+            /// <inheritdoc />
             public override int Key => Id;
+            /// <summary>
+            /// The option id.
+            /// </summary>
             public int Id { get; private set; }
+            /// <summary>
+            /// The stat this option adds, or <see cref="StatType.NONE"/> for a skill option.
+            /// </summary>
             public StatType StatType { get; private set; }
+            /// <summary>
+            /// The inclusive lower bound of the stat value.
+            /// </summary>
             public long StatMin { get; private set; }
+            /// <summary>
+            /// The inclusive upper bound of the stat value.
+            /// </summary>
             public long StatMax { get; private set; }
+            /// <summary>
+            /// The skill this option grants, or 0 for a stat option.
+            /// </summary>
             public int SkillId { get; private set; }
             public long SkillDamageMin { get; private set; }
+            /// <summary>
+            /// The inclusive upper bound of the skill power.
+            /// </summary>
             public long SkillDamageMax { get; private set; }
+            /// <summary>
+            /// The inclusive lower bound of the skill chance.
+            /// </summary>
             public int SkillChanceMin { get; private set; }
+            /// <summary>
+            /// The inclusive upper bound of the skill chance.
+            /// </summary>
             public int SkillChanceMax { get; private set; }
+            /// <summary>
+            /// The inclusive lower bound of the stat damage ratio.
+            /// </summary>
             public int StatDamageRatioMin { get; private set; }
+            /// <summary>
+            /// The inclusive upper bound of the stat damage ratio.
+            /// </summary>
             public int StatDamageRatioMax { get; private set; }
+            /// <summary>
+            /// The stat the stat damage ratio refers to.
+            /// </summary>
             public StatType ReferencedStatType { get; private set; }
 
             public override void Set(IReadOnlyList<string> fields)
@@ -48,6 +88,9 @@ namespace Nekoyume.TableData
             }
         }
 
+        /// <summary>
+        /// Creates an empty sheet.
+        /// </summary>
         public EquipmentItemOptionSheet() : base(nameof(EquipmentItemOptionSheet))
         {
         }
