@@ -4,6 +4,7 @@ using System.Linq;
 using Libplanet.Action;
 using Libplanet.Crypto;
 using Nekoyume.Battle;
+using Nekoyume.Extensions;
 using Nekoyume.Model.Item;
 using Nekoyume.Model.Skill;
 using Nekoyume.Model.Stat;
@@ -11,13 +12,22 @@ using Nekoyume.TableData;
 
 namespace Nekoyume.Action
 {
+    /// <summary>
+    /// Option helpers kept from <c>CombinationEquipment5</c> and still used by current crafting.
+    /// </summary>
     public static class CombinationEquipment5
     {
+        /// <summary>
+        /// The address that collects crafting fees.
+        /// </summary>
         public static readonly Address BlacksmithAddress = ItemEnhancement9.BlacksmithAddress;
 
+        /// <summary>
+        /// Draws a stat value in the option's range.
+        /// </summary>
         public static DecimalStat GetStat(EquipmentItemOptionSheet.Row row, IRandom random)
         {
-            var value = random.Next(row.StatMin, row.StatMax + 1);
+            var value = random.NextLong(row.StatMin, row.StatMax + 1);
             return new DecimalStat(row.StatType, value);
         }
 
@@ -27,7 +37,7 @@ namespace Nekoyume.Action
             try
             {
                 var skillRow = skillSheet.OrderedList.First(r => r.Id == row.SkillId);
-                var dmg = random.Next(row.SkillDamageMin, row.SkillDamageMax + 1);
+                var dmg = random.NextLong(row.SkillDamageMin, row.SkillDamageMax + 1);
                 var chance = random.Next(row.SkillChanceMin, row.SkillChanceMax + 1);
 
                 var hasStatDamageRatio = row.StatDamageRatioMin != default && row.StatDamageRatioMax != default;

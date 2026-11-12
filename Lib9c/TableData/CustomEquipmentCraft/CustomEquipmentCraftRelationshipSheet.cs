@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Numerics;
 using Libplanet.Action;
+using Nekoyume.Extensions;
 using Nekoyume.Model.Item;
 using static Nekoyume.TableData.TableExtensions;
 
@@ -20,15 +21,27 @@ namespace Nekoyume.TableData.CustomEquipmentCraft
         }
 
         // Total CP range is divided to several groups with group ratio. (Max 10 groups)
+        /// <summary>
+        /// A total CP range and its selection weight.
+        /// </summary>
         public struct CpGroup
         {
+            /// <summary>
+            /// The weight of this group among the row's groups.
+            /// </summary>
             public int Ratio;
-            public int MinCp;
-            public int MaxCp;
+            /// <summary>
+            /// The inclusive lower bound of the total CP.
+            /// </summary>
+            public long MinCp;
+            /// <summary>
+            /// The inclusive upper bound of the total CP.
+            /// </summary>
+            public long MaxCp;
 
-            public int SelectCp(IRandom random)
+            public long SelectCp(IRandom random)
             {
-                return random.Next(MinCp, MaxCp + 1);
+                return random.NextLong(MinCp, MaxCp + 1);
             }
         }
 
@@ -61,12 +74,12 @@ namespace Nekoyume.TableData.CustomEquipmentCraft
                 for (var i = 0; i < groupCount; i++)
                 {
                     var col = 3 + i * increment;
-                    if (TryParseInt(fields[col], out var min))
+                    if (TryParseLong(fields[col], out var min))
                     {
                         CpGroups.Add(new CpGroup
                         {
                             MinCp = min,
-                            MaxCp = ParseInt(fields[col + 1]),
+                            MaxCp = ParseLong(fields[col + 1]),
                             Ratio = ParseInt(fields[col + 2]),
                         });
                     }

@@ -122,7 +122,7 @@ namespace Nekoyume.Helper
                 throw new ArgumentException($"This material is not replaceable with crystal. id : {materialId}");
             }
 
-            return costRow.CRYSTAL * materialCount * CRYSTAL;
+            return CRYSTAL * costRow.CRYSTAL * materialCount;
         }
 
         public static FungibleAssetValue CalculateCombinationCost(FungibleAssetValue crystal,

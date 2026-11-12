@@ -717,7 +717,7 @@ namespace Nekoyume.Action
                 return null;
             }
 
-            var dmg = random.Next(row.SkillDamageMin, row.SkillDamageMax + 1);
+            var dmg = random.NextLong(row.SkillDamageMin, row.SkillDamageMax + 1);
             var chance = random.Next(row.SkillChanceMin, row.SkillChanceMax + 1);
 
             var hasStatDamageRatio = row.StatDamageRatioMin != default && row.StatDamageRatioMax != default;
