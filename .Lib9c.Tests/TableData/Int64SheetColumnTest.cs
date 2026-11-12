@@ -18,6 +18,10 @@ namespace Lib9c.Tests.TableData
     {
         private const long Big = 3_000_000_000L;
 
+        // TestRandom(42).NextLong(Big, Big * 2): the 8 bytes from System.Random(42), read
+        // big-endian, modulo Big.
+        private const long PinnedWideDraw = 3_143_288_123L;
+
         [Fact]
         public void CrystalSheets()
         {
@@ -137,6 +141,27 @@ namespace Lib9c.Tests.TableData
                 var actual = new TestRandom(seed).NextLong(minValue, maxValue);
                 Assert.Equal(expected, actual);
             }
+        }
+
+        [Fact]
+        public void NextLong_Int32Boundary()
+        {
+            // (0, int.MaxValue) still fits and must keep using Next(int, int).
+            Assert.Equal(
+                new TestRandom(7).Next(0, int.MaxValue),
+                new TestRandom(7).NextLong(0, int.MaxValue));
+
+            // StatMax = int.MaxValue makes the exclusive bound int.MaxValue + 1, which the old
+            // int arithmetic wrapped to int.MinValue; it now takes the wide path.
+            var value = new TestRandom(7).NextLong(int.MaxValue, (long)int.MaxValue + 1);
+            Assert.Equal(int.MaxValue, value);
+        }
+
+        [Fact]
+        public void NextLong_BeyondInt32_IsPinned()
+        {
+            // Every node must draw the same value; this pins the byte order and the modulo.
+            Assert.Equal(PinnedWideDraw, new TestRandom(42).NextLong(Big, Big * 2));
         }
 
         [Fact]

@@ -403,7 +403,7 @@ namespace Nekoyume.Model.Item
             foreach (var skill in skills)
             {
                 var chance = NumberConversionHelper.SafeDecimalToInt32(skill.Chance * 1.3m);
-                var power = NumberConversionHelper.SafeDecimalToInt32(skill.Power * 1.3m);
+                var power = NumberConversionHelper.SafeDecimalToInt64(skill.Power * 1.3m);
                 var statPowerRatio = NumberConversionHelper.SafeDecimalToInt32(skill.StatPowerRatio * 1.3m);
                 skill.Update(chance, power, statPowerRatio);
             }
@@ -457,7 +457,7 @@ namespace Nekoyume.Model.Item
                 }
 
                 var chance = skill.Chance + NumberConversionHelper.SafeDecimalToInt32(addChance);
-                var power = skill.Power + NumberConversionHelper.SafeDecimalToInt32(addPower);
+                var power = skill.Power + NumberConversionHelper.SafeDecimalToInt64(addPower);
                 var statPowerRatio = skill.StatPowerRatio + NumberConversionHelper.SafeDecimalToInt32(addStatPowerRatio);
 
                 skill.Update(chance, power, statPowerRatio);
@@ -509,7 +509,7 @@ namespace Nekoyume.Model.Item
                 }
 
                 var chance = skill.Chance + NumberConversionHelper.SafeDecimalToInt32(addChance);
-                var power = skill.Power + NumberConversionHelper.SafeDecimalToInt32(addPower);
+                var power = skill.Power + NumberConversionHelper.SafeDecimalToInt64(addPower);
                 var statPowerRatio = skill.StatPowerRatio + NumberConversionHelper.SafeDecimalToInt32(addStatPowerRatio);
 
                 skill.Update(chance, power, statPowerRatio);
