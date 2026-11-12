@@ -18,11 +18,24 @@ namespace Nekoyume.Helper
     {
 #pragma warning disable CS0618
         // Use of obsolete method Currency.Legacy(): https://github.com/planetarium/lib9c/discussions/1319
+        /// <summary>
+        /// The crystal currency.
+        /// </summary>
         public static readonly Currency CRYSTAL = Currencies.Crystal;
 #pragma warning restore CS0618
-        public const int MaxLevelExponent = 5;
-        public const long CrystalLimit = 100_000_000L;
 
+        /// <summary>
+        /// Enhancement levels above this add no more grinding crystal: the multiplier stops at
+        /// 2^5 - 1.
+        /// </summary>
+        public const int MaxLevelExponent = 5;
+
+        /// <summary>
+        /// Sums the crystal needed to unlock the given equipment recipes.
+        /// </summary>
+        /// <param name="recipeIds">The recipes to unlock.</param>
+        /// <param name="equipmentItemRecipeSheet">The sheet holding each recipe's unlock cost.</param>
+        /// <returns>The total unlock cost.</returns>
         public static FungibleAssetValue CalculateRecipeUnlockCost(IEnumerable<int> recipeIds, EquipmentItemRecipeSheet equipmentItemRecipeSheet)
         {
             var cost = 0 * CRYSTAL;
@@ -96,7 +109,6 @@ namespace Nekoyume.Helper
                 crystalAmount +=
                     (BigInteger.Pow(2, Math.Min(equipment.level, MaxLevelExponent)) - 1) *
                     crystalEquipmentGrindingSheet[grindingRow.EnchantBaseId].CRYSTAL;
-                crystalAmount = BigInteger.Min(crystalAmount, CrystalLimit);
                 crystal += crystalAmount * CRYSTAL;
             }
 
