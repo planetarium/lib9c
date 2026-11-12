@@ -245,9 +245,9 @@ namespace Lib9c.Tests
                     false,
                     "320",
                 },
-                // Max crystal = 100_000_000
+                // No per-equipment cap: the old 100_000_000 limit guarded an int that is now
+                // BigInteger, so the sheet value is paid in full.
                 // 10_000_000 + (2^5 - 1) * 10_000_000 = 320_000_000
-                // limit to 100_000_000
                 new object[]
                 {
                     new[]
@@ -256,7 +256,7 @@ namespace Lib9c.Tests
                     },
                     0,
                     false,
-                    "100000000",
+                    "320000000",
                 },
             };
 

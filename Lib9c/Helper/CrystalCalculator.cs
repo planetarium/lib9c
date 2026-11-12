@@ -21,7 +21,6 @@ namespace Nekoyume.Helper
         public static readonly Currency CRYSTAL = Currencies.Crystal;
 #pragma warning restore CS0618
         public const int MaxLevelExponent = 5;
-        public const long CrystalLimit = 100_000_000L;
 
         public static FungibleAssetValue CalculateRecipeUnlockCost(IEnumerable<int> recipeIds, EquipmentItemRecipeSheet equipmentItemRecipeSheet)
         {
@@ -96,7 +95,6 @@ namespace Nekoyume.Helper
                 crystalAmount +=
                     (BigInteger.Pow(2, Math.Min(equipment.level, MaxLevelExponent)) - 1) *
                     crystalEquipmentGrindingSheet[grindingRow.EnchantBaseId].CRYSTAL;
-                crystalAmount = BigInteger.Min(crystalAmount, CrystalLimit);
                 crystal += crystalAmount * CRYSTAL;
             }
 
