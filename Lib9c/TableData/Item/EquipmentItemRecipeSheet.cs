@@ -21,7 +21,7 @@ namespace Nekoyume.TableData
             public long RequiredBlockIndex { get; private set; }
             public int UnlockStage { get; private set; }
             public List<int> SubRecipeIds { get; private set; }
-            public int CRYSTAL { get; private set; }
+            public long CRYSTAL { get; private set; }
             public ItemSubType? ItemSubType { get; private set; }
 
             public override void Set(IReadOnlyList<string> fields)
@@ -48,7 +48,7 @@ namespace Nekoyume.TableData
                 if (fields.Count >= 12)
                 {
                     var currentField = fields[11];
-                    CRYSTAL = string.IsNullOrEmpty(currentField) ? 0 : ParseInt(currentField);
+                    CRYSTAL = string.IsNullOrEmpty(currentField) ? 0 : ParseLong(currentField);
                 }
 
                 if (fields.Count >= 13)

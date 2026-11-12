@@ -71,7 +71,7 @@ namespace Nekoyume.TableData
 
                 RuneId = ParseInt(fields[0]);
                 var level = ParseInt(fields[1]);
-                var cp = ParseInt(fields[2]);
+                var cp = ParseLong(fields[2]);
 
                 if (!string.IsNullOrEmpty(fields[3]))
                 {

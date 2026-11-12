@@ -10,14 +10,14 @@ namespace Nekoyume.TableData.Crystal
             public override int Key => ItemId;
             public int ItemId;
             public int EnchantBaseId;
-            public int CRYSTAL;
+            public long CRYSTAL;
             public List<(int materialId, int count)> RewardMaterials = new();
 
             public override void Set(IReadOnlyList<string> fields)
             {
                 ItemId = ParseInt(fields[0]);
                 EnchantBaseId = ParseInt(fields[1]);
-                CRYSTAL = ParseInt(fields[2]);
+                CRYSTAL = ParseLong(fields[2]);
 
                 if (fields.Count > 3)
                 {

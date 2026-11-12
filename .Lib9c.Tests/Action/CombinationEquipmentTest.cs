@@ -212,10 +212,10 @@ namespace Lib9c.Tests.Action
                 }
             }
 
-            var expectedCrystal = 0;
+            var expectedCrystal = 0L;
             if (payByCrystal)
             {
-                var crystalBalance = 0;
+                var crystalBalance = 0L;
                 var row = _tableSheets.EquipmentItemRecipeSheet[recipeId];
                 var costSheet = _tableSheets.CrystalMaterialCostSheet;
                 crystalBalance += costSheet[row.MaterialId].CRYSTAL * row.MaterialCount;

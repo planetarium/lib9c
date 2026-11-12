@@ -14,7 +14,7 @@ namespace Nekoyume.Helper
 {
     public static class CustomCraftHelper
     {
-        public static int SelectCp(
+        public static long SelectCp(
             CustomEquipmentCraftRelationshipSheet.Row relationshipRow,
             IRandom random
         )

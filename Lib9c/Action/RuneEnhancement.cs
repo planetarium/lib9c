@@ -32,7 +32,7 @@ namespace Nekoyume.Action
         {
             public int LevelUpCount { get; set; }
             public int NcgCost { get; set; }
-            public int CrystalCost { get; set; }
+            public long CrystalCost { get; set; }
             public int RuneCost { get; set; }
 
             public override string ToString() =>

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Numerics;
 using Libplanet.Action;
+using Nekoyume.Extensions;
 using Nekoyume.Model.Item;
 using static Nekoyume.TableData.TableExtensions;
 
@@ -23,12 +24,12 @@ namespace Nekoyume.TableData.CustomEquipmentCraft
         public struct CpGroup
         {
             public int Ratio;
-            public int MinCp;
-            public int MaxCp;
+            public long MinCp;
+            public long MaxCp;
 
-            public int SelectCp(IRandom random)
+            public long SelectCp(IRandom random)
             {
-                return random.Next(MinCp, MaxCp + 1);
+                return random.NextLong(MinCp, MaxCp + 1);
             }
         }
 
@@ -61,12 +62,12 @@ namespace Nekoyume.TableData.CustomEquipmentCraft
                 for (var i = 0; i < groupCount; i++)
                 {
                     var col = 3 + i * increment;
-                    if (TryParseInt(fields[col], out var min))
+                    if (TryParseLong(fields[col], out var min))
                     {
                         CpGroups.Add(new CpGroup
                         {
                             MinCp = min,
-                            MaxCp = ParseInt(fields[col + 1]),
+                            MaxCp = ParseLong(fields[col + 1]),
                             Ratio = ParseInt(fields[col + 2]),
                         });
                     }

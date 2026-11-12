@@ -7,6 +7,7 @@ using System;
 using System.Linq;
 using Libplanet.Action;
 using Nekoyume.Battle;
+using Nekoyume.Extensions;
 using Nekoyume.Model.Item;
 using Nekoyume.TableData.CustomEquipmentCraft;
 
@@ -180,7 +181,7 @@ namespace Nekoyume.Model.Skill
         public static Skill DeserializeFromList(List serialized)
         {
             var skillRow = SkillSheet.Row.Deserialize(serialized[0]);
-            var power = serialized[1].ToInteger();
+            var power = serialized[1].ToLong();
             var chance = serialized[2].ToInteger();
 
             var ratio = 0;
@@ -227,7 +228,7 @@ namespace Nekoyume.Model.Skill
 
             return Get(
                 SkillSheet.Row.Deserialize(serialized["skillRow"]),
-                serialized["power"].ToInteger(),
+                serialized["power"].ToLong(),
                 serialized["chance"].ToInteger(),
                 ratio,
                 statType
@@ -266,7 +267,7 @@ namespace Nekoyume.Model.Skill
 
             return SkillFactory.Get(
                 skillRow,
-                random.Next(skillOptionRow.SkillDamageMin, skillOptionRow.SkillDamageMax + 1),
+                random.NextLong(skillOptionRow.SkillDamageMin, skillOptionRow.SkillDamageMax + 1),
                 random.Next(skillOptionRow.SkillChanceMin, skillOptionRow.SkillChanceMax + 1),
                 statDamageRatio,
                 refStatType

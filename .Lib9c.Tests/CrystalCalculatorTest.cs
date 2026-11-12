@@ -38,7 +38,7 @@ namespace Lib9c.Tests
         public void CalculateRecipeUnlockCost(int recipeCount)
         {
             var recipeIds = new List<int>();
-            var expected = 0;
+            var expected = 0L;
             foreach (var row in _equipmentItemRecipeSheet.OrderedList)
             {
                 if (recipeIds.Count < recipeCount)

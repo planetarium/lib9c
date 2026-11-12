@@ -230,6 +230,26 @@ namespace Lib9c.Tests.Model.Skill
         }
 
         [Fact]
+        public void Skill_Deserialize_PowerBeyondInt32()
+        {
+            // Power is serialized as long; reading it back as int threw for any value past
+            // int.MaxValue, which would make the whole inventory holding it unreadable.
+            var originalSkill = SkillFactory.Get(_skillRow, 3_000_000_000L, 50, 25, StatType.ATK);
+
+            var fromList = SkillFactory.DeserializeFromList((List)originalSkill.Serialize());
+            Assert.Equal(3_000_000_000L, fromList.Power);
+
+            var dict = new Bencodex.Types.Dictionary(new Dictionary<IKey, IValue>
+            {
+                [(Text)"skillRow"] = LegacySerializeSkillRow(originalSkill.SkillRow),
+                [(Text)"power"] = originalSkill.Power.Serialize(),
+                [(Text)"chance"] = originalSkill.Chance.Serialize(),
+            });
+            var fromDictionary = SkillFactory.DeserializeFromDictionary(dict);
+            Assert.Equal(3_000_000_000L, fromDictionary.Power);
+        }
+
+        [Fact]
         public void Skill_Serialize_Deserialize_RoundTrip()
         {
             // Arrange

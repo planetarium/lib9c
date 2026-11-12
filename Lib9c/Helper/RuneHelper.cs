@@ -243,7 +243,7 @@ namespace Nekoyume.Helper
         /// <para>
         /// Discount only: a row can never raise a cost. Raising one is not an event anyone has
         /// asked for, and it would let a mistyped row push the per-try sum in
-        /// <see cref="TryEnhancement"/> past <see cref="int.MaxValue"/>, where it wraps negative
+        /// <see cref="TryEnhancement"/> past its type's maximum, where it wraps negative
         /// and the cost is skipped instead of charged.
         /// </para>
         /// <para>
@@ -261,6 +261,26 @@ namespace Nekoyume.Helper
             }
 
             return Math.Min(Math.Max(boost.Apply(baseCost), 1), baseCost);
+        }
+
+        /// <summary>
+        /// <see cref="ApplyEnhancementCostBoostQuantity(BoostScheduleSheet.Row?, int)"/> for the
+        /// 64-bit crystal quantity: the same discount-only, at-least-1 rule.
+        /// </summary>
+        /// <param name="boost">The row to apply, or <c>null</c> for none.</param>
+        /// <param name="baseCost">The sheet's quantity.</param>
+        /// <returns>
+        /// The adjusted quantity, kept within <c>[1, baseCost]</c> when <paramref name="baseCost"/>
+        /// is positive. A non-positive <paramref name="baseCost"/> is returned unchanged.
+        /// </returns>
+        public static long ApplyEnhancementCostBoostQuantity(BoostScheduleSheet.Row? boost, long baseCost)
+        {
+            if (boost is null || baseCost <= 0)
+            {
+                return baseCost;
+            }
+
+            return Math.Min(Math.Max(boost.Apply(baseCost), 1L), baseCost);
         }
 
         public static FungibleAssetValue CalculateStakeReward(FungibleAssetValue stakeAmount,

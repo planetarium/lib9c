@@ -504,7 +504,7 @@ namespace Lib9c.DevExtensions.Tests.Action
                 var statOptions = options
                     .Where(e => e.StatType != StatType.NONE)
                     .Aggregate(
-                        new Dictionary<StatType, int>(),
+                        new Dictionary<StatType, long>(),
                         (dict, row) =>
                         {
                             if (dict.ContainsKey(row.StatType))

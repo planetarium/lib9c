@@ -10,13 +10,13 @@ namespace Nekoyume.TableData.Crystal
         public class Row : SheetRow<int>
         {
             public int ItemId { get; private set; }
-            public int CRYSTAL { get; private set; }
+            public long CRYSTAL { get; private set; }
             public override int Key => ItemId;
 
             public override void Set(IReadOnlyList<string> fields)
             {
                 ItemId = ParseInt(fields[0]);
-                CRYSTAL = ParseInt(fields[1]);
+                CRYSTAL = ParseLong(fields[1]);
             }
         }
 
