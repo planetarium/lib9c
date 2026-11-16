@@ -274,6 +274,13 @@ namespace Nekoyume.Action
                 costNcg += subRecipeRow.RequiredGold;
                 endBlockIndex += subRecipeRow.RequiredBlockIndex;
             }
+            else if (recipeRow.SubRecipeIds.Any())
+            {
+                // A recipe that has sub recipes must be crafted with one of them.
+                // Skipping it would drop the sub recipe cost and every option roll.
+                throw new InvalidRecipeIdException(
+                    $"{addressesHex}Aborted as the recipe {recipeId} requires a sub recipe.");
+            }
             // ~Validate SubRecipeId
 
             costActionPoint += recipeRow.RequiredActionPoint;
