@@ -40420,12 +40420,6 @@ references:
   isSpec: "True"
   fullName: Nekoyume.Helper.CrystalCalculator.CalculateWorldUnlockCost
   nameWithType: CrystalCalculator.CalculateWorldUnlockCost
-- uid: Nekoyume.Helper.CrystalCalculator.CrystalLimit
-  name: CrystalLimit
-  href: api/Nekoyume.Helper.CrystalCalculator.html#Nekoyume_Helper_CrystalCalculator_CrystalLimit
-  commentId: F:Nekoyume.Helper.CrystalCalculator.CrystalLimit
-  fullName: Nekoyume.Helper.CrystalCalculator.CrystalLimit
-  nameWithType: CrystalCalculator.CrystalLimit
 - uid: Nekoyume.Helper.CrystalCalculator.MaxLevelExponent
   name: MaxLevelExponent
   href: api/Nekoyume.Helper.CrystalCalculator.html#Nekoyume_Helper_CrystalCalculator_MaxLevelExponent
