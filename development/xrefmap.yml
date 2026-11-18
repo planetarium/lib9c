@@ -81040,6 +81040,22 @@ references:
   commentId: T:Nekoyume.Module.InfiniteTowerModule
   fullName: Nekoyume.Module.InfiniteTowerModule
   nameWithType: InfiniteTowerModule
+- uid: Nekoyume.Module.InfiniteTowerModule.GetBoardStateAddress(System.Int32)
+  name: GetBoardStateAddress(int)
+  href: api/Nekoyume.Module.InfiniteTowerModule.html#Nekoyume_Module_InfiniteTowerModule_GetBoardStateAddress_System_Int32_
+  commentId: M:Nekoyume.Module.InfiniteTowerModule.GetBoardStateAddress(System.Int32)
+  name.vb: GetBoardStateAddress(Integer)
+  fullName: Nekoyume.Module.InfiniteTowerModule.GetBoardStateAddress(int)
+  fullName.vb: Nekoyume.Module.InfiniteTowerModule.GetBoardStateAddress(Integer)
+  nameWithType: InfiniteTowerModule.GetBoardStateAddress(int)
+  nameWithType.vb: InfiniteTowerModule.GetBoardStateAddress(Integer)
+- uid: Nekoyume.Module.InfiniteTowerModule.GetBoardStateAddress*
+  name: GetBoardStateAddress
+  href: api/Nekoyume.Module.InfiniteTowerModule.html#Nekoyume_Module_InfiniteTowerModule_GetBoardStateAddress_
+  commentId: Overload:Nekoyume.Module.InfiniteTowerModule.GetBoardStateAddress
+  isSpec: "True"
+  fullName: Nekoyume.Module.InfiniteTowerModule.GetBoardStateAddress
+  nameWithType: InfiniteTowerModule.GetBoardStateAddress
 - uid: Nekoyume.Module.InfiniteTowerModule.GetFloorClearCount(Libplanet.Action.State.IWorld,System.Int32,System.Int32)
   name: GetFloorClearCount(IWorld, int, int)
   href: api/Nekoyume.Module.InfiniteTowerModule.html#Nekoyume_Module_InfiniteTowerModule_GetFloorClearCount_Libplanet_Action_State_IWorld_System_Int32_System_Int32_

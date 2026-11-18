@@ -6,7 +6,7 @@
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <meta name="title" content="Class InfiniteTowerModule | Lib9c ">
       
-      
+      <meta name="description" content="World state accessors for infinite tower info and board states.">
       <link rel="icon" href="../favicon.ico">
       <link rel="stylesheet" href="../public/docfx.min.css">
       <link rel="stylesheet" href="../public/main.css">
@@ -89,7 +89,7 @@
 
 
   <h1 id="Nekoyume_Module_InfiniteTowerModule" data-uid="Nekoyume.Module.InfiniteTowerModule" class="text-break">
-Class InfiniteTowerModule  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Module/InfiniteTowerModule.cs/#L13"><i class="bi bi-code-slash"></i></a>
+Class InfiniteTowerModule  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Module/InfiniteTowerModule.cs/#L16"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
@@ -97,7 +97,8 @@ Class InfiniteTowerModule  <a class="header-action link-secondary" title="View s
   <dl><dt>Assembly</dt><dd>Lib9c.dll</dd></dl>
   </div>
 
-  <div class="markdown summary"></div>
+  <div class="markdown summary"><p>World state accessors for infinite tower info and board states.</p>
+</div>
   <div class="markdown conceptual"></div>
 
   <div class="codewrapper">
@@ -152,11 +153,54 @@ Class InfiniteTowerModule  <a class="header-action link-secondary" title="View s
 </h2>
 
 
+  <a id="Nekoyume_Module_InfiniteTowerModule_GetBoardStateAddress_" data-uid="Nekoyume.Module.InfiniteTowerModule.GetBoardStateAddress*"></a>
+
+  <h3 id="Nekoyume_Module_InfiniteTowerModule_GetBoardStateAddress_System_Int32_" data-uid="Nekoyume.Module.InfiniteTowerModule.GetBoardStateAddress(System.Int32)">
+  GetBoardStateAddress(int)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Module/InfiniteTowerModule.cs/#L27"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Address of the board state of the given tower in <a class="xref" href="Nekoyume.Addresses.html#Nekoyume_Addresses_InfiniteTowerBoard">InfiniteTowerBoard</a>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static Address GetBoardStateAddress(int infiniteTowerId)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>infiniteTowerId</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><span class="xref">Address</span></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+  <h4 class="section" id="Nekoyume_Module_InfiniteTowerModule_GetBoardStateAddress_System_Int32__remarks">Remarks</h4>
+  <div class="markdown level1 remarks"><p>The hex string must be lower-case. <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">Address(string)</a> validates the EIP-55 checksum
+of any string containing upper-case letters, so an upper-case form (<code>X40</code>) throws
+&quot;Address checksum is invalid&quot; for most ids with a hex digit A-F (e.g. 11).
+Lower-case yields the same bytes as before, so existing states stay reachable.</p>
+</div>
+
+
+
+
   <a id="Nekoyume_Module_InfiniteTowerModule_GetFloorClearCount_" data-uid="Nekoyume.Module.InfiniteTowerModule.GetFloorClearCount*"></a>
 
   <h3 id="Nekoyume_Module_InfiniteTowerModule_GetFloorClearCount_Libplanet_Action_State_IWorld_System_Int32_System_Int32_" data-uid="Nekoyume.Module.InfiniteTowerModule.GetFloorClearCount(Libplanet.Action.State.IWorld,System.Int32,System.Int32)">
   GetFloorClearCount(IWorld, int, int)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Module/InfiniteTowerModule.cs/#L165"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Module/InfiniteTowerModule.cs/#L180"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Get the clear count for a specific floor in a specific tower.</p>
@@ -201,7 +245,7 @@ Class InfiniteTowerModule  <a class="header-action link-secondary" title="View s
 
   <h3 id="Nekoyume_Module_InfiniteTowerModule_GetInfiniteTowerBoardState_Libplanet_Action_State_IWorld_System_Int32_" data-uid="Nekoyume.Module.InfiniteTowerModule.GetInfiniteTowerBoardState(Libplanet.Action.State.IWorld,System.Int32)">
   GetInfiniteTowerBoardState(IWorld, int)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Module/InfiniteTowerModule.cs/#L97"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Module/InfiniteTowerModule.cs/#L112"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Get infinite tower board state for a specific tower.</p>
@@ -243,7 +287,7 @@ Class InfiniteTowerModule  <a class="header-action link-secondary" title="View s
 
   <h3 id="Nekoyume_Module_InfiniteTowerModule_GetInfiniteTowerInfo_Libplanet_Action_State_IWorld_Libplanet_Crypto_Address_System_Int32_" data-uid="Nekoyume.Module.InfiniteTowerModule.GetInfiniteTowerInfo(Libplanet.Action.State.IWorld,Libplanet.Crypto.Address,System.Int32)">
   GetInfiniteTowerInfo(IWorld, Address, int)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Module/InfiniteTowerModule.cs/#L22"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Module/InfiniteTowerModule.cs/#L37"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Get infinite tower info for a specific avatar and tower.</p>
@@ -288,7 +332,7 @@ Class InfiniteTowerModule  <a class="header-action link-secondary" title="View s
 
   <h3 id="Nekoyume_Module_InfiniteTowerModule_RecordFloorClear_Libplanet_Action_State_IWorld_System_Int32_System_Int32_System_Int64_" data-uid="Nekoyume.Module.InfiniteTowerModule.RecordFloorClear(Libplanet.Action.State.IWorld,System.Int32,System.Int32,System.Int64)">
   RecordFloorClear(IWorld, int, int, long)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Module/InfiniteTowerModule.cs/#L151"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Module/InfiniteTowerModule.cs/#L166"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Update infinite tower board state by recording a floor clear.</p>
@@ -336,7 +380,7 @@ Class InfiniteTowerModule  <a class="header-action link-secondary" title="View s
 
   <h3 id="Nekoyume_Module_InfiniteTowerModule_SetInfiniteTowerBoardState_Libplanet_Action_State_IWorld_Nekoyume_Model_State_InfiniteTowerBoardState_" data-uid="Nekoyume.Module.InfiniteTowerModule.SetInfiniteTowerBoardState(Libplanet.Action.State.IWorld,Nekoyume.Model.State.InfiniteTowerBoardState)">
   SetInfiniteTowerBoardState(IWorld, InfiniteTowerBoardState)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Module/InfiniteTowerModule.cs/#L114"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Module/InfiniteTowerModule.cs/#L129"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Set infinite tower board state for a specific tower.</p>
@@ -378,7 +422,7 @@ Class InfiniteTowerModule  <a class="header-action link-secondary" title="View s
 
   <h3 id="Nekoyume_Module_InfiniteTowerModule_SetInfiniteTowerInfo_Libplanet_Action_State_IWorld_Libplanet_Crypto_Address_Nekoyume_Model_InfiniteTower_InfiniteTowerInfo_" data-uid="Nekoyume.Module.InfiniteTowerModule.SetInfiniteTowerInfo(Libplanet.Action.State.IWorld,Libplanet.Crypto.Address,Nekoyume.Model.InfiniteTower.InfiniteTowerInfo)">
   SetInfiniteTowerInfo(IWorld, Address, InfiniteTowerInfo)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Module/InfiniteTowerModule.cs/#L60"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Module/InfiniteTowerModule.cs/#L75"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Set infinite tower info for a specific avatar and tower.</p>
@@ -423,7 +467,7 @@ Class InfiniteTowerModule  <a class="header-action link-secondary" title="View s
 
   <h3 id="Nekoyume_Module_InfiniteTowerModule_TryGetInfiniteTowerBoardState_Libplanet_Action_State_IWorld_System_Int32_Nekoyume_Model_State_InfiniteTowerBoardState__" data-uid="Nekoyume.Module.InfiniteTowerModule.TryGetInfiniteTowerBoardState(Libplanet.Action.State.IWorld,System.Int32,Nekoyume.Model.State.InfiniteTowerBoardState@)">
   TryGetInfiniteTowerBoardState(IWorld, int, out InfiniteTowerBoardState)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Module/InfiniteTowerModule.cs/#L129"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Module/InfiniteTowerModule.cs/#L144"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Try to get infinite tower board state for a specific tower.</p>
@@ -468,7 +512,7 @@ Class InfiniteTowerModule  <a class="header-action link-secondary" title="View s
 
   <h3 id="Nekoyume_Module_InfiniteTowerModule_TryGetInfiniteTowerInfo_Libplanet_Action_State_IWorld_Libplanet_Crypto_Address_System_Int32_Nekoyume_Model_InfiniteTower_InfiniteTowerInfo__" data-uid="Nekoyume.Module.InfiniteTowerModule.TryGetInfiniteTowerInfo(Libplanet.Action.State.IWorld,Libplanet.Crypto.Address,System.Int32,Nekoyume.Model.InfiniteTower.InfiniteTowerInfo@)">
   TryGetInfiniteTowerInfo(IWorld, Address, int, out InfiniteTowerInfo)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Module/InfiniteTowerModule.cs/#L77"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Module/InfiniteTowerModule.cs/#L92"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Try to get infinite tower info for a specific avatar and tower.</p>
@@ -516,7 +560,7 @@ Class InfiniteTowerModule  <a class="header-action link-secondary" title="View s
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Module/InfiniteTowerModule.cs/#L13" class="edit-link">Edit this page</a>
+          <a href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Module/InfiniteTowerModule.cs/#L16" class="edit-link">Edit this page</a>
         </div>
 
 
