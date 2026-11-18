@@ -13,6 +13,18 @@ namespace Nekoyume.Module
     public static class InfiniteTowerModule
     {
         /// <summary>
+        /// Address of the board state of the given tower in <see cref="Addresses.InfiniteTowerBoard"/>.
+        /// </summary>
+        /// <remarks>
+        /// The hex string must be lower-case. <see cref="Address(string)"/> validates the EIP-55 checksum
+        /// of any string containing upper-case letters, so an upper-case form (<c>X40</c>) throws
+        /// "Address checksum is invalid" for most ids with a hex digit A-F (e.g. 11).
+        /// Lower-case yields the same bytes as before, so existing states stay reachable.
+        /// </remarks>
+        public static Address GetBoardStateAddress(int infiniteTowerId) =>
+            new Address($"{infiniteTowerId:x40}");
+
+        /// <summary>
         /// Get infinite tower info for a specific avatar and tower.
         /// </summary>
         /// <param name="worldState">The world state.</param>
@@ -97,7 +109,7 @@ namespace Nekoyume.Module
         public static InfiniteTowerBoardState GetInfiniteTowerBoardState(this IWorld worldState, int infiniteTowerId)
         {
             var account = worldState.GetAccountState(Addresses.InfiniteTowerBoard);
-            var seasonAddress = new Address($"{infiniteTowerId:X40}");
+            var seasonAddress = GetBoardStateAddress(infiniteTowerId);
             var boardStateValue = account.GetState(seasonAddress);
 
             return boardStateValue is Bencodex.Types.List serializedBoardState
@@ -114,7 +126,7 @@ namespace Nekoyume.Module
         public static IWorld SetInfiniteTowerBoardState(this IWorld world, InfiniteTowerBoardState infiniteTowerBoardState)
         {
             var account = world.GetAccount(Addresses.InfiniteTowerBoard);
-            var seasonAddress = new Address($"{infiniteTowerBoardState.InfiniteTowerId:X40}");
+            var seasonAddress = GetBoardStateAddress(infiniteTowerBoardState.InfiniteTowerId);
             account = account.SetState(seasonAddress, infiniteTowerBoardState.Serialize());
             return world.SetAccount(Addresses.InfiniteTowerBoard, account);
         }
