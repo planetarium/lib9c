@@ -10,6 +10,9 @@ using Nekoyume.TableData;
 
 namespace Nekoyume.Module
 {
+    /// <summary>
+    /// World state accessors for infinite tower info and board states.
+    /// </summary>
     public static class InfiniteTowerModule
     {
         /// <summary>
