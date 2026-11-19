@@ -24,6 +24,7 @@ namespace Lib9c.Tests.Action
     using Nekoyume.Model.State;
     using Nekoyume.Module;
     using Nekoyume.TableData;
+    using Nekoyume.TableData.Crystal;
     using Xunit;
 
     public class HackAndSlashSweepTest
@@ -31,6 +32,8 @@ namespace Lib9c.Tests.Action
         private const int ExtendedWorldId = 10;
         private const int ExtendedStageIdOffset = 450;
         private const int ExtendedEntryMaterialId = 900001;
+        private const string WorldOpenHeader =
+            "id,world_id,stage_end,prerequisite_open_id,min_block_index,fallback_block_index,effective_delay_block\n";
 
         private readonly Dictionary<string, string> _sheets;
         private readonly TableSheets _tableSheets;
@@ -1467,6 +1470,69 @@ namespace Lib9c.Tests.Action
                 boosted.Select(item => item.Id));
         }
 
+        [Fact]
+        public void Execute_StageNotOpened_Throws()
+        {
+            var state = PrepareWorld11(clearedStageId: 521);
+            Assert.Throws<StageNotOpenedException>(() => SweepWorld11(state, 521));
+
+            // A pending opening (fallback still ahead) keeps it locked as well.
+            var pending = WithWorldOpenSheets(state, null, "1,11,550,,0,1000000,0\n", null);
+            Assert.Throws<StageNotOpenedException>(() => SweepWorld11(pending, 521));
+
+            // Out of the world's range still fails the range check before the gate.
+            Assert.Throws<SheetRowColumnException>(() => SweepWorld11(state, 551));
+        }
+
+        [Fact]
+        public void Execute_StageOpened_ByFallback()
+        {
+            const long blockIndex = 100;
+            var state = WithWorldOpenSheets(
+                PrepareWorld11(clearedStageId: 521),
+                null,
+                $"1,11,550,,0,{blockIndex},0\n",
+                null);
+
+            var next = SweepWorld11(state, 521, blockIndex);
+
+            Assert.True(next.GetAvatarState(_avatarAddress).exp > state.GetAvatarState(_avatarAddress).exp);
+        }
+
+        /// <summary>
+        /// Sweeping never moves a world-open counter: STAGE_PLAY counts won battles only, and a
+        /// sweep is not a battle.
+        /// </summary>
+        [Fact]
+        public void Sweep_DoesNotCount()
+        {
+            var state = WithWorldOpenSheets(
+                PrepareWorld11(clearedStageId: 520),
+                "1,STAGE_FIRST_CLEAR,520,520,0\n2,STAGE_PLAY,501,550,0\n",
+                "1,11,550,,0,1000000,0\n",
+                "1,1,1,100\n1,1,2,100\n");
+
+            var next = SweepWorld11(state, 520);
+
+            Assert.True(next.GetAvatarState(_avatarAddress).exp > state.GetAvatarState(_avatarAddress).exp);
+            Assert.Equal(0, next.GetCounter(1));
+            Assert.Equal(0, next.GetCounter(2));
+            AssertAccountUnchanged(state, next, Addresses.GlobalCounter);
+            AssertAccountUnchanged(state, next, Addresses.WorldOpen);
+        }
+
+        [Fact]
+        public void Sweep_NoWorldOpenSheets_AccountsUntouched()
+        {
+            var state = PrepareWorld11(clearedStageId: 520);
+
+            var next = SweepWorld11(state, 520);
+
+            Assert.True(next.GetAvatarState(_avatarAddress).exp > state.GetAvatarState(_avatarAddress).exp);
+            AssertAccountUnchanged(state, next, Addresses.GlobalCounter);
+            AssertAccountUnchanged(state, next, Addresses.WorldOpen);
+        }
+
         /// <summary>
         /// The per-clear item rule planning set, written out independently of the code under test:
         /// plain floor, except that a MUL above 1 turns a single drop into 2, capped at
@@ -1493,6 +1559,49 @@ namespace Lib9c.Tests.Action
                 .Where(i => i.item is Material)
                 .GroupBy(i => i.item.Id)
                 .ToDictionary(g => g.Key, g => g.Sum(i => i.count));
+
+        private static void AssertAccountUnchanged(IWorld before, IWorld after, Address account) =>
+            Assert.Equal(
+                before.GetAccountState(account).Trie.Hash,
+                after.GetAccountState(account).Trie.Hash);
+
+        private static string CopyRows(string csv, int sourceId, params int[] targetIds)
+        {
+            var lines = csv.Split('\n').Select(l => l.TrimEnd('\r')).Where(l => l.Length > 0).ToList();
+            var source = lines.Where(l => l.Split(',')[0] == sourceId.ToString()).ToList();
+            foreach (var target in targetIds)
+            {
+                lines.AddRange(source.Select(l => target + l.Substring(l.IndexOf(','))));
+            }
+
+            return string.Join("\n", lines) + "\n";
+        }
+
+        private static IWorld WithWorldOpenSheets(IWorld state, string counters, string opens, string conds)
+        {
+            if (counters is not null)
+            {
+                state = state.SetLegacyState(
+                    Addresses.GetSheetAddress<GlobalCounterSheet>(),
+                    (Text)("id,type,target_begin,target_end,min_avatar_level\n" + counters));
+            }
+
+            if (opens is not null)
+            {
+                state = state.SetLegacyState(
+                    Addresses.GetSheetAddress<WorldOpenSheet>(),
+                    (Text)(WorldOpenHeader + opens));
+            }
+
+            if (conds is not null)
+            {
+                state = state.SetLegacyState(
+                    Addresses.GetSheetAddress<WorldOpenConditionSheet>(),
+                    (Text)("open_id,condition_group,counter_id,threshold\n" + conds));
+            }
+
+            return state;
+        }
 
         /// <summary>
         /// An avatar that can sweep <paramref name="stageId"/>, which grants 1000 crystal per
@@ -1548,6 +1657,68 @@ namespace Lib9c.Tests.Action
                 CountMaterials(nextAvatarState),
                 nextState.GetBalance(recipient, favCurrency),
                 nextAvatarState.exp);
+        }
+
+        /// <summary>
+        /// World 11 spanning 501-550 with stages 520-521 copied from stage 1, and an avatar that
+        /// cleared up to <paramref name="clearedStageId"/> and unlocked world 11.
+        /// </summary>
+        private IWorld PrepareWorld11(int clearedStageId)
+        {
+            var state = _initialState
+                .SetLegacyState(
+                    Addresses.TableSheet.Derive(nameof(WorldSheet)),
+                    (_sheets[nameof(WorldSheet)].TrimEnd() + "\n11,Hard 2,501,550\n").Serialize())
+                .SetLegacyState(
+                    Addresses.TableSheet.Derive(nameof(StageSheet)),
+                    CopyRows(_sheets[nameof(StageSheet)], 1, 520, 521).Serialize())
+                .SetLegacyState(
+                    Addresses.TableSheet.Derive(nameof(StageWaveSheet)),
+                    CopyRows(_sheets[nameof(StageWaveSheet)], 1, 520, 521).Serialize())
+                .SetLegacyState(
+                    Addresses.TableSheet.Derive(nameof(CrystalStageBuffGachaSheet)),
+                    CopyRows(_sheets[nameof(CrystalStageBuffGachaSheet)], 1, 520, 521).Serialize())
+                .SetLegacyState(
+                    Addresses.TableSheet.Derive(nameof(SweepRequiredCPSheet)),
+                    CopyRows(_sheets[nameof(SweepRequiredCPSheet)], 1, 520, 521).Serialize());
+
+            var avatarState = state.GetAvatarState(_avatarAddress);
+            avatarState.level = 100;
+            avatarState.exp = _tableSheets.CharacterLevelSheet[100].Exp;
+            avatarState.worldInformation = new WorldInformation(
+                0,
+                state.GetSheet<WorldSheet>(),
+                clearedStageId);
+
+            return state
+                .SetAvatarState(_avatarAddress, avatarState)
+                .SetLegacyState(
+                    _avatarAddress.Derive("world_ids"),
+                    List.Empty.Add(11.Serialize()));
+        }
+
+        private IWorld SweepWorld11(IWorld state, int stageId, long blockIndex = 100)
+        {
+            var action = new HackAndSlashSweep
+            {
+                costumes = new List<Guid>(),
+                equipments = new List<Guid>(),
+                runeInfos = new List<RuneSlotInfo>(),
+                avatarAddress = _avatarAddress,
+                actionPoint = (int)state.GetActionPoint(_avatarAddress),
+                apStoneCount = 0,
+                worldId = 11,
+                stageId = stageId,
+            };
+
+            return action.Execute(
+                new ActionContext
+                {
+                    PreviousState = state,
+                    Signer = _agentAddress,
+                    RandomSeed = 0,
+                    BlockIndex = blockIndex,
+                });
         }
     }
 }

@@ -274,6 +274,13 @@ namespace Nekoyume.Action
                 costNcg += subRecipeRow.RequiredGold;
                 endBlockIndex += subRecipeRow.RequiredBlockIndex;
             }
+            else if (recipeRow.SubRecipeIds.Any())
+            {
+                // A recipe that has sub recipes must be crafted with one of them.
+                // Skipping it would drop the sub recipe cost and every option roll.
+                throw new InvalidRecipeIdException(
+                    $"{addressesHex}Aborted as the recipe {recipeId} requires a sub recipe.");
+            }
             // ~Validate SubRecipeId
 
             costActionPoint += recipeRow.RequiredActionPoint;
@@ -496,11 +503,20 @@ namespace Nekoyume.Action
 
             var ended = DateTimeOffset.UtcNow;
             Log.Debug("{AddressesHex}CombinationEquipment Total Executed Time: {Elapsed}", addressesHex, ended - started);
-            return states
+            states = states
                 .SetAvatarState(avatarAddress, avatarState)
                 .SetCombinationSlotState(avatarAddress, allSlotState)
                 .SetLegacyState(hammerPointAddress,hammerPointState.Serialize())
                 .SetAgentState(context.Signer, agentState);
+
+            // The action never changes the avatar's level, so it is read as is.
+            return WorldOpenCounter.Tick(
+                states,
+                GlobalCounterType.RECIPE_CRAFT,
+                recipeId,
+                1,
+                avatarState.level,
+                context.BlockIndex);
         }
 
         private IWorld UseAssetsBySuperCraft(
@@ -708,7 +724,7 @@ namespace Nekoyume.Action
                 return null;
             }
 
-            var dmg = random.Next(row.SkillDamageMin, row.SkillDamageMax + 1);
+            var dmg = random.NextLong(row.SkillDamageMin, row.SkillDamageMax + 1);
             var chance = random.Next(row.SkillChanceMin, row.SkillChanceMax + 1);
 
             var hasStatDamageRatio = row.StatDamageRatioMin != default && row.StatDamageRatioMax != default;

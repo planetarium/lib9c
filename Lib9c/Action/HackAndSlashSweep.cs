@@ -223,6 +223,11 @@ namespace Nekoyume.Action
                     $"{worldRow.StageBegin}-{worldRow.StageEnd}");
             }
 
+            if (!WorldOpenGate.IsStageOpen(states, worldRow, stageId, context.BlockIndex))
+            {
+                throw new StageNotOpenedException(stageId, worldId);
+            }
+
             if (!sheets.GetSheet<StageSheet>().TryGetValue(stageId, out var stageRow))
             {
                 throw new SheetRowNotFoundException(addressesHex, nameof(StageSheet), stageId);

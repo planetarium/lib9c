@@ -285,7 +285,7 @@ namespace Lib9c.Tests.Model.Item
 
             foreach (var optionRow in statOptions)
             {
-                var value = random.Next(optionRow.StatMin, optionRow.StatMax + 1);
+                var value = random.NextInt64(optionRow.StatMin, optionRow.StatMax + 1);
                 equipment.StatsMap.AddStatAdditionalValue(optionRow.StatType, value);
                 equipment.optionCountFromCombination++;
             }
@@ -301,7 +301,7 @@ namespace Lib9c.Tests.Model.Item
                 var skillRow = skillSheet.OrderedList.FirstOrDefault(r => r.Id == optionRow.SkillId);
                 if (skillRow != null)
                 {
-                    var dmg = random.Next(optionRow.SkillDamageMin, optionRow.SkillDamageMax + 1);
+                    var dmg = random.NextInt64(optionRow.SkillDamageMin, optionRow.SkillDamageMax + 1);
                     var chance = random.Next(optionRow.SkillChanceMin, optionRow.SkillChanceMax + 1);
                     var skill = SkillFactory.Get(skillRow, dmg, chance, 0, StatType.NONE);
                     equipment.Skills.Add(skill);

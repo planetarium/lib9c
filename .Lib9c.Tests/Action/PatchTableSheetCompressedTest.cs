@@ -142,10 +142,13 @@ namespace Lib9c.Tests.Action
             Assert.Equal(csvData, nextState.GetSheetCsv<RestrictionSheet>());
         }
 
-        [Fact]
-        public void Execute_Throw_SheetRowValidateException_WhenRestrictionSheetIsMalformed()
+        [Theory]
+        [InlineData("key,market_registrable,synthesize_material\n10660004,flase,\n")]
+        [InlineData("key,market_registrable,synthesize_material\ncrystal,false,\n")]
+        [InlineData("key,synthesize_material,market_registrable\n10660004,false,\n")]
+        public void Execute_Throw_SheetRowValidateException_WhenRestrictionSheetIsMalformed(
+            string csvData)
         {
-            const string csvData = "key,market_registrable,synthesize_material\n10660004,flase,\n";
             var action = new PatchTableSheetCompressed
             {
                 TableName = nameof(RestrictionSheet),
@@ -172,15 +175,136 @@ namespace Lib9c.Tests.Action
             Assert.Equal(csvData, nextState.GetSheetCsv<BoostScheduleSheet>());
         }
 
-        [Fact]
-        public void Execute_Throw_SheetRowValidateException_WhenBoostScheduleSheetIsMalformed()
+        [Theory]
+        [InlineData("id,target,target_id,op,value,start_block,end_block\n1,EQUIPMENT_SUMMON_GUARANTEE,10001,MUL,0,100,200\n")]
+        [InlineData("id,target,target_id,op,value,start_block,end_block\n1,EQUIPMENT_SUMMON_GUARANTEE,10001,ADD,1.5,100,200\n")]
+        [InlineData("id,target,target_id,op,value,start_block,end_block\n1,EQUIPMENT_SUMMON_GUARANTEE,10001,MUL,1.5,200,100\n")]
+        [InlineData("id,target,target_id,op,value,end_block,start_block\n1,EQUIPMENT_SUMMON_GUARANTEE,10001,ADD,1,100,200\n")]
+        public void Execute_Throw_SheetRowValidateException_WhenBoostScheduleSheetIsMalformed(
+            string csvData)
         {
-            const string csvData =
-                "id,target,target_id,op,value,start_block,end_block\n" +
-                "1,EQUIPMENT_SUMMON_GUARANTEE,10001,MUL,0,100,200\n";
             var action = new PatchTableSheetCompressed
             {
                 TableName = nameof(BoostScheduleSheet),
+                CompressedTableCsv = PatchTableSheetCompressed.CompressCsv(csvData),
+            };
+
+            Assert.Throws<SheetRowValidateException>(() => action.Execute(_context));
+        }
+
+        [Theory]
+        [InlineData(nameof(GlobalCounterSheet), "id,type,target_begin,target_end,min_avatar_level\n1,STAGE_FIRST_CLEAR,10,10,0\n")]
+        [InlineData(nameof(WorldOpenSheet), "id,world_id,stage_end,prerequisite_open_id,min_block_index,fallback_block_index,effective_delay_block\n1,12,570,,0,1000,0\n")]
+        [InlineData(nameof(WorldOpenConditionSheet), "open_id,condition_group,counter_id,threshold\n1,1,1,10\n")]
+        public void Execute_WorldOpenSheets_Valid(string tableName, string csvData)
+        {
+            var action = new PatchTableSheetCompressed
+            {
+                TableName = tableName,
+                CompressedTableCsv = PatchTableSheetCompressed.CompressCsv(csvData),
+            };
+
+            var nextState = action.Execute(_context);
+
+            var patched = (Bencodex.Types.Text)nextState.GetLegacyState(
+                Nekoyume.Addresses.TableSheet.Derive(tableName));
+            Assert.Equal(csvData, patched.Value);
+        }
+
+        /// <summary>
+        /// Lowering a threshold below the current counter confirms the opening in the patch
+        /// itself, at the patch's block — the backoffice signs only this variant.
+        /// </summary>
+        [Fact]
+        public void Execute_LoweredThreshold_ConfirmsOpenAtPatchBlock()
+        {
+            var state = _previousState
+                .SetLegacyState(
+                    Nekoyume.Addresses.GetSheetAddress<GlobalCounterSheet>(),
+                    (Bencodex.Types.Text)"id,type,target_begin,target_end,min_avatar_level\n1,STAGE_PLAY,10,10,0\n")
+                .SetLegacyState(
+                    Nekoyume.Addresses.GetSheetAddress<WorldOpenSheet>(),
+                    (Bencodex.Types.Text)"id,world_id,stage_end,prerequisite_open_id,min_block_index,fallback_block_index,effective_delay_block\n1,12,570,,0,1000,0\n")
+                .SetLegacyState(
+                    Nekoyume.Addresses.GetSheetAddress<WorldOpenConditionSheet>(),
+                    (Bencodex.Types.Text)"open_id,condition_group,counter_id,threshold\n1,1,1,10\n")
+                .AddCounter(1, 5);
+            var action = new PatchTableSheetCompressed
+            {
+                TableName = nameof(WorldOpenConditionSheet),
+                CompressedTableCsv = PatchTableSheetCompressed.CompressCsv(
+                    "open_id,condition_group,counter_id,threshold\n1,1,1,5\n"),
+            };
+
+            var nextState = action.Execute(
+                new ActionContext { PreviousState = state, BlockIndex = 8, RandomSeed = 0 });
+
+            Assert.True(nextState.TryGetConfirmedBlock(1, out var block));
+            Assert.Equal(8, block);
+        }
+
+        [Fact]
+        public void Execute_ThresholdStillAboveCounter_DoesNotConfirm()
+        {
+            var state = _previousState
+                .SetLegacyState(
+                    Nekoyume.Addresses.GetSheetAddress<WorldOpenSheet>(),
+                    (Bencodex.Types.Text)"id,world_id,stage_end,prerequisite_open_id,min_block_index,fallback_block_index,effective_delay_block\n1,12,570,,0,1000,0\n")
+                .AddCounter(1, 5);
+            var action = new PatchTableSheetCompressed
+            {
+                TableName = nameof(WorldOpenConditionSheet),
+                CompressedTableCsv = PatchTableSheetCompressed.CompressCsv(
+                    "open_id,condition_group,counter_id,threshold\n1,1,1,6\n"),
+            };
+
+            var nextState = action.Execute(
+                new ActionContext { PreviousState = state, BlockIndex = 8, RandomSeed = 0 });
+
+            Assert.False(nextState.TryGetConfirmedBlock(1, out _));
+        }
+
+        [Fact]
+        public void Execute_ChangedOpenIdentity_Throws()
+        {
+            const string header =
+                "id,world_id,stage_end,prerequisite_open_id,min_block_index,fallback_block_index,effective_delay_block\n";
+            var first = new PatchTableSheetCompressed
+            {
+                TableName = nameof(WorldOpenSheet),
+                CompressedTableCsv = PatchTableSheetCompressed.CompressCsv(header + "1,12,570,,0,1000,0\n"),
+            };
+            var state = first.Execute(
+                new ActionContext { PreviousState = _previousState, BlockIndex = 1, RandomSeed = 0 });
+            var moved = new PatchTableSheetCompressed
+            {
+                TableName = nameof(WorldOpenSheet),
+                CompressedTableCsv = PatchTableSheetCompressed.CompressCsv(header + "1,12,560,,0,1000,0\n"),
+            };
+
+            Assert.Throws<SheetRowValidateException>(
+                () => moved.Execute(
+                    new ActionContext { PreviousState = state, BlockIndex = 2, RandomSeed = 0 }));
+
+            // The failed patch leaves the stored sheet as it was.
+            Assert.Contains(
+                "1,12,570,",
+                ((Bencodex.Types.Text)state.GetLegacyState(Nekoyume.Addresses.GetSheetAddress<WorldOpenSheet>())).Value);
+        }
+
+        /// <summary>
+        /// The backoffice signs only this compressed variant, so it must reject a malformed
+        /// world-open sheet exactly like <see cref="PatchTableSheet"/> does.
+        /// </summary>
+        [Theory]
+        [MemberData(nameof(PatchTableSheetTest.MalformedWorldOpenSheets), MemberType = typeof(PatchTableSheetTest))]
+        public void Execute_Throw_SheetRowValidateException_WhenWorldOpenSheetIsMalformed(
+            string tableName,
+            string csvData)
+        {
+            var action = new PatchTableSheetCompressed
+            {
+                TableName = tableName,
                 CompressedTableCsv = PatchTableSheetCompressed.CompressCsv(csvData),
             };
 

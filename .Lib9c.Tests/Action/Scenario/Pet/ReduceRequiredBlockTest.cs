@@ -43,13 +43,10 @@ namespace Lib9c.Tests.Action.Scenario.Pet
         public void CombinationEquipmentTest(int? petLevel)
         {
             var targetItemId = 10114000;
-            var random = new TestRandom();
-
             // Get Recipe
             var recipe = _tableSheets.EquipmentItemRecipeSheet.OrderedList.First(
                 recipe => recipe.ResultEquipmentId == targetItemId);
             Assert.NotNull(recipe);
-            var expectedBlock = recipe.RequiredBlockIndex;
 
             // Get Materials and stages
             var materialList =
@@ -61,6 +58,9 @@ namespace Lib9c.Tests.Action.Scenario.Pet
             }
 
             var stateV2 = _initialStateV2.SetLegacyState(_recipeAddr, stageList);
+
+            // Sub recipe options add blocks, so take the pet-less craft time as the baseline.
+            var expectedBlock = Craft(stateV2, recipe, materialList, null);
 
             // Get pet
             if (!(petLevel is null))
@@ -78,6 +78,18 @@ namespace Lib9c.Tests.Action.Scenario.Pet
                     expectedBlock * (1 - petRow.LevelOptionMap[(int)petLevel].OptionValue / 100)
                 );
             }
+
+            // TEST: RequiredBlockIndex
+            Assert.Equal(expectedBlock, Craft(stateV2, recipe, materialList, _petId));
+        }
+
+        private long Craft(
+            IWorld stateV2,
+            EquipmentItemRecipeSheet.Row recipe,
+            List<EquipmentItemSubRecipeSheet.MaterialInfo> materialList,
+            int? petId)
+        {
+            var random = new TestRandom();
 
             // Prepare
             stateV2 = CraftUtil.PrepareCombinationSlot(stateV2, _avatarAddr);
@@ -101,8 +113,8 @@ namespace Lib9c.Tests.Action.Scenario.Pet
                 avatarAddress = _avatarAddr,
                 slotIndex = 0,
                 recipeId = recipe.Id,
-                subRecipeId = null,
-                petId = _petId,
+                subRecipeId = recipe.SubRecipeIds[0],
+                petId = petId,
             };
 
             stateV2 = action.Execute(
@@ -114,10 +126,8 @@ namespace Lib9c.Tests.Action.Scenario.Pet
                     RandomSeed = random.Seed,
                 });
 
-            var allSlotState = stateV2.GetAllCombinationSlotState(_avatarAddr);
-            var slotState = allSlotState.GetSlot(0);
-            // TEST: RequiredBlockIndex
-            Assert.Equal(expectedBlock, slotState.RequiredBlockIndex);
+            return stateV2.GetAllCombinationSlotState(_avatarAddr)
+                .GetSlot(0).RequiredBlockIndex;
         }
     }
 }

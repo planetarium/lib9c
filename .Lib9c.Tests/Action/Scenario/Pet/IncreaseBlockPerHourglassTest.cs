@@ -83,10 +83,7 @@ namespace Lib9c.Tests.Action.Scenario.Pet
 
             stateV2 = stateV2.SetLegacyState(_recipeIdsAddr, recipeIds);
 
-            var expectedHourglass = (int)Math.Ceiling(
-                (double)recipe.RequiredBlockIndex
-                /
-                stateV2.GetGameConfigState().HourglassPerBlock);
+            decimal blockPerHourglass = stateV2.GetGameConfigState().HourglassPerBlock;
 
             // Get pet
             if (!(petLevel is null))
@@ -99,28 +96,8 @@ namespace Lib9c.Tests.Action.Scenario.Pet
                     PetState.DeriveAddress(_avatarAddr, (int)_petId),
                     new List(_petId!.Serialize(), petLevel.Serialize(), 0L.Serialize())
                 );
-                expectedHourglass = (int)Math.Ceiling(
-                    recipe.RequiredBlockIndex
-                    /
-                    (stateV2.GetGameConfigState().HourglassPerBlock
-                        + petRow.LevelOptionMap[(int)petLevel].OptionValue)
-                );
+                blockPerHourglass += petRow.LevelOptionMap[(int)petLevel].OptionValue;
             }
-
-            // Give hourglass
-            stateV2 = CraftUtil.AddMaterialsToInventory(
-                stateV2,
-                _tableSheets,
-                _avatarAddr,
-                new List<EquipmentItemSubRecipeSheet.MaterialInfo>
-                {
-                    new (
-                        _hourglassItemId,
-                        expectedHourglass
-                    ),
-                },
-                random
-            );
 
             // Prepare to combination
             stateV2 = CraftUtil.PrepareCombinationSlot(stateV2, _avatarAddr);
@@ -144,7 +121,7 @@ namespace Lib9c.Tests.Action.Scenario.Pet
                 avatarAddress = _avatarAddr,
                 slotIndex = 0,
                 recipeId = recipe.Id,
-                subRecipeId = null,
+                subRecipeId = recipe.SubRecipeIds[0],
                 petId = _petId,
             };
 
@@ -156,6 +133,28 @@ namespace Lib9c.Tests.Action.Scenario.Pet
                     BlockIndex = 0L,
                     RandomSeed = random.Seed,
                 });
+
+            // Sub recipe options can add blocks, so size hourglasses from the crafted slot.
+            var craftedBlock = stateV2.GetAllCombinationSlotState(_avatarAddr)
+                .GetSlot(0).RequiredBlockIndex;
+            var expectedHourglass = Math.Max(
+                1,
+                (int)Math.Ceiling(craftedBlock / blockPerHourglass));
+
+            // Give hourglass
+            stateV2 = CraftUtil.AddMaterialsToInventory(
+                stateV2,
+                _tableSheets,
+                _avatarAddr,
+                new List<EquipmentItemSubRecipeSheet.MaterialInfo>
+                {
+                    new (
+                        _hourglassItemId,
+                        expectedHourglass
+                    ),
+                },
+                random
+            );
 
             // Do rapid combination
             var rapidAction = new RapidCombination

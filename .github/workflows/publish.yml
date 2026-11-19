@@ -14,6 +14,9 @@ on:
 jobs:
   nuget:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write  # NuGet Trusted Publishing: OIDC 토큰을 1시간짜리 nuget.org 키로 바꾼다
     steps:
     - uses: actions/checkout@v4
     - uses: actions/setup-dotnet@v4
@@ -30,8 +33,16 @@ jobs:
         dotnet build $dotnet_args
         # shellcheck disable=SC2086
         dotnet pack $dotnet_args
+    # 오래 쓰던 NUGET_API_KEY 시크릿이 만료돼(2026-11) Trusted Publishing 으로 바꿨다.
+    # nuget.org 정책: 소유자 Planetarium, 저장소 planetarium/lib9c, 워크플로 publish.yml.
+    - name: nuget login
+      id: nuget-login
+      if: github.event_name != 'pull_request' && github.repository == 'planetarium/lib9c'
+      uses: NuGet/login@v1
+      with:
+        user: yang-planetarium
     - name: push
-      if: github.event_name != 'pull_request'
+      if: github.event_name != 'pull_request' && github.repository == 'planetarium/lib9c'
       run: |
         if [[ "$NUGET_API_KEY" != "" ]]; then
           for project in Lib9c Lib9c.Abstractions Lib9c.MessagePack Lib9c.Renderers \
@@ -44,7 +55,7 @@ jobs:
           done
         fi
       env:
-        NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
+        NUGET_API_KEY: ${{ steps.nuget-login.outputs.NUGET_API_KEY }}
   jsr:
     strategy:
       matrix:

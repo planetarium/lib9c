@@ -114,7 +114,7 @@ namespace Nekoyume.TableData
                     StatModifiers.Add(new StatModifier(
                         (StatType) Enum.Parse(typeof(StatType), statType),
                         (StatModifier.OperationType) Enum.Parse(typeof(StatModifier.OperationType), fields[26 + offset]),
-                        ParseInt(fields[27 + offset])));
+                        ParseLong(fields[27 + offset])));
                 }
             }
         }

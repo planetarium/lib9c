@@ -19,6 +19,7 @@ namespace Lib9c.Tests.Action
     using Nekoyume.Model.State;
     using Nekoyume.Module;
     using Nekoyume.Module.CombinationSlot;
+    using Nekoyume.TableData;
     using Nekoyume.TableData.Crystal;
     using Serilog;
     using Xunit;
@@ -26,6 +27,9 @@ namespace Lib9c.Tests.Action
 
     public class CombinationEquipmentTest
     {
+        private const string WorldOpenHeader =
+            "id,world_id,stage_end,prerequisite_open_id,min_block_index,fallback_block_index,effective_delay_block\n";
+
         private readonly Address _agentAddress;
         private readonly Address _avatarAddress;
         private readonly Address _slotAddress;
@@ -91,33 +95,35 @@ namespace Lib9c.Tests.Action
 
         [Theory]
         // Tutorial recipe.
-        [InlineData(null, false, false, true, true, 3, 0, true, 1L, 1, null, true, false, false, false)]
+        [InlineData(null, false, false, true, true, 3, 0, true, 1L, 1, 373, true, false, false, false)]
         // SubRecipe
         [InlineData(null, true, true, true, true, 27, 0, true, 1L, 6, 376, true, false, false, false)]
         // 3rd sub recipe, not Mimisbrunnr Equipment.
         [InlineData(null, true, true, true, true, 349, 0, true, 1L, 28, 101520003, true, false, false, false)]
         // Purchase CRYSTAL.
-        [InlineData(null, true, true, true, true, 3, 0, true, 1L, 1, null, false, false, true, false)]
+        [InlineData(null, true, true, true, true, 3, 0, true, 1L, 1, 373, false, false, true, false)]
         // Purchase CRYSTAL with calculate previous cost.
-        [InlineData(null, true, true, true, true, 3, 0, true, 100_800L, 1, null, false, false, true, true)]
+        [InlineData(null, true, true, true, true, 3, 0, true, 100_800L, 1, 373, false, false, true, true)]
         // Arena round not found
-        [InlineData(null, false, false, true, true, 3, 0, true, 0L, 1, null, true, false, false, false)]
+        [InlineData(null, false, false, true, true, 3, 0, true, 0L, 1, 373, true, false, false, false)]
         // UnlockEquipmentRecipe not executed.
         [InlineData(typeof(FailedLoadStateException), false, true, true, true, 11, 0, true, 0L, 6, 1, true, false, false, false)]
         // CRYSTAL not paid.
         [InlineData(typeof(InvalidRecipeIdException), true, false, true, true, 11, 0, true, 0L, 6, 1, true, false, false, false)]
         // AgentState not exist.
-        [InlineData(typeof(FailedLoadStateException), true, true, false, true, 3, 0, true, 0L, 1, null, true, false, false, false)]
+        [InlineData(typeof(FailedLoadStateException), true, true, false, true, 3, 0, true, 0L, 1, 373, true, false, false, false)]
         // AvatarState not exist.
-        [InlineData(typeof(FailedLoadStateException), true, true, true, false, 3, 0, true, 0L, 1, null, true, false, false, false)]
+        [InlineData(typeof(FailedLoadStateException), true, true, true, false, 3, 0, true, 0L, 1, 373, true, false, false, false)]
         // CombinationSlotState not exist.
-        [InlineData(typeof(CombinationSlotNotFoundException), true, true, true, true, 3, 5, true, 0L, 1, null, true, false, false, false)]
+        [InlineData(typeof(CombinationSlotNotFoundException), true, true, true, true, 3, 5, true, 0L, 1, 373, true, false, false, false)]
         // CombinationSlotState locked.
-        [InlineData(typeof(CombinationSlotUnlockException), true, true, true, true, 3, 0, false, 0L, 1, null, true, false, false, false)]
+        [InlineData(typeof(CombinationSlotUnlockException), true, true, true, true, 3, 0, false, 0L, 1, 373, true, false, false, false)]
         // Stage not cleared.
-        [InlineData(typeof(NotEnoughClearedStageLevelException), true, true, true, true, 3, 0, true, 0L, 6, null, true, false, false, false)]
+        [InlineData(typeof(NotEnoughClearedStageLevelException), true, true, true, true, 3, 0, true, 0L, 6, 376, true, false, false, false)]
         // Not enough material.
-        [InlineData(typeof(NotEnoughMaterialException), true, true, true, true, 3, 0, true, 0L, 1, null, false, false, false, false)]
+        [InlineData(typeof(NotEnoughMaterialException), true, true, true, true, 3, 0, true, 0L, 1, 373, false, false, false, false)]
+        // Sub recipe omitted for a recipe that has sub recipes.
+        [InlineData(typeof(InvalidRecipeIdException), true, true, true, true, 3, 0, true, 0L, 1, null, true, false, false, false)]
         public void Execute(
             Type exc,
             bool unlockIdsExist,
@@ -208,10 +214,10 @@ namespace Lib9c.Tests.Action
                 }
             }
 
-            var expectedCrystal = 0;
+            var expectedCrystal = 0L;
             if (payByCrystal)
             {
-                var crystalBalance = 0;
+                var crystalBalance = 0L;
                 var row = _tableSheets.EquipmentItemRecipeSheet[recipeId];
                 var costSheet = _tableSheets.CrystalMaterialCostSheet;
                 crystalBalance += costSheet[row.MaterialId].CRYSTAL * row.MaterialCount;
@@ -499,6 +505,151 @@ namespace Lib9c.Tests.Action
                 _tableSheets.SkillSheet
             );
             Assert.True(equipment.optionCountFromCombination > 0);
+        }
+
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public void Execute_Throw_SubRecipeOmitted(bool useHammerPoint)
+        {
+            var action = new CombinationEquipment
+            {
+                avatarAddress = _avatarAddress,
+                slotIndex = 0,
+                recipeId = 1,
+                subRecipeId = null,
+                payByCrystal = false,
+                useHammerPoint = useHammerPoint,
+            };
+
+            var exc = Assert.Throws<InvalidRecipeIdException>(
+                () => action.Execute(
+                    new ActionContext
+                    {
+                        PreviousState = PrepareTutorialCraft(),
+                        Signer = _agentAddress,
+                        BlockIndex = 1L,
+                        RandomSeed = _random.Seed,
+                    }));
+            Assert.Contains("requires a sub recipe", exc.Message);
+        }
+
+        [Fact]
+        public void Craft_CountsRecipeCraft()
+        {
+            var state = WithWorldOpenSheets(PrepareTutorialCraft(), "1,RECIPE_CRAFT,1,1,0\n");
+
+            var next = Craft(state, 1);
+            Assert.Equal(1, next.GetCounter(1));
+
+            // Counters accumulate across crafts.
+            Assert.Equal(2, Craft(WithFreshSlotAndMaterial(next), 1).GetCounter(1));
+        }
+
+        [Fact]
+        public void Craft_RecipeOutsideTarget_NoChange()
+        {
+            var state = WithWorldOpenSheets(PrepareTutorialCraft(), "1,RECIPE_CRAFT,2,2,0\n");
+
+            var next = Craft(state, 1);
+
+            Assert.Equal(0, next.GetCounter(1));
+            AssertAccountUnchanged(state, next, Addresses.GlobalCounter);
+        }
+
+        [Fact]
+        public void Craft_BelowMinAvatarLevel_NoChange()
+        {
+            var state = WithWorldOpenSheets(
+                PrepareTutorialCraft(),
+                $"1,RECIPE_CRAFT,1,1,{_avatarState.level + 1}\n");
+
+            var next = Craft(state, 1);
+
+            Assert.Equal(0, next.GetCounter(1));
+            AssertAccountUnchanged(state, next, Addresses.GlobalCounter);
+        }
+
+        [Fact]
+        public void Craft_NoWorldOpenSheets_AccountsUntouched()
+        {
+            var state = PrepareTutorialCraft();
+
+            var next = Craft(state, 1);
+
+            Assert.NotNull(next.GetAllCombinationSlotState(_avatarAddress).GetSlot(0).Result);
+            AssertAccountUnchanged(state, next, Addresses.GlobalCounter);
+            AssertAccountUnchanged(state, next, Addresses.WorldOpen);
+        }
+
+        private static void AssertAccountUnchanged(IWorld before, IWorld after, Address account) =>
+            Assert.Equal(
+                before.GetAccountState(account).Trie.Hash,
+                after.GetAccountState(account).Trie.Hash);
+
+        private static IWorld WithWorldOpenSheets(IWorld state, string counters) =>
+            state
+                .SetLegacyState(
+                    Addresses.GetSheetAddress<GlobalCounterSheet>(),
+                    new Text("id,type,target_begin,target_end,min_avatar_level\n" + counters))
+                .SetLegacyState(
+                    Addresses.GetSheetAddress<WorldOpenSheet>(),
+                    new Text(WorldOpenHeader + "1,11,550,,0,1000000,0\n"))
+                .SetLegacyState(
+                    Addresses.GetSheetAddress<WorldOpenConditionSheet>(),
+                    new Text("open_id,condition_group,counter_id,threshold\n1,1,1,100\n"));
+
+        private IWorld PrepareTutorialCraft()
+        {
+            _avatarState.worldInformation = new WorldInformation(0, _tableSheets.WorldSheet, 3);
+            var state = _initialState
+                .SetAgentState(_agentAddress, _agentState)
+                .SetLegacyState(
+                    _avatarAddress.Derive("recipe_ids"),
+                    List.Empty.Add(1.Serialize()));
+            return AddRecipeMaterial(state.SetAvatarState(_avatarAddress, _avatarState), 1);
+        }
+
+        private IWorld AddRecipeMaterial(IWorld state, int recipeId)
+        {
+            var avatarState = state.GetAvatarState(_avatarAddress);
+            var row = _tableSheets.EquipmentItemRecipeSheet[recipeId];
+            avatarState.inventory.AddItem(
+                ItemFactory.CreateItem(_tableSheets.MaterialItemSheet[row.MaterialId], _random),
+                row.MaterialCount);
+            return state.SetAvatarState(_avatarAddress, avatarState);
+        }
+
+        private IWorld WithFreshSlotAndMaterial(IWorld state)
+        {
+            var allSlotState = new AllCombinationSlotState();
+            allSlotState.AddSlot(CombinationSlotState.DeriveAddress(_avatarAddress, 0));
+            return AddRecipeMaterial(
+                state.SetCombinationSlotState(_avatarAddress, allSlotState),
+                1)
+                .SetActionPoint(_avatarAddress, DailyReward.ActionPointMax);
+        }
+
+        private IWorld Craft(IWorld state, int recipeId)
+        {
+            var action = new CombinationEquipment
+            {
+                avatarAddress = _avatarAddress,
+                slotIndex = 0,
+                recipeId = recipeId,
+                subRecipeId = _tableSheets.EquipmentItemRecipeSheet[recipeId].SubRecipeIds[0],
+                payByCrystal = false,
+                useHammerPoint = false,
+            };
+
+            return action.Execute(
+                new ActionContext
+                {
+                    PreviousState = state,
+                    Signer = _agentAddress,
+                    BlockIndex = 1L,
+                    RandomSeed = _random.Seed,
+                });
         }
     }
 }

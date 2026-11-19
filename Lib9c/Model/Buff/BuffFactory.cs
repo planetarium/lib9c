@@ -24,7 +24,7 @@ namespace Nekoyume.Model.Buff
             switch (row.ActionBuffType)
             {
                 case ActionBuffType.Bleed:
-                    var power = NumberConversionHelper.SafeDecimalToInt32(decimal.Round(stat.ATK * row.ATKPowerRatio));
+                    var power = NumberConversionHelper.SafeDecimalToInt64(decimal.Round(stat.ATK * row.ATKPowerRatio));
                     return new Bleed(row, power);
                 case ActionBuffType.Stun:
                     return new Stun(row);
@@ -96,7 +96,7 @@ namespace Nekoyume.Model.Buff
                         {
                             var statMap = stats.StatWithoutBuffs;
                             var multiplier = skill.StatPowerRatio / 10000m;
-                            additionalValue += NumberConversionHelper.SafeDecimalToInt32(Math.Round(statMap.GetStat(skill.ReferencedStatType) * multiplier));
+                            additionalValue += NumberConversionHelper.SafeDecimalToInt64(Math.Round(statMap.GetStat(skill.ReferencedStatType) * multiplier));
                         }
 
                         customField = new SkillCustomField()

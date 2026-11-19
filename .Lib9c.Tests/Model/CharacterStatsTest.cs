@@ -66,6 +66,29 @@ namespace Lib9c.Tests.Model
         }
 
         [Fact]
+        public void BuffLimitAdd_BeyondInt32()
+        {
+            // Hard-world stats pass int.MaxValue, so absolute limits must too.
+            const long buffAtkValue = 5_000_000_000;
+            const long buffLimitValue = 3_000_000_000;
+
+            var stats =
+                new CharacterStats(
+                    _tableSheets.CharacterSheet[GameConfig.DefaultAvatarCharacterId],
+                    1);
+            var statBuffSheet = new StatBuffSheet();
+            statBuffSheet.Set($"id,group,_name,chance,duration,target_type,stat_type,modify_type,modify_value,is_enhanceable,max_stack\n702002,702002,ATK,100,12,Self,ATK,Add,{buffAtkValue},true,");
+            var buff = new StatBuff(statBuffSheet[702002]);
+            var buffLimitSheet = new BuffLimitSheet();
+            buffLimitSheet.Set($"group_id,modify_type,percentage\n{buff.RowData.GroupId},Add,{buffLimitValue}");
+            Assert.Equal(buffLimitValue, buffLimitSheet[buff.RowData.GroupId].Value);
+
+            var atk = stats.ATK;
+            stats.AddBuff(buff, buffLimitSheet);
+            Assert.Equal(atk + buffLimitValue, stats.ATK);
+        }
+
+        [Fact]
         public void BuffLimitAdd()
         {
             const long buffDrrValue = 80;
