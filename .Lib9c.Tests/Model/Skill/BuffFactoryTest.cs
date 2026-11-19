@@ -92,6 +92,84 @@ namespace Lib9c.Tests.Model.Skill
             Assert.NotNull(buff.CustomField);
         }
 
+        /// <summary>
+        /// PLD-1743. 스탯 비례 스탯 버프의 추가값이 int.MaxValue 에서 잘리지 않는다.
+        /// </summary>
+        [Fact]
+        public void GetBuffs_StatReferencedAdditionalValue_BeyondInt32()
+        {
+            var player = new Player(
+                1,
+                _tableSheets.CharacterSheet,
+                _tableSheets.CharacterLevelSheet,
+                _tableSheets.EquipmentItemSetEffectSheet);
+            const long targetHp = 100_000_000_000L;
+            var baseHp = player.Stats.StatWithoutBuffs.GetStatAsLong(StatType.HP);
+            player.Stats.SetCollections(new[]
+            {
+                new StatModifier(StatType.HP, StatModifier.OperationType.Add, targetHp - baseHp),
+            });
+            Assert.Equal(targetHp, player.Stats.StatWithoutBuffs.GetStatAsLong(StatType.HP));
+
+            // Thorns, HP 7%
+            var skillRow = _tableSheets.SkillSheet[270000];
+            var skill = SkillFactory.Get(skillRow, 0, 100, 700, StatType.HP);
+            var buffs = BuffFactory.GetBuffs(
+                player.Stats,
+                skill,
+                _tableSheets.SkillBuffSheet,
+                _tableSheets.StatBuffSheet,
+                _tableSheets.SkillActionBuffSheet,
+                _tableSheets.ActionBuffSheet
+            );
+
+            var buff = Assert.IsType<StatBuff>(Assert.Single(buffs));
+            Assert.NotNull(buff.CustomField);
+            const long additional = targetHp * 700 / 10000;
+            Assert.True(additional > int.MaxValue);
+            Assert.Equal(SkillType.Buff, skillRow.SkillType);
+            Assert.Equal(buff.RowData.Value + additional, buff.CustomField.Value.BuffValue);
+        }
+
+        /// <summary>
+        /// PLD-1743. 상한(BuffLimitSheet)이 없는 그룹의 스탯 비례 버프는 int.MaxValue 를 넘는 값이 스탯까지 그대로 들어간다.
+        /// </summary>
+        [Fact]
+        public void AddBuff_StatReferencedBuff_WithoutLimit_RaisesStatBeyondInt32()
+        {
+            var player = new Player(
+                1,
+                _tableSheets.CharacterSheet,
+                _tableSheets.CharacterLevelSheet,
+                _tableSheets.EquipmentItemSetEffectSheet);
+            const long targetDef = 5_000_000_000L;
+            var baseDef = player.Stats.StatWithoutBuffs.GetStatAsLong(StatType.DEF);
+            player.Stats.SetCollections(new[]
+            {
+                new StatModifier(StatType.DEF, StatModifier.OperationType.Add, targetDef - baseDef),
+            });
+            var atkBefore = player.Stats.GetStatAsLong(StatType.ATK);
+
+            // ATK 증가 (DEF 비례 증가) → StatBuff 102021(그룹 102020, BuffLimitSheet 에 없음), DEF 100%
+            var skillRow = _tableSheets.SkillSheet[800014];
+            Assert.Equal(SkillType.Buff, skillRow.SkillType);
+            var skill = SkillFactory.Get(skillRow, 0, 100, 10000, StatType.DEF);
+            var buff = Assert.IsType<StatBuff>(Assert.Single(BuffFactory.GetBuffs(
+                player.Stats,
+                skill,
+                _tableSheets.SkillBuffSheet,
+                _tableSheets.StatBuffSheet,
+                _tableSheets.SkillActionBuffSheet,
+                _tableSheets.ActionBuffSheet)));
+            Assert.False(_tableSheets.BuffLimitSheet.TryGetValue(buff.RowData.GroupId, out _));
+            Assert.Equal(buff.RowData.Value + targetDef, buff.CustomField!.Value.BuffValue);
+
+            player.Stats.AddBuff(buff, _tableSheets.BuffLimitSheet);
+            var atkAfter = player.Stats.GetStatAsLong(StatType.ATK);
+            Assert.True(atkAfter > int.MaxValue);
+            Assert.Equal(atkBefore + buff.RowData.Value + targetDef, atkAfter);
+        }
+
         [Fact]
         public void Thorns()
         {

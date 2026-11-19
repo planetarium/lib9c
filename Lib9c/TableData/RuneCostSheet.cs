@@ -39,7 +39,7 @@ namespace Nekoyume.TableData
             /// <summary>
             /// The quantity of crystals required for enhancement
             /// </summary>
-            public int CrystalQuantity { get; }
+            public long CrystalQuantity { get; }
 
             /// <summary>
             /// The quantity of NCG (Nine Chronicles Gold) required for enhancement
@@ -64,7 +64,7 @@ namespace Nekoyume.TableData
                 int levelStart,
                 int levelEnd,
                 int runeStoneQuantity,
-                int crystalQuantity,
+                long crystalQuantity,
                 int ncgQuantity,
                 int levelUpSuccessRate)
             {
@@ -119,7 +119,7 @@ namespace Nekoyume.TableData
                 var levelStart = ParseInt(fields[1]);
                 var levelEnd = ParseInt(fields[2]);
                 var runeStoneQuantity = ParseInt(fields[3]);
-                var crystal = ParseInt(fields[4]);
+                var crystal = ParseLong(fields[4]);
                 var ncg = ParseInt(fields[5]);
                 var successRate = ParseInt(fields[6]);
                 Cost = new List<RuneCostData>

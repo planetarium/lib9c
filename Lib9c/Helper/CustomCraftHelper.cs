@@ -12,9 +12,15 @@ using static System.Numerics.BigInteger;
 
 namespace Nekoyume.Helper
 {
+    /// <summary>
+    /// Helpers for <c>CustomEquipmentCraft</c>.
+    /// </summary>
     public static class CustomCraftHelper
     {
-        public static int SelectCp(
+        /// <summary>
+        /// Picks a CP group by its ratio, then a total CP within it.
+        /// </summary>
+        public static long SelectCp(
             CustomEquipmentCraftRelationshipSheet.Row relationshipRow,
             IRandom random
         )
