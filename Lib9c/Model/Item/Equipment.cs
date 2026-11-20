@@ -22,6 +22,7 @@ namespace Nekoyume.Model.Item
     /// Field Order (List Format):
     /// Base fields (0~10): 11 fields from ItemUsable
     /// Equipment fields (11~22): equipped, level, stat, setId, spineResourcePath, iconId, byCustomCraft, craftWithRandom, hasRandomOnlyIcon, optionCountFromCombination, madeWithMimisbrunnrRecipe, exp
+    /// Potential field (23): potential — optional trailing field, absent in equipment serialized before the potential layer
     /// </para>
     ///
     /// <para>
@@ -65,26 +66,65 @@ namespace Nekoyume.Model.Item
     [Serializable]
     public class Equipment : ItemUsable, IEquippableItem
     {
-        // Field count constants for serialization
+        // Field count constants for serialization.
+        // This is the MINIMUM required length (indices 0~22). The potential layer (index 23) is an
+        // optional trailing field, so this constant is intentionally NOT bumped when it is present.
         private const int EQUIPMENT_FIELD_COUNT = ITEM_USABLE_FIELD_COUNT + 12; // base + equipped, level, stat, setId, spineResourcePath, iconId, byCustomCraft, craftWithRandom, hasRandomOnlyIcon, optionCountFromCombination, madeWithMimisbrunnrRecipe, exp
 
+        /// <summary>Whether the equipment is currently equipped.</summary>
         // FIXME: Whether the equipment is equipped or not has no asset value and must be removed from the state.
         public bool equipped;
+
+        /// <summary>The enhancement level of the equipment.</summary>
         public int level;
+
+        /// <summary>The accumulated experience points used for enhancement.</summary>
         public long Exp;
+
+        /// <summary>The number of options granted from combination (crafting).</summary>
         public int optionCountFromCombination;
+
+        /// <summary>The icon identifier used for UI display.</summary>
         public int IconId;
+
+        /// <summary>Whether the equipment was crafted through custom crafting.</summary>
         public bool ByCustomCraft;
+
+        /// <summary>Whether random options were applied during crafting.</summary>
         public bool CraftWithRandom;
+
+        /// <summary>Whether the equipment has a random-only icon.</summary>
         public bool HasRandomOnlyIcon;
 
+        /// <summary>The primary stat of the equipment.</summary>
         public DecimalStat Stat { get; private set; }
+
+        /// <summary>The identifier used for equipment set bonuses.</summary>
         public int SetId { get; private set; }
+
+        /// <summary>The path to the spine animation resource.</summary>
         public string SpineResourcePath { get; private set; }
+
+        /// <summary>Whether the equipment was made with a Mimisbrunnr recipe.</summary>
         public bool MadeWithMimisbrunnrRecipe { get; set; }
+
+        /// <summary>
+        /// The latent ("potential") option layer attached to this equipment.
+        /// Independent of <see cref="StatsMap"/> and <see cref="Skills"/>; defaults to
+        /// <see cref="EquipmentPotential.Empty"/> for equipment that has never been granted options.
+        /// </summary>
+        public EquipmentPotential Potential { get; private set; } = EquipmentPotential.Empty;
+
+        /// <summary>The stat type of the equipment's primary stat.</summary>
         public StatType UniqueStatType => Stat.StatType;
+
+        /// <summary>Whether the equipment is currently equipped.</summary>
         public bool Equipped => equipped;
 
+        /// <summary>
+        /// Gets the stat increment amount applied per enhancement level.
+        /// </summary>
+        /// <returns>The increment amount, at least 1.0.</returns>
         public decimal GetIncrementAmountOfEnhancement()
         {
             var stat = StatsMap.GetBaseStat(UniqueStatType);
@@ -193,6 +233,9 @@ namespace Nekoyume.Model.Item
             {
                 MadeWithMimisbrunnrRecipe = value.ToBoolean();
             }
+
+            // Legacy Dictionary-format equipment predates the potential layer.
+            Potential = EquipmentPotential.Empty;
         }
 
         /// <summary>
@@ -251,6 +294,13 @@ namespace Nekoyume.Model.Item
 
             // exp (index 22)
             Exp = (Integer)list[22];
+
+            // potential (index 23) — optional trailing field.
+            // Equipment serialized before the potential layer was introduced stops at index 22,
+            // so read it only when present to stay backward compatible.
+            Potential = list.Count > 23
+                ? new EquipmentPotential(list[23])
+                : EquipmentPotential.Empty;
         }
 
         protected Equipment(SerializationInfo info, StreamingContext _)
@@ -277,7 +327,8 @@ namespace Nekoyume.Model.Item
                 .Add(HasRandomOnlyIcon)
                 .Add(optionCountFromCombination)
                 .Add(MadeWithMimisbrunnrRecipe)
-                .Add(Exp);
+                .Add(Exp)
+                .Add(Potential.Serialize());
 
             return list;
         }
@@ -301,7 +352,8 @@ namespace Nekoyume.Model.Item
                 "hasRandomOnlyIcon",
                 "optionCountFromCombination",
                 "madeWithMimisbrunnrRecipe",
-                "exp"
+                "exp",
+                "potential"
             }).ToArray();
         }
 
@@ -313,6 +365,16 @@ namespace Nekoyume.Model.Item
         public void Unequip()
         {
             equipped = false;
+        }
+
+        /// <summary>
+        /// Replaces the latent ("potential") option layer of this equipment.
+        /// Passing <c>null</c> resets it to <see cref="EquipmentPotential.Empty"/>.
+        /// </summary>
+        /// <param name="potential">The new potential layer.</param>
+        public void SetPotential(EquipmentPotential potential)
+        {
+            Potential = potential ?? EquipmentPotential.Empty;
         }
 
         [Obsolete("Use LevelUp")]
